@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    class RobotManagementService:RegisterProcedureService
+    class RobotManagementService
     {
         Dictionary<String,RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
         //readonly Dictionary<String, RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();

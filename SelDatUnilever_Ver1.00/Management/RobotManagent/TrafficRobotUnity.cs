@@ -15,10 +15,10 @@ namespace SeldatMRMS.Management
         {
             public PriorityLevel()
             {
-                this.OnMainRoad = 0;
+                this.IndexOnMainRoad = 0;
                 this.OnAuthorizedPriorityProcedure = false;
             }
-            public int OnMainRoad { get; set; } //  Index on Road;
+            public int IndexOnMainRoad { get; set; } //  Index on Road;
             public bool OnAuthorizedPriorityProcedure { get; set; }
 
         }
@@ -30,57 +30,85 @@ namespace SeldatMRMS.Management
             HEADER_TOUCH_NOTOUCH
         }
         private List<RobotUnity> RobotUnitylist;
+        private Dictionary<String,RobotUnity> RobotUnityRiskList=new Dictionary<string, RobotUnity>();
         private TrafficBehaviorState TrafficBehaviorStateTracking;
         public TrafficRobotUnity() : base() { }
+        public PriorityLevel PrioritLevelRegister;
         public void RegisteRobotInAvailable(List<RobotUnity> RobotUnitylist)
         {
             this.RobotUnitylist = RobotUnitylist;
             TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
+            PrioritLevelRegister = new PriorityLevel();
         }
-        public bool CheckIntersection()
+        public RobotUnity CheckIntersection()
         {
-            return FindHeaderIntersectsFullRiskArea(this.properties.pose.Position);
+            RobotUnity robot = null;
+            if(RobotUnityRiskList.Count>0)
+            {
+                foreach(RobotUnity r in RobotUnityRiskList.Values)
+                {
+                   bool onTouch= FindHeaderIntersectsFullRiskArea(this.TopHeader()) | FindHeaderIntersectsFullRiskArea(this.MiddleHeader()) | FindHeaderIntersectsFullRiskArea(this.BottomHeader());
+                    if(onTouch)
+                    {
+                        robot = r;
+                        break;
+                    }
+                }
+            }
+            return robot;
         }
         public bool CheckSafeDistance() // KIểm tra khoản cách an toàn/ nếu đang trong vùng close với robot khác thì giảm tốc độ, chuyển sang chế độ dò risk area
         {
             bool iscloseDistance = false;
             foreach(RobotUnity r in RobotUnitylist)
             {
-                iscloseDistance = r.FindHeaderIsCloseRiskArea(this.properties.pose.Position);
-                if (iscloseDistance)
+                bool onFound = r.FindHeaderIsCloseRiskArea(this.properties.pose.Position);
+                if (onFound)
                 {
+                    // if robot in list is near but add in risk list robot
+
                     SetSpeed(RobotSpeedLevel.ROBOT_SPEED_SLOW);
+                    if(!RobotUnityRiskList.ContainsKey(r.properties.NameID))
+                    {
+                        RobotUnityRiskList.Add(r.properties.NameID,r);
+                    }
                     // reduce speed robot control
-                    break;
+                    iscloseDistance = true;
+                }
+                else
+                {
+                    // if robot in list is far but before registe in list, must remove in list
+                    RemoveRiskList(r.properties.NameID);
                 }
             }
             return iscloseDistance;
         }
-        public void DetectTouchedPosition() // determine traffic state
+        public void RemoveRiskList(String NameID)
         {
-            foreach (RobotUnity r in RobotUnitylist)
+            if(RobotUnityRiskList.ContainsKey(NameID))
             {
-                if (r.FindHeaderIntersectsRiskAreaHeader(this.properties.pose.Position))
+                RobotUnityRiskList.Remove(NameID);
+            }
+        }
+        public void DetectTouchedPosition(RobotUnity robot) // determine traffic state
+        {
+                if (robot.FindHeaderIntersectsRiskAreaHeader(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaHeader(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaHeader(this.BottomHeader()))
                 {
                     TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_HEADER;
-                    break;
                 }
-                else if (r.FindHeaderIntersectsRiskAreaTail(this.properties.pose.Position))
+                else if (robot.FindHeaderIntersectsRiskAreaTail(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.BottomHeader()))
                 {
                     TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_TAIL;
-                    break;
                 }
-                else if (r.FindHeaderIntersectsRiskAreaRightSide(this.properties.pose.Position))
+                else if (robot.FindHeaderIntersectsRiskAreaRightSide(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.BottomHeader()))
                 {
                     TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
-                    break;
                 }
-                else if (r.FindHeaderIntersectsRiskAreaLeftSide(this.properties.pose.Position))
+                else if (robot.FindHeaderIntersectsRiskAreaLeftSide(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.MiddleHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.BottomHeader()))
                 {
                     TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
-                    break;
                 }
-            }
+          
         }
         public void TrafficBehavior()
         {
@@ -108,22 +136,22 @@ namespace SeldatMRMS.Management
         protected override void SupervisorTraffic() {
             if(CheckSafeDistance())
             {
-                if(CheckIntersection())
+                RobotUnity robot = CheckIntersection();
+                if (robot != null)
                 {
-                    DetectTouchedPosition();
+                    DetectTouchedPosition(robot);
                     TrafficBehavior();
                 }
             }
             else
             {
+                if(RobotUnityRiskList.Count>0)
+                {
+                    RobotUnityRiskList.Clear();
+                }
                 TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
                 TrafficBehavior();
             }
-        }
-        public void DetermineOperatingArea()
-        {
-            // dùng tọa độ xá định khu vực hoạt động
-            // cập nhật chỉ số ưu tiên
         }
     }
 }

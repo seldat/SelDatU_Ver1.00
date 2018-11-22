@@ -11,8 +11,9 @@ using WebSocketSharp;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    public class RobotAgentControl:RosSocket
+    public class RobotUnityControl:RosSocket
     {
+        public event Action<Pose, Object> PoseHandler;
         public class Pose
         {
            public Pose(Point p,double AngleW) // Angle gốc
@@ -80,7 +81,7 @@ namespace SeldatMRMS.Management.RobotManagent
         ParamsRosSocket paramsRosSocket;
         public PropertiesRobotUnity properties;
         protected virtual void SupervisorTraffic() { }
-        public RobotAgentControl()
+        public RobotUnityControl()
         {
 
         }
@@ -103,6 +104,7 @@ namespace SeldatMRMS.Management.RobotManagent
             double posTheta = (double)2 * Math.Atan2(posThetaZ, posThetaW);
             properties.pose.Position = new Point(posX,posY);
             properties.pose.AngleW = posTheta;
+            PoseHandler(properties.pose, this);
         }
         private void FinishedStatesHandler(Communication.Message message)
         {

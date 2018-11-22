@@ -91,14 +91,15 @@
     <Compile Include="Management\ProcedureServices\ProcedureReturnPalletToGround.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureRobotToChargeReady.cs" />
     <Compile Include="Management\ProcedureServices\RegisterProcedureService.cs" />
-    <Compile Include="Management\RobotManagent\ExtensionRobotService.cs" />
-    <Compile Include="Management\RobotManagent\RobotAgentControl.cs" />
+    <Compile Include="Management\ExtensionService.cs" />
+    <Compile Include="Management\RobotManagent\RobotUnityControl.cs" />
     <Compile Include="Management\RobotManagent\RobotUnityService.cs" />
     <Compile Include="Management\RobotManagent\RobotBaseService.cs" />
     <Compile Include="Management\RobotManagent\RobotManagementService.cs" />
     <Compile Include="Management\RobotManagent\RobotUnity.cs" />
     <Compile Include="Management\RobotManagent\TrafficRobotUnity.cs" />
     <Compile Include="Management\TrafficManager\TrafficManagementService.cs" />
+    <Compile Include="Management\TrafficManager\TrafficRounterService.cs" />
     <Compile Include="Management\UnityService\UnityBaseService.cs" />
     <Compile Include="Management\UnityService\UnityManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

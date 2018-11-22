@@ -33,7 +33,7 @@ plot([0 X3],[0 Y3],'.g-')*/
 namespace SeldatMRMS.Management
 {
 
-    public class RobotUnityService:RobotAgentControl
+    public class RobotUnityService:RobotUnityControl
     {
         
         public event Action<Communication.Message> ZoneHandler;
@@ -106,28 +106,28 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIsCloseRiskArea(Point p)
         {
-            return ExtensionRobotService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionRobotService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionRobotService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
+            return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
            
         }
         public bool FindHeaderIntersectsFullRiskArea(Point p)
         {
-            return ExtensionRobotService.IsInPolygon(FullRiskArea(),p);
+            return ExtensionService.IsInPolygon(FullRiskArea(),p);
         }
         public bool FindHeaderIntersectsRiskAreaHeader(Point p)
         {
-            return ExtensionRobotService.IsInPolygon(RiskAreaHeader(), p);
+            return ExtensionService.IsInPolygon(RiskAreaHeader(), p);
         }
         public bool FindHeaderIntersectsRiskAreaTail(Point p)
         {
-            return ExtensionRobotService.IsInPolygon(RiskAreaTail(), p);
+            return ExtensionService.IsInPolygon(RiskAreaTail(), p);
         }
         public bool FindHeaderIntersectsRiskAreaLeftSide(Point p)
         {
-            return ExtensionRobotService.IsInPolygon(RiskAreaLeftSide(), p);
+            return ExtensionService.IsInPolygon(RiskAreaLeftSide(), p);
         }
         public bool FindHeaderIntersectsRiskAreaRightSide(Point p)
         {
-            return ExtensionRobotService.IsInPolygon(RiskAreaRightSide(), p);
+            return ExtensionService.IsInPolygon(RiskAreaRightSide(), p);
         }
 
     }

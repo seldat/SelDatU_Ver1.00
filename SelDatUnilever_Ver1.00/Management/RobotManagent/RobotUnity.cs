@@ -31,9 +31,10 @@ namespace SeldatMRMS.Management.RobotManagent
                 // double oriY = double.Parse(row.Field<string>("ORIGINAL").Split(',')[1]);
                 loadConfigureInformation.IsLoadedStatus = true;
             }
-            catch {
+            catch
+            {
                 loadConfigureInformation.IsLoadedStatus = false;
-                }
+            }
         }
         
     }

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SeldatMRMS.Management
+namespace SeldatMRMS
 {
-    public static class ExtensionRobotService
+    public static class ExtensionService
     {
         public static double CalDistance(Point p1,Point p2 )
         {
