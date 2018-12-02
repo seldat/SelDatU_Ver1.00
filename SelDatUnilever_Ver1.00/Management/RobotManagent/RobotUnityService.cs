@@ -36,9 +36,7 @@ namespace SeldatMRMS.Management
     public class RobotUnityService:RobotUnityControl
     {
         
-        public event Action<Communication.Message> ZoneHandler;
-        public event Action<Communication.Message> AmclPoseHandler;
-        public event Action<Communication.Message> FinishStatesHandler;
+
         public RobotUnityService()
         {
         }
@@ -106,8 +104,13 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIsCloseRiskArea(Point p)
         {
-            return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
-           
+            // return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
+            //Console.WriteLine("Vi tri robot "+ this.properties.NameID+" = " + properties.pose.Position);
+           // Console.WriteLine("Vi tien gan " + p.ToString());
+           // Console.WriteLine("kHOAN CACH " + ExtensionService.CalDistance(properties.pose.Position, p));
+
+            return ExtensionService.CalDistance(properties.pose.Position, p) < properties.DistanceIntersection ? true : false;
+
         }
         public bool FindHeaderIntersectsFullRiskArea(Point p)
         {

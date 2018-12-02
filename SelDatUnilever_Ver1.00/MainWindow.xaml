@@ -5,28 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SelDatUnilever_Ver1._00"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-        <Border Background="Yellow" MouseMove="Border_MouseMove" Margin="60,23,52,43">
-            <Canvas Name="map" Width="526" Height="100" Background="Blue" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"
-           
-          RenderTransform="1 0 0 -1 0 0" MouseMove="Canvas_MouseMove" Margin="106,233,48,20">
-                <Canvas.Children>
-                    <Rectangle Fill="Red" Width="10" Height="10" Canvas.Left="10" RenderTransformOrigin="0.5,0.5" >
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform/>
-                                <SkewTransform/>
-                                <RotateTransform Angle="0"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                </Canvas.Children>
-
-
-            </Canvas>
+        Title="MainWindow" Height="450" Width="800" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
+    <Grid Name="main" KeyDown="main_KeyDown">
+        <Button Content="Button" HorizontalAlignment="Left" Margin="266,31,0,0" VerticalAlignment="Top" Width="75" Name="sendPose" Click="sendPose_Click"/>
+        <Border Margin="242,104,0,0" >
+            <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="288" VerticalAlignment="Top" Width="540" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
         </Border>
+        <RadioButton Name="selRobot1" IsChecked="True" Content="Robot1" HorizontalAlignment="Left" Margin="78,104,0,0" VerticalAlignment="Top" Checked="selRobot1_Checked"/>
+        <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="78,124,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>
+        <RadioButton Name="selRobot3" Content="Robot3" HorizontalAlignment="Left" Margin="78,144,0,0" VerticalAlignment="Top" Checked="selRobot3_Checked"/>
+        <RadioButton Content="Robot4" HorizontalAlignment="Left" Margin="78,164,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

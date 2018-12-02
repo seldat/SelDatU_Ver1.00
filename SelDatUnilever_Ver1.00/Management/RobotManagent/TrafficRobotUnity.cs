@@ -47,9 +47,10 @@ namespace SeldatMRMS.Management
             {
                 foreach(RobotUnity r in RobotUnityRiskList.Values)
                 {
-                   bool onTouch= FindHeaderIntersectsFullRiskArea(this.TopHeader()) | FindHeaderIntersectsFullRiskArea(this.MiddleHeader()) | FindHeaderIntersectsFullRiskArea(this.BottomHeader());
+                   bool onTouch= r.FindHeaderIntersectsFullRiskArea(this.TopHeader()) | r.FindHeaderIntersectsFullRiskArea(this.MiddleHeader()) |r. FindHeaderIntersectsFullRiskArea(this.BottomHeader());
                     if(onTouch)
                     {
+                        Console.WriteLine(this.properties.NameID+" co su va cham voi "+ r.properties.NameID);
                         robot = r;
                         break;
                     }
@@ -62,15 +63,20 @@ namespace SeldatMRMS.Management
             bool iscloseDistance = false;
             foreach(RobotUnity r in RobotUnitylist)
             {
-                bool onFound = r.FindHeaderIsCloseRiskArea(this.properties.pose.Position);
+              //  bool onFound = r.FindHeaderIsCloseRiskArea(this.TopHeader())| r.FindHeaderIsCloseRiskArea(this.BottomHeader())| r.FindHeaderIsCloseRiskArea(this.MiddleHeader());
+                bool onFound =  r.FindHeaderIsCloseRiskArea(this.MiddleHeader());
+
                 if (onFound)
                 {
+                   
                     // if robot in list is near but add in risk list robot
 
                     SetSpeed(RobotSpeedLevel.ROBOT_SPEED_SLOW);
-                    if(!RobotUnityRiskList.ContainsKey(r.properties.NameID))
+                    if(!RobotUnityRiskList.ContainsKey(r.properties.NameID) && !r.properties.NameID.Equals(this.properties.NameID))
                     {
+                        Console.WriteLine(this.properties.NameID+" khoan cach gan " + r.properties.NameID);
                         RobotUnityRiskList.Add(r.properties.NameID,r);
+                       
                     }
                     // reduce speed robot control
                     iscloseDistance = true;

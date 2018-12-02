@@ -14,7 +14,7 @@ namespace SeldatMRMS
         ForkLiftToBuffer StateForkLiftToBuffer;
         public ProcedureForkLiftToBuffer(RobotUnity robot,DoorService doorservice):base(robot,doorservice)
         {
-            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_IDLE;
+            
         }
         public void Start(String content)
         {
@@ -70,6 +70,13 @@ namespace SeldatMRMS
                 case ForkLiftToBuffer.FORBUF_ROBOT_CAME_GOBACK_FRONTLINE_BUFFER: break; // đã đến vị trí đầu line
                 case ForkLiftToBuffer.FORBUF_ROBOT_RELEASED: break; // trả robot về robotmanagement để nhận quy trình mới
             }
+        }
+        public override void FinishStatesCallBack(Int32 message) {
+            Procedure();
+            // printf("hello ");
+            base.FinishStatesCallBack(message);
+
+            
         }
     }
 }

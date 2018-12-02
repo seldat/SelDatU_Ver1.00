@@ -5,19 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SeldatMRMS
 {
     public class ProcedureBufferToMachine : ProcedureControlServices
     {
         private BufferToMachine StateBufferToMachine;
-        public ProcedureBufferToMachine(RobotUnity robot):base(robot,null) { }
+        RobotUnity robot;
+        public ProcedureBufferToMachine(RobotUnity robot):base(robot,null) {
+            StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
+            this.robot = robot;
+        }
         public void Procedure()
         {
             switch(StateBufferToMachine)
             {
                 case BufferToMachine.BUFMAC_IDLE: break;
                 case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: break; // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
+                   //gửi toa độ laser 
+                    // Pose position = new Pose(new System.Windows.Point(10,10),0);
+                  //  this.robot.SendPoseStamped(position);
                 case BufferToMachine.BUFMAC_ROBOT_FINISHED_GOTO_CHECKIN_BUFFER: break; // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
 
                 case BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_BUFFER: break; // ROBOT cho tiến vào vị trí đầu line // vẩn dò đường bằng laser
@@ -51,6 +59,8 @@ namespace SeldatMRMS
                 case BufferToMachine.BUFMAC_ROBOT_RELEASED: break; // trả robot về robotmanagement để nhận quy trình mới
 
             }
-        }
+
+    }
+        public override void FinishStatesCallBack(Int32 message) { }
     }
 }

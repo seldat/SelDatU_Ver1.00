@@ -13,10 +13,16 @@ namespace SeldatMRMS.Management.RobotManagent
 {
     public class RobotUnityControl:RosSocket
     {
-        public event Action<Pose, Object> PoseHandler;
+        public event Action<Pose, Object> PoseCallBack;
+        public event Action<Communication.Message> ZoneCallBack;
+        public event Action<Int32> FinishStatesCallBack;
         public class Pose
         {
-           public Pose(Point p,double AngleW) // Angle gốc
+            public Pose() // Angle gốc
+            {
+                
+            }
+            public Pose(Point p,double AngleW) // Angle gốc
             {
                 this.Position = p;
                 this.AngleW = AngleW;
@@ -83,7 +89,8 @@ namespace SeldatMRMS.Management.RobotManagent
         protected virtual void SupervisorTraffic() { }
         public RobotUnityControl()
         {
-
+            properties.pose = new Pose();
+            properties.DistanceIntersection = 40;
         }
         public void createRosTerms()
         {
@@ -104,10 +111,12 @@ namespace SeldatMRMS.Management.RobotManagent
             double posTheta = (double)2 * Math.Atan2(posThetaZ, posThetaW);
             properties.pose.Position = new Point(posX,posY);
             properties.pose.AngleW = posTheta;
-            PoseHandler(properties.pose, this);
+            PoseCallBack(properties.pose, this);
         }
         private void FinishedStatesHandler(Communication.Message message)
         {
+            StandardInt32 standard = (StandardInt32)message;
+            FinishStatesCallBack(standard.data);
         }
         protected override void OnClosedEvent(object sender, CloseEventArgs e) {
             properties.IsConnected = false;
