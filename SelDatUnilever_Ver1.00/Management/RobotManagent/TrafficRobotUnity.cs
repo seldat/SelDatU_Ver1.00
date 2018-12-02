@@ -98,23 +98,48 @@ namespace SeldatMRMS.Management
         }
         public void DetectTouchedPosition(RobotUnity robot) // determine traffic state
         {
-                if (robot.FindHeaderIntersectsRiskAreaHeader(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaHeader(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaHeader(this.BottomHeader()))
-                {
-                    TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_HEADER;
-                }
-                else if (robot.FindHeaderIntersectsRiskAreaTail(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.BottomHeader()))
-                {
-                    TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_TAIL;
-                }
-                else if (robot.FindHeaderIntersectsRiskAreaRightSide(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.BottomHeader()))
-                {
-                    TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
-                }
-                else if (robot.FindHeaderIntersectsRiskAreaLeftSide(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.MiddleHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.BottomHeader()))
-                {
-                    TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
-                }
-          
+            /*if (robot.FindHeaderIntersectsRiskAreaHeader(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaHeader(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaHeader(this.BottomHeader()))
+            {
+                Console.WriteLine(this.properties.NameID +" Đa co va cham voi vùng Header "+ robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_HEADER;
+            }
+            if (robot.FindHeaderIntersectsRiskAreaTail(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaTail(this.BottomHeader()))
+            {
+                 Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Tail " + robot.properties.NameID);
+                 TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_TAIL;
+            }
+            if (robot.FindHeaderIntersectsRiskAreaRightSide(this.TopHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.MiddleHeader())|| robot.FindHeaderIntersectsRiskAreaRightSide(this.BottomHeader()))
+            {
+                Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Right Side " + robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
+            }
+            if (robot.FindHeaderIntersectsRiskAreaLeftSide(this.TopHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.MiddleHeader()) || robot.FindHeaderIntersectsRiskAreaLeftSide(this.BottomHeader()))
+            {
+                 Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Left Side " + robot.properties.NameID);
+                 TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
+            }*/
+            if ( robot.FindHeaderIntersectsRiskAreaHeader(this.MiddleHeader()))
+            {
+                Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Header " + robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_HEADER;
+            }
+            if (robot.FindHeaderIntersectsRiskAreaTail(this.MiddleHeader()))
+            {
+                Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Tail " + robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_TAIL;
+            }
+            if ( robot.FindHeaderIntersectsRiskAreaRightSide(this.MiddleHeader()) )
+            {
+                Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Right Side " + robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
+            }
+            if (robot.FindHeaderIntersectsRiskAreaLeftSide(this.MiddleHeader()) )
+            {
+                Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Left Side " + robot.properties.NameID);
+                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
+            }
+
+
         }
         public void TrafficBehavior()
         {
