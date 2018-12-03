@@ -47,6 +47,8 @@ namespace SeldatMRMS.Management.RobotManagent
         Ellipse ep2;
         Ellipse ep3;
         Ellipse ep4;
+        Ellipse ep5;
+        Ellipse ep6;
         TextBlock textblock;
         double x = 0, y = 0;
         double angle = 0;
@@ -55,7 +57,7 @@ namespace SeldatMRMS.Management.RobotManagent
             this.canvas = canvas;
             properties.L1 = 30;
             properties.L2 = 30;
-            properties.WS = 20;
+            properties.WS = 40;
             textblock = new TextBlock();
            
            ep = new Ellipse();
@@ -80,11 +82,23 @@ namespace SeldatMRMS.Management.RobotManagent
             ep4.Width = 5;
             ep4.Height = 5;
             ep4.Fill = new SolidColorBrush(Colors.Yellow);
+            ep5 = new Ellipse();
+            ep5.Width = 5;
+            ep5.Height = 5;
+            ep5.Fill = new SolidColorBrush(Colors.White);
+
+            ep6 = new Ellipse();
+            ep6.Width = 5;
+            ep6.Height = 5;
+            ep6.Fill = new SolidColorBrush(Colors.White);
+
             canvas.Children.Add(ep);
             canvas.Children.Add(ep1);
             canvas.Children.Add(ep2);
             canvas.Children.Add(ep3);
             canvas.Children.Add(ep4);
+            canvas.Children.Add(ep5);
+           // canvas.Children.Add(ep6);
             canvas.Children.Add(textblock);
         }
 
@@ -109,15 +123,17 @@ namespace SeldatMRMS.Management.RobotManagent
             ep2.RenderTransform = new TranslateTransform(BottomHeader().X, BottomHeader().Y);
             ep3.RenderTransform = new TranslateTransform(TopTail().X, TopTail().Y);
             ep4.RenderTransform = new TranslateTransform(BottomTail().X, BottomTail().Y);
+            ep5.RenderTransform = new TranslateTransform(MiddleHeader().X, MiddleHeader().Y);
+            ep6.RenderTransform = new TranslateTransform(MiddleTail().X, MiddleTail().Y);
             //Canvas.SetLeft(ep1, TopHeader().X);
-           // Canvas.SetTop(ep1, TopHeader().Y);
+            // Canvas.SetTop(ep1, TopHeader().Y);
             //Canvas.SetLeft(ep2, BottomHeader().X);
-           // Canvas.SetTop(ep2, BottomHeader().Y);
-           // Canvas.SetLeft(ep3, TopTail().X);
-           // Canvas.SetTop(ep3, TopTail().Y);
-           // Canvas.SetLeft(ep4, BottomTail().X);
-           // Canvas.SetTop(ep4, BottomTail().Y);
-           
+            // Canvas.SetTop(ep2, BottomHeader().Y);
+            // Canvas.SetLeft(ep3, TopTail().X);
+            // Canvas.SetTop(ep3, TopTail().Y);
+            // Canvas.SetLeft(ep4, BottomTail().X);
+            // Canvas.SetTop(ep4, BottomTail().Y);
+
 
 
         }

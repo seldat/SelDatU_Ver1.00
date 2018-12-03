@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SelDatUnilever_Ver1._00"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
+        Title="MainWindow" Height="757.059" Width="1308.235" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Grid Name="main" KeyDown="main_KeyDown">
         <Button Content="Button" HorizontalAlignment="Left" Margin="266,31,0,0" VerticalAlignment="Top" Width="75" Name="sendPose" Click="sendPose_Click"/>
         <Border Margin="242,104,0,0" >
-            <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="288" VerticalAlignment="Top" Width="540" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
+            <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="612" VerticalAlignment="Top" Width="1048" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
         </Border>
         <RadioButton Name="selRobot1" IsChecked="True" Content="Robot1" HorizontalAlignment="Left" Margin="78,104,0,0" VerticalAlignment="Top" Checked="selRobot1_Checked"/>
         <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="78,124,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>

@@ -50,7 +50,7 @@ namespace SeldatMRMS.Management
                    bool onTouch= r.FindHeaderIntersectsFullRiskArea(this.TopHeader()) | r.FindHeaderIntersectsFullRiskArea(this.MiddleHeader()) |r. FindHeaderIntersectsFullRiskArea(this.BottomHeader());
                     if(onTouch)
                     {
-                        Console.WriteLine(this.properties.NameID+" co su va cham voi "+ r.properties.NameID);
+                        Console.WriteLine(this.properties.NameID+" co su va cham voi toi vung an toan "+ r.properties.NameID);
                         robot = r;
                         break;
                     }
@@ -68,18 +68,21 @@ namespace SeldatMRMS.Management
 
                 if (onFound)
                 {
-                   
-                    // if robot in list is near but add in risk list robot
 
-                    SetSpeed(RobotSpeedLevel.ROBOT_SPEED_SLOW);
-                    if(!RobotUnityRiskList.ContainsKey(r.properties.NameID) && !r.properties.NameID.Equals(this.properties.NameID))
+                    // if robot in list is near but add in risk list robot
+                    if (!r.properties.NameID.Equals(this.properties.NameID))
                     {
-                        Console.WriteLine(this.properties.NameID+" khoan cach gan " + r.properties.NameID);
-                        RobotUnityRiskList.Add(r.properties.NameID,r);
-                       
+                        if (!RobotUnityRiskList.ContainsKey(r.properties.NameID) )
+                        {
+                            Console.WriteLine(this.properties.NameID + " đang giam toc do ve 50%");
+                            SetSpeed(RobotSpeedLevel.ROBOT_SPEED_SLOW);
+                            Console.WriteLine(this.properties.NameID + " co khoan cach gan " + r.properties.NameID);
+                            RobotUnityRiskList.Add(r.properties.NameID, r);
+
+                        }
+                        // reduce speed robot control
+                        iscloseDistance = true;
                     }
-                    // reduce speed robot control
-                    iscloseDistance = true;
                 }
                 else
                 {
@@ -118,6 +121,7 @@ namespace SeldatMRMS.Management
                  Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Left Side " + robot.properties.NameID);
                  TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_SIDE;
             }*/
+            Console.WriteLine("VI TRI MIDDLE " + this.MiddleHeader());
             if ( robot.FindHeaderIntersectsRiskAreaHeader(this.MiddleHeader()))
             {
                 Console.WriteLine(this.properties.NameID + " Đa co va cham voi vùng Header " + robot.properties.NameID);
@@ -167,7 +171,9 @@ namespace SeldatMRMS.Management
         protected override void SupervisorTraffic() {
             if(CheckSafeDistance())
             {
+                
                 RobotUnity robot = CheckIntersection();
+             
                 if (robot != null)
                 {
                     DetectTouchedPosition(robot);
@@ -180,6 +186,7 @@ namespace SeldatMRMS.Management
                 {
                     RobotUnityRiskList.Clear();
                 }
+                Console.WriteLine(this.properties.NameID + " đang giam toc do ve 100%");
                 TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
                 TrafficBehavior();
             }

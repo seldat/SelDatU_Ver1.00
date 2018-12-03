@@ -92,11 +92,13 @@ namespace SeldatMRMS.Management
 
         public Point[] RiskAreaRightSide()  // From Point : TopHeader / TopTail / Middle TAil //Middle HEader
         {
+            Console.WriteLine("Right Side " + BottomHeader() + " " + BottomTail() + " " + MiddleTail() + " " + MiddleHeader());
             return new Point[4] { BottomHeader(), BottomTail(), MiddleTail(), MiddleHeader() };
            
         }
         public Point[] RiskAreaLeftSide()  // From Point : BOttom Header / Bottom Tail / Middle TAil //Middle HEader
         {
+            Console.WriteLine("Left Side "+TopHeader() +" "+ TopTail() +" "+ MiddleTail()+" "+ MiddleHeader());
             return new Point[4] { TopHeader(), TopTail(), MiddleTail(), MiddleHeader() };
         }
         public Point[] FullRiskArea()
@@ -127,6 +129,7 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIntersectsRiskAreaLeftSide(Point p)
         {
+
             return ExtensionService.IsInPolygon(RiskAreaLeftSide(), p);
         }
         public bool FindHeaderIntersectsRiskAreaRightSide(Point p)

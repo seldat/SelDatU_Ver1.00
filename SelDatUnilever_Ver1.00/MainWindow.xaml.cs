@@ -50,8 +50,8 @@ namespace SelDatUnilever_Ver1._00
             robotlist.Add("robot3", robot3);
 
             robot1.initialPos(0,0);
-            robot2.initialPos(50,50);
-            robot3.initialPos(100,100);
+            robot2.initialPos(300,300);
+            robot3.initialPos(400,400);
         }
 
         private void sendPose_Click(object sender, RoutedEventArgs e)
