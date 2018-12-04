@@ -186,7 +186,7 @@ namespace SeldatMRMS.Management
                 {
                     RobotUnityRiskList.Clear();
                 }
-                Console.WriteLine(this.properties.NameID + " đang giam toc do ve 100%");
+                Console.WriteLine(this.properties.NameID + " đang tang toc do ve 100%");
                 TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
                 TrafficBehavior();
             }
