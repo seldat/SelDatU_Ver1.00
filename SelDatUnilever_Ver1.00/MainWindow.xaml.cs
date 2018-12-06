@@ -1,5 +1,6 @@
 ﻿using SeldatMRMS;
 using SeldatMRMS.Management.RobotManagent;
+using SelDatUnilever_Ver1._00.Communication.HttpBridge;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,8 @@ namespace SelDatUnilever_Ver1._00
 
         private void sendPose_Click(object sender, RoutedEventArgs e)
         {
-            
+            BridgeClientRequest pp = new BridgeClientRequest();
+            pp.PostCallAPI("",null);
         }
 
         private void canvas_KeyUp(object sender, KeyEventArgs e)

@@ -64,6 +64,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Communication\BridgeNodeServerCtrl.cs" />
+    <Compile Include="Communication\HttpBridge\BridgeClientRequest.cs" />
+    <Compile Include="Communication\HttpServerRounter\BridgeServer.cs" />
+    <Compile Include="Communication\HttpServerRounter\HttpServer.cs" />
+    <Compile Include="Communication\HttpServerRounter\HttpProcessor.cs" />
     <Compile Include="Communication\JObjectExtensions.cs" />
     <Compile Include="Communication\Message.cs" />
     <Compile Include="Communication\MessageTypes.cs" />
@@ -75,6 +79,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\DeviceManagement\DeviceControlService.cs" />
+    <Compile Include="Management\DeviceManagement\DeviceItem.cs" />
     <Compile Include="Management\DoorServices\DoorElevator.cs" />
     <Compile Include="Management\DoorServices\DoorManagementService.cs" />
     <Compile Include="Management\DoorServices\DoorMezzamineReturn.cs" />
@@ -140,7 +146,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DeviceManagement\" />
+    <Folder Include="Management\DataBaseManagement\" />
     <Folder Include="Management\LogText\" />
+    <Folder Include="Management\OrderService\" />
     <Folder Include="Management\Store\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
