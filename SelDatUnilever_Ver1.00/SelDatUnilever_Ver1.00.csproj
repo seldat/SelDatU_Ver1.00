@@ -79,7 +79,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Management\DeviceManagement\DeviceControlService.cs" />
+    <Compile Include="Management\DeviceManagement\DeviceRegistrationService.cs" />
     <Compile Include="Management\DeviceManagement\DeviceItem.cs" />
     <Compile Include="Management\DoorServices\DoorElevator.cs" />
     <Compile Include="Management\DoorServices\DoorManagementService.cs" />

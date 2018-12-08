@@ -37,7 +37,7 @@ namespace SelDatUnilever_Ver1._00.Communication
                     }
                 });
             }
-            public abstract void handleGETRequest(HttpProcessor p);
-            public abstract void handlePOSTRequest(HttpProcessor p, StreamReader inputData);
+            public abstract Task handleGETRequest(HttpProcessor p);
+            public abstract Task handlePOSTRequest(HttpProcessor p, StreamReader inputData);
     }
 }

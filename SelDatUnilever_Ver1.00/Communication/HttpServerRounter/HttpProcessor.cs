@@ -12,8 +12,6 @@ namespace SelDatUnilever_Ver1._00.Communication.HttpServerRounter
 {
     public class HttpProcessor
     {
-        public virtual void RecievedDataEvent(String json) { }
-
         public TcpClient socket;
         public HttpServer srv;
 
@@ -170,12 +168,7 @@ namespace SelDatUnilever_Ver1._00.Communication.HttpServerRounter
                 }
                 ms.Seek(0, SeekOrigin.Begin);
             }
-            try
-            {
-                RecievedDataEvent(new StreamReader(ms).ReadToEnd());
-            }
-            catch { }
-            //srv.handlePOSTRequest(this, new StreamReader(ms));
+            srv.handlePOSTRequest(this, new StreamReader(ms));
 
         }
         public void handlePostResponse()
