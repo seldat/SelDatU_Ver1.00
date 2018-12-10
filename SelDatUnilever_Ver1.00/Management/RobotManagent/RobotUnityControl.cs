@@ -40,6 +40,12 @@ namespace SeldatMRMS.Management.RobotManagent
            public Point Position { get; set; }
            public double AngleW { get; set; } // radian
         }
+        public class LinePose
+        {
+            public LinePose() { }
+            public Pose BeginningPosition;
+            public double ThresholdDetectsMaker;
+        }
         public enum RobotSpeedLevel
         {
             ROBOT_SPEED_NORMAL = 100,

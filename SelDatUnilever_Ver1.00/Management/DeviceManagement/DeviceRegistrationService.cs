@@ -32,7 +32,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         {
             return DeviceItemList.Find(e => e.DeviceID == deviceID);
         }
-        public  override  async Task handlePOSTRequest(HttpProcessor p, StreamReader inputData)
+        public override async Task handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
             String data = inputData.ReadToEnd();
             JObject results = JObject.Parse(data);

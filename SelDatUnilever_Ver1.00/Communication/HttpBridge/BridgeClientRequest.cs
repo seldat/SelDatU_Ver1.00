@@ -10,8 +10,8 @@ namespace SelDatUnilever_Ver1._00.Communication.HttpBridge
 {
    public class BridgeClientRequest
     {
-        public virtual void ReceiveResponseHandler(String msg) { }
-        public virtual void ErrorBridgeHandler(int code) { }
+        public event Action<String> ReceiveResponseHandler;
+        public event Action<int> ErrorBridgeHandler;
         public BridgeClientRequest() { }
         public async Task<object> PostCallAPI(string url, object jsonObject)
         {

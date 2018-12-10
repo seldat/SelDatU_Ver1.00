@@ -79,6 +79,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\DeviceManagement\CollectionDataService.cs" />
     <Compile Include="Management\DeviceManagement\DeviceRegistrationService.cs" />
     <Compile Include="Management\DeviceManagement\DeviceItem.cs" />
     <Compile Include="Management\DoorServices\DoorElevator.cs" />
@@ -125,6 +126,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Management\DeviceManagement\Machine.Json" />
     <None Include="Management\Media\8400001A_small5M2.stl" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -146,8 +148,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DeviceManagement\" />
-    <Folder Include="Management\DataBaseManagement\" />
     <Folder Include="Management\LogText\" />
     <Folder Include="Management\OrderService\" />
     <Folder Include="Management\Store\" />
