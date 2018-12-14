@@ -10,15 +10,15 @@ namespace SeldatMRMS.Management.UnityService
 {
     public class UnityManagementService
     {
-        RobotManagementService RobotManagementServiceRegister { get; set; }
-        DoorManagementService DoorManagementServiceRegister { get; set; }
-        ProcedureManagementService ProcedureManagementServiceRegister { get; set; }
+        RobotManagementService RobotManagementServiceRegistery { get; set; }
+        DoorManagementService DoorManagementServiceRegistery { get; set; }
+        ProcedureManagementService ProcedureManagementServiceRegistery { get; set; }
         public UnityManagementService() { }
         public void Initialize()
         {
-            RobotManagementServiceRegister = new RobotManagementService();
-            DoorManagementServiceRegister = new DoorManagementService();
-            ProcedureManagementServiceRegister = new ProcedureManagementService();
+            RobotManagementServiceRegistery = new RobotManagementService();
+            DoorManagementServiceRegistery = new DoorManagementService();
+            ProcedureManagementServiceRegistery = new ProcedureManagementService();
         }
         public void Dispose()
         {

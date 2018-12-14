@@ -11,7 +11,7 @@ namespace SeldatMRMS.Management.TrafficManager
 {
     class TrafficManagementService:TrafficRounterService
     {
-        List<RobotUnity> RobotUnityListOnTraffic = new List<RobotUnity>();
+      
         public TrafficManagementService() { }
         public void AddRobotUnityToTraffic(List<RobotUnity> elements)
         {
@@ -26,7 +26,7 @@ namespace SeldatMRMS.Management.TrafficManager
         public void PoseRobotHandler(Pose p, Object obj)
         {
             var robot = obj as RobotUnity;
-            robot.PrioritLevelRegister.IndexOnMainRoad = FindIndexZoneRegister(p.Position);
+            robot.PrioritLevelRegister.IndexOnMainRoad = (int)FindIndexZoneRegister(p.Position);
         }
     }
 }

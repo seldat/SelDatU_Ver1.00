@@ -1,6 +1,8 @@
 ﻿using SeldatMRMS;
 using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
+using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,7 @@ namespace SelDatUnilever_Ver1._00
         Dictionary<String, RobotUnity> robotlist = new Dictionary<string, RobotUnity>();
         List<RobotUnity> robottrafficlist = new List<RobotUnity>();
         String namerobot = "robot1";
+        DeviceRegistrationService deviceRegistrationService;
         public MainWindow()
         {
      
@@ -53,6 +56,11 @@ namespace SelDatUnilever_Ver1._00
             robot1.initialPos(0,0);
             robot2.initialPos(300,300);
             robot3.initialPos(400,400);
+            TrafficManagementService traffic = new TrafficManagementService();
+            traffic.LoadConfigureZone();
+
+            deviceRegistrationService=new DeviceRegistrationService(8080);
+            deviceRegistrationService.listen();
         }
 
         private void sendPose_Click(object sender, RoutedEventArgs e)

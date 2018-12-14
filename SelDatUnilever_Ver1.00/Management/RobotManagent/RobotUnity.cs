@@ -60,7 +60,7 @@ namespace SeldatMRMS.Management.RobotManagent
             properties.WS = 40;
             textblock = new TextBlock();
            
-           ep = new Ellipse();
+            ep = new Ellipse();
             ep.Width = 5;
             ep.Height = 5;
             ep.Name = "hello";
@@ -114,8 +114,6 @@ namespace SeldatMRMS.Management.RobotManagent
         }
         public void setConner(Point p, double angle)
         {
-
-
             textblock.RenderTransform = new TranslateTransform(p.X + 5, p.Y);
             properties.pose.Position = p;
             properties.pose.AngleW = angle;
@@ -125,9 +123,9 @@ namespace SeldatMRMS.Management.RobotManagent
             ep4.RenderTransform = new TranslateTransform(BottomTail().X, BottomTail().Y);
             ep5.RenderTransform = new TranslateTransform(MiddleHeader().X, MiddleHeader().Y);
             ep6.RenderTransform = new TranslateTransform(MiddleTail().X, MiddleTail().Y);
-            //Canvas.SetLeft(ep1, TopHeader().X);
+            // Canvas.SetLeft(ep1, TopHeader().X);
             // Canvas.SetTop(ep1, TopHeader().Y);
-            //Canvas.SetLeft(ep2, BottomHeader().X);
+            // Canvas.SetLeft(ep2, BottomHeader().X);
             // Canvas.SetTop(ep2, BottomHeader().Y);
             // Canvas.SetLeft(ep3, TopTail().X);
             // Canvas.SetTop(ep3, TopTail().Y);

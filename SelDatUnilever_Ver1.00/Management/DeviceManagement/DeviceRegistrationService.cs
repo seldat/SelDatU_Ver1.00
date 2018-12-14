@@ -7,33 +7,37 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 {
-    public abstract class DeviceRegistrationService:HttpServer
+    public class DeviceRegistrationService:HttpServer
     {
-       public List<DeviceItem> DeviceItemList { get; set; }
-       public DeviceRegistrationService(int port):base(port)
+       private List<DeviceItem> deviceItemList { get; set; }
+    
+     public DeviceRegistrationService(int port):base(port)
        {
-            DeviceItemList = new List<DeviceItem>();
+            deviceItemList = new List<DeviceItem>();
         }
        public void RemoveDeviceItem(String deviceID)
        {
-            if (DeviceItemList.Count > 0)
+            if (deviceItemList.Count > 0)
             {
-                DeviceItemList.RemoveAt(DeviceItemList.FindIndex(e => e.DeviceID == deviceID));
+                deviceItemList.RemoveAt(deviceItemList.FindIndex(e => e.deviceID == deviceID));
             }
        }
         public int HasDeviceItemAt(String deviceID)
         {
-            return DeviceItemList.FindIndex(e=>e.DeviceID==deviceID);
+            return deviceItemList.FindIndex(e=>e.deviceID==deviceID);
         }
         public DeviceItem FindDeviceItem(String deviceID)
         {
-            return DeviceItemList.Find(e => e.DeviceID == deviceID);
+            return deviceItemList.Find(e => e.deviceID == deviceID);
         }
         public override async Task handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
+            MessageBox.Show("xxx"+inputData.ReadToEnd());
+            
             String data = inputData.ReadToEnd();
             JObject results = JObject.Parse(data);
             String deviceID = (String)results["DeviceID"];
@@ -45,8 +49,12 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             {
                 DeviceItem deviceItem = new DeviceItem();
                 deviceItem.rounter(data);
-                DeviceItemList.Add(deviceItem);
+                deviceItemList.Add(deviceItem);
             }
+        }
+        public List<DeviceItem> GetDeviceItemList()
+        {
+            return deviceItemList;
         }
     }
 }

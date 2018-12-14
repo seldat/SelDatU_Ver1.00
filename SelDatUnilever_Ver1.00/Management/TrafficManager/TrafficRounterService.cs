@@ -1,4 +1,5 @@
 ﻿using SeldatMRMS;
+using SeldatMRMS.Management.RobotManagent;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,6 +13,7 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
 {
     class TrafficRounterService
     {
+        protected List<RobotUnity> RobotUnityListOnTraffic = new List<RobotUnity>();
         public class ZoneRegister
         {
             public String NameID { get; set; }
@@ -31,9 +33,9 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
         public TrafficRounterService() { }
         public void LoadConfigureZone()
         {
-            string name = "Sheet1";
+            string name = "Area";
             string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
-                            "C:\\Users\\Charlie\\Desktop\\test.xls" +
+                            "C:\\Users\\luat.tran\\source\\repos\\Unilever\\SelDatUnilever_Ver1.00\\SelDatUnilever_Ver1.00\\Management\\TrafficManager\\Configure.xlsx" +
                             ";Extended Properties='Excel 12.0 XML;HDR=YES;';";
             OleDbConnection con = new OleDbConnection(constr);
             OleDbCommand oconn = new OleDbCommand("Select * From [" + name + "$]", con);
@@ -46,8 +48,8 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
             foreach (DataRow row in data.Rows)
             {
                 ZoneRegister zone = new ZoneRegister();
-                zone.TypeZone = row.Field<string>("TypeZone");
-                zone.Index = int.Parse(row.Field<string>("Index"));
+                zone.NameID = row.Field<string>("Name");
+                zone.Index =int.Parse(row.Field<string>("Index"));
                 x = double.Parse(row.Field<string>("Point1").Split(',')[0]);
                 y = double.Parse(row.Field<string>("Point1").Split(',')[1]);
                 zone.Point1 = new Point(x, y);
@@ -60,7 +62,7 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
                 x = double.Parse(row.Field<string>("Point4").Split(',')[0]);
                 y = double.Parse(row.Field<string>("Point4").Split(',')[1]);
                 zone.Point4 = new Point(x, y);
-                zone.Detail = row.Field<string>("Detail_en");
+                zone.Detail = row.Field<string>("Detail_vn");
                 ZoneRegisterList.Add(zone.NameID, zone);
             }
             con.Close();
@@ -78,5 +80,70 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
             }
             return index;
         }
+        public int FindAmoutOfRobotUnityinArea(String areaName)
+        {
+            int amout=0;
+            foreach(RobotUnity r in RobotUnityListOnTraffic)
+            {
+
+                if (ExtensionService.IsInPolygon(ZoneRegisterList["areaName"].GetZone(), r.properties.pose.Position))
+                {
+                    amout++;
+                }
+            }
+            return amout;
+        }
+        public String DetermineRobotUnityinArea(Point position)
+        {
+            String zoneName = "";
+            bool hasRobot = false;
+            foreach (var r in ZoneRegisterList.Values) // xác định khu vực đến
+            {
+
+                if (ExtensionService.IsInPolygon(r.GetZone(), position))
+                {
+                    zoneName = r.NameID;
+                    break;
+                }
+            }
+            return zoneName;
+        }
+        public bool HasRobotUnityinArea(Point goal)
+        {
+            String zoneName = "";
+            bool hasRobot = false;
+            foreach (var r in ZoneRegisterList.Values) // xác định khu vực đến
+            {
+
+                if (ExtensionService.IsInPolygon(r.GetZone(), goal))
+                {
+                    zoneName = r.NameID;
+                    break;
+                }
+            }
+            foreach (RobotUnity r in RobotUnityListOnTraffic) // xác định robot có trong khu vực
+            {
+
+                if (ExtensionService.IsInPolygon(ZoneRegisterList[zoneName].GetZone(), r.properties.pose.Position))
+                {
+                    hasRobot = true;
+                }
+            }
+            return hasRobot;
+        }
+        public bool HasRobotUnityinArea(String AreaName)
+        { 
+            bool hasRobot = false;
+            foreach (RobotUnity r in RobotUnityListOnTraffic) // xác định robot có trong khu vực
+            {
+
+                if (ExtensionService.IsInPolygon(ZoneRegisterList[AreaName].GetZone(), r.properties.pose.Position))
+                {
+                    hasRobot = true;
+                }
+            }
+            return hasRobot;
+        }
+
     }
 }

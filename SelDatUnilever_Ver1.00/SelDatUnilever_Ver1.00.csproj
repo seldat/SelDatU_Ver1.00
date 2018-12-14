@@ -107,7 +107,8 @@
     <Compile Include="Management\RobotManagent\TrafficRobotUnity.cs" />
     <Compile Include="Management\TrafficManager\TrafficManagementService.cs" />
     <Compile Include="Management\TrafficManager\TrafficRounterService.cs" />
-    <Compile Include="Management\UnityService\UnityBaseService.cs" />
+    <Compile Include="Management\UnityService\AssigmentTaskService.cs" />
+    <Compile Include="Management\UnityService\TaskRounterService.cs" />
     <Compile Include="Management\UnityService\UnityManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -128,6 +129,7 @@
     </EmbeddedResource>
     <None Include="Management\DeviceManagement\Machine.Json" />
     <None Include="Management\Media\8400001A_small5M2.stl" />
+    <None Include="Management\TrafficManager\Configure.xlsx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
