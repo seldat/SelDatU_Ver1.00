@@ -39,9 +39,9 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             deviceRegistrationService.GetDeviceItemList().RemoveAt(0);
             deviceRegistrationService.GetDeviceItemList().Add(element);
         }
-        public OneOrder Gettask()
+        public OrderItem Gettask()
         {
-            OneOrder item = deviceRegistrationService.GetDeviceItemList()[0].GetOrder();
+            OrderItem item = deviceRegistrationService.GetDeviceItemList()[0].GetOrder();
             return item;
         }
 

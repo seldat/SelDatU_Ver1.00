@@ -22,24 +22,30 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             CMD_DATA_ORDER_FORKLIFT = 101,
             CMD_DATA_STATE = 102
         }
-
-        public class OneOrder : CollectionDataService
+        public class OrderItem
         {
-            public String palletID;
-            public String bufferID { get; set; }
-            public String productID { get; set; }
+            public OrderItem() { }
+            public String OrderID;
+            public int planID { get; set; }
+            public int productID { get; set; }
+            public int productDetailID { get; set; }
             public String typeRequest; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
-            public long datetime;
+            public String activeDate;
+            public int timeWorkID;
+            public String palletStatus;
+            public int palletId;
+            public int updUsrId;
+            public String dataRequest;
             public bool status = false; // chua hoan thanh
         }
         public string deviceID { get; set; } // dia chi Emei
         public string codeID { get; set; }
-        public List<OneOrder> oneOrderList { get; set; }
+        public List<OrderItem> oneOrderList { get; set; }
         public int orderedAmount = 0;
         public int doneAmount = 0;
         public DeviceItem()
         {
-            oneOrderList = new List<OneOrder>();
+            oneOrderList = new List<OrderItem>();
         }
         public void state(CommandRequest pCommandRequest, String data)
         {
@@ -60,11 +66,11 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 oneOrderList.RemoveAt(0);
             }
         }
-        public void AddOrder(OneOrder hasOrder)
+        public void AddOrder(OrderItem hasOrder)
         {
             oneOrderList.Add(hasOrder);
         }
-        public OneOrder GetOrder()
+        public OrderItem GetOrder()
         {
             if (oneOrderList.Count > 0)
             {
@@ -83,18 +89,16 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         {
 
         }
-        public void ParseDataOfBufferMachine(String json)
+        public void ParseDataOfForkLift(String dataReq)
         {
-            JObject results = JObject.Parse(json);
-            string deviceID = (string)results["DeviceID"];
-            foreach (var result in results["Tasks"])
-            {
-                OneOrder order = new OneOrder();
-                order.palletID = (string)result["PalletID"];
-                order.bufferID = (string)result["BufferID"];
-                order.productID = (string)result["ProductID"];
-                //order.PosePalletAtMachine=new Pose() { Position = new System.Windows.Point((double)result["Position"]["X"], (double)result["Position"]["Y"]),AngleW= (double)result["Position"]["Angle"] };
-            }
+            OrderItem order = new OrderItem();
+            JObject results = JObject.Parse(dataReq);
+            order.productDetailID = (int)results["productDetailId"];
+            order.productID = (int)results["productId"];
+            order.timeWorkID = (int)results["timeWorkId"];
+            order.palletStatus =(String)results["palletStatus"];
+            order.dataRequest = dataReq;
+            oneOrderList.Add(order);
         }
 
     }

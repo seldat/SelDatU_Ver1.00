@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelDatUnilever_Ver1;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,12 @@ using System.Windows;
 
 namespace SeldatMRMS
 {
-    public class DBProcedureService
+    public class DBProcedureService:CollectionDataService
     {
+        public void SaveDataToDb(object ojb){
+            /* Hien thuc giup em */
+            Console.WriteLine("Save data to database\r\n");
+        }
         public DBProcedureService() { }
         public struct RobotSensor
         {

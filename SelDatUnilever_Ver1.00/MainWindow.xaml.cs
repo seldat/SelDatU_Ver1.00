@@ -1,4 +1,5 @@
-﻿using SeldatMRMS;
+﻿using Newtonsoft.Json.Linq;
+using SeldatMRMS;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
@@ -59,8 +60,78 @@ namespace SelDatUnilever_Ver1._00
             TrafficManagementService traffic = new TrafficManagementService();
             traffic.LoadConfigureZone();
 
-            deviceRegistrationService=new DeviceRegistrationService(8080);
-            deviceRegistrationService.listen();
+            //deviceRegistrationService=new DeviceRegistrationService(9000);
+            //deviceRegistrationService.listen();
+            string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+
+            JArray results = JArray.Parse(text);
+            foreach (var result in results)
+            {
+                int temp_productDetailID = (int)result["productDetailId"];
+                if (temp_productDetailID ==1)
+                {
+                    var bufferResults = result["buffers"];
+                    var palletResults = bufferResults[0]["pallets"];
+
+                    var dataPalletItemResults = palletResults[0]["dataPallet"];
+                    int palletId = (int)palletResults[0]["palletId"];
+                    int updUsrId = (int)palletResults[0]["updUsrId"];
+                    bool dataPalletItem_hasMainLine = (bool)dataPalletItemResults["hasMainLine"];
+                    double dataPalletItem_rot = (double)dataPalletItemResults["rot"];
+                    double dataPalletItem_mainThreshold = (double)dataPalletItemResults["mainThreshold"];
+                    double dataPalletItem_subThreshold = (double)dataPalletItemResults["subThreshold"];
+                      break;
+                }
+            }
+
+            /*  string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+
+              JArray results = JArray.Parse(text);
+              foreach (var result in results)
+              {
+                  int temp_productDetailID = (int)result["productDetailId"];
+                  if (temp_productDetailID == 1)
+                  {
+                      var bufferResults = result["buffers"];
+
+
+                      var palletResults = bufferResults[0]["pallets"];
+                      var palletItemResults = palletResults[0]["dataPallet"];
+                      int d = 5;
+                      bool dataPalletItem_hasMainLine = (bool)palletItemResults["hasMainLine"];
+                      double dataPalletItem_rot = (double)palletItemResults["rot"];
+                      double dataPalletItem_mainThreshold = (double)palletItemResults["mainThreshold"];
+                      double dataPalletItem_subThreshold = (double)palletItemResults["subThreshold"];
+                    //  dataPalletItem = new DataPallet() { hasMainLine = dataPalletItem_hasMainLine, rot = dataPalletItem_rot, ThresholdDetectsMaker_MainLine = dataPalletItem_mainThreshold, ThresholdDetectsMaker_SubLine = dataPalletItem_subThreshold };
+                  }
+              }*/
+            /* string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\source\\repos\\TestServer\\TestServer\\HttpServerRounter\\datajson.json");
+             JArray results = JArray.Parse(text);
+             foreach (var result in results)
+             {
+                 int temp_productDetailID = (int)result["productDetailId"];
+                 var bufferResults = result["buffers"];
+                 var checkinResults = bufferResults[0]["bufferCheckIn"];
+                     foreach (var checkinResult in checkinResults)
+                     {
+                         double x = (int)checkinResult["X"];
+                         double y = (int)checkinResult["Y"];
+                         double angle = (int)checkinResult["A"];
+                         Pose poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                     }
+                     //var palletResults = bufferResults[0]["pallets"];
+
+
+             }*/
+
+            /* String data = "[{\"a\":3,\"b\":[{\"e\":10},{\"d\":10}] }]";
+             JArray stff = JArray.Parse(data);
+             foreach(var result in stff)
+             {
+                 var bb = result["b"];
+                 int ee = (int)bb[0]["e"];
+                 MessageBox.Show("" + ee);
+             }*/
         }
 
         private void sendPose_Click(object sender, RoutedEventArgs e)

@@ -1,128 +1,176 @@
 ﻿using DoorControllerService;
-using SeldatMRMS.Management;
 using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SeldatMRMS
 {
-    public class ProcedureControlServices:ControlService
+    public class ProcedureControlServices : ControlService
     {
         public String ProcedureID { get; set; }
         public String DeliveryInfo { get; set; }
-        public struct ContentDatabase {}
+        public TrafficManagementService TrafficService;
+        public struct ContentDatabase { }
         public virtual event Action<ProcedureControlServices> ReleaseProcedureHandler;
         public virtual event Action<ProcedureControlServices> ErrorProcedureHandler;
         public virtual ContentDatabase RequestDataFromDataBase() { return new ContentDatabase(); }
-        public ProcedureControlServices(RobotUnity robot, DoorService doorService):base(robot,doorService) {}
-        protected enum ForkLiftToBuffer
+        public ProcedureControlServices(RobotUnity robot, DoorService doorService) : base(robot, doorService) { }
+        public void RegistrationTranfficService(TrafficManagementService TrafficService)
+        {
+            this.TrafficService = TrafficService;
+        }
+        public enum ForkLiftToBuffer
         {
             FORBUF_IDLE,
-            FORBUF_ROBOT_GOTO_CHECKIN_POSITION, // vị trí check in liệu có quy trình nào tại cổng
-            FORBUF_ROBOT_CAME_CHECKIN_POSITION, // đã đến vị trí
-            FORBUF_ROBOT_GOINTO_WAITINGZONE, // vào vùng chờ
-            FORBUF_ROBOT_CAME_WAITINGZONE,  // Waiitng tại vùng chờ
-            FORBUF_ROBOT_GOTO_READYZONE_GATE, // đến vùng sẵng sáng trước cổng
-            FORBUF_ROBOT_CAME_READYZONE_GATE, // đến vùng trước cổng
-            FORBUF_ROBOT_GATE_CHECKSENSOR,  // kiểm tra trạng thái sensors
-
-            FORBUF_GATE_READYOPEN, // Cổng làm việc tốt / và gửi yêu cầu Mở cổng
-            FORBUF_GATE_FINISHED_READYOPEN, // Hoàn Thành Mở cổng
-            FORBUF_GATE_ERRORSENSOR_OPEN,
-
-            FORBUF_GATE_READYCLOSE, // Cổng làm việc tốt / và gửi yêu cầu đóng cổng
-            FORBUF_GATE_FINISHED_READYCLOSE, // Hoàn Thành đóng cổng
-            FORBUF_GATE_ERRORSENSOR_CLOSE,
-
-            FORBUF_ROBOT_DETECTLINE_PICKUP_PALLET,  // cho phép dò line và lấy pallet
-            FORBUF_ROBOT_WAITING_DETECTLINE_PICKUP_PALLET, // đang trong tiến trình dò line và pick up pallet
-            FORBUF_ROBOT_FINISED_DETECTLINE_PICKUP_PALLET, // hoàn thành dò line và pick up pallet
-
-            FORBUF_ROBOT_GOBACK_READYZONE_GATE,
-            FORBUF_ROBOT_CAME_GOBACK_READYZONE_GATE,
-
-            FORBUF_ROBOT_GOTO_CHECKIN_BUFFER, // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-            FORBUF_ROBOT_FINISHED_GOTO_CHECKIN_BUFFER, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-
-            FORBUF_ROBOT_GOTO_FRONTLINE_BUFFER, // ROBOT cho tiến vào vị trí đầu line // vẩn dò đường bằng laser
-            FORBUF_ROBOT_FINISED_GOTO_FRONTLINE_BUFFER, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-            FORBUF_ROBOT_START_DETECTLINE_TO_LINE_INSIDE_BUFFER, // bắt đầu dò line để đến vị trí line trong buffer
-            FORBUF_ROBOT_WAIITNG_DETECTLINE_TO_LINE_INSIDE_BUFFER, // đang đợi dò line để đến vị trí line trong buffer
-            FORBUF_ROBOT_CAME_LINE_INSIDE_BUFFER, // đến vị trí line trong buffer
-
-            FORBUF_ROBOT_START_DETECTLINE_DROPDOWN_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer
-            FORBUF_ROBOT_WAITING_DETECTLINE_DROPDOWN_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer
-            FORBUF_ROBOT_FINISED_DETECTLINE_DROPDOWN_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer // lưu vào cơ sở dữ liệu
-
-            FORBUF_ROBOT_GOBACK_FRONTLINE_BUFFER, // bắt đầu go back vi tri đau line buffer
-            FORBUF_ROBOT_WAIITING_GOBACK_FRONTLINE_BUFFER, // đợi
-            FORBUF_ROBOT_CAME_GOBACK_FRONTLINE_BUFFER, // đã đến vị trí đầu line
+            FORBUF_ROBOT_GOTO_CHECKIN_GATE, // vị trí check in liệu có quy trình nào tại cổng
+            FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE,
+            FORBUF_ROBOT_CAME_CHECKIN_GATE, // đã đến vị trí, kiem tra khu vuc cong san sang de di vao.
+            FORBUF_ROBOT_WAITTING_GOTO_GATE, // doi robot di den khu vuc cong
+            FORBUF_ROBOT_CAME_GATE_POSITION, // da den khu vuc cong , gui yeu cau mo cong.
+            FORBUF_ROBOT_WAITTING_OPEN_DOOR,  //doi mo cong
+            FORBUF_ROBOT_OPEN_DOOR_SUCCESS, // mo cua thang cong ,gui toa do line de robot di vao gap hang
+            FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
+            FORBUF_ROBOT_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
+            FORBUF_ROBOT_WAITTING_GOTO_PALLET_IN, //cho robot den toa do pallet
+            FORBUF_ROBOT_WAITTING_PICKUP_PALLET_IN, // doi robot gap hang
+            FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE, //doi robot di tro lai dau line cong.
+            FORBUF_ROBOT_WAITTING_GOOUT_GATE, // doi robot di ra khoi cong
+            FORBUF_ROBOT_WAITTING_CLOSE_GATE, // doi dong cong.
+            FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
+            FORBUF_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
+            FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER, // den dau line buffer, chuyen mode do line
+            FORBUF_ROBOT_WAITTING_GOTO_POINT_BRANCHING, // doi khu vuc buffer san sang de di vao
+            FORBUF_ROBOT_CAME_POINT_BRANCHING, //den dau line pallet, gui chieu quay (trai phai), va toa do pallet (option)
+            FORBUF_ROBOT_GOTO_DROPDOWN_PALLET_BUFFER,
+            FORBUF_ROBOT_WAITTING_DROPDOWN_PALLET_BUFFER, // doi robot do line den pallet  va tha pallet
+            FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER, // doi robot di den dau line buffer.
             FORBUF_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
         }
-        protected enum BufferToMachine
+        public enum BufferToMachine
         {
             BUFMAC_IDLE,
-            BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER, // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-            BUFMAC_ROBOT_FINISHED_GOTO_CHECKIN_BUFFER, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
+            BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER,
+            BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
+            BUFMAC_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
+            BUFMAC_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER, // den dau line buffer, chuyen mode do line
+            BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING, // doi khu vuc buffer san sang de di vao
+            BUFMAC_ROBOT_CAME_POINT_BRANCHING, //den dau line pallet, gui chieu quay (trai phai), va toa do pallet (option)
+            BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER,
+            BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER, // doi robot do line den pallet  va tha pallet
+            BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER, // doi robot di den dau line buffer.
 
-            BUFMAC_ROBOT_GOTO_FRONTLINE_BUFFER, // ROBOT cho tiến vào vị trí đầu line // vẩn dò đường bằng laser
-            BUFMAC_ROBOT_FINISED_GOTO_FRONTLINE_BUFFER, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-            BUFMAC_ROBOT_START_DETECTLINE_TO_LINE_INSIDE_BUFFER, // bắt đầu dò line để đến vị trí line trong buffer
-            BUFMAC_ROBOT_WAIITNG_DETECTLINE_TO_LINE_INSIDE_BUFFER, // đang đợi dò line để đến vị trí line trong buffer
-            BUFMAC_ROBOT_CAME_LINE_INSIDE_BUFFER, // đến vị trí line trong buffer
-
-            BUFMAC_ROBOT_START_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer
-            BUFMAC_ROBOT_WAITING_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer
-            BUFMAC_ROBOT_FINISED_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER, // bắt đầu dò line và vị trí pallet trong buffer // lưu vào cơ sở dữ liệu
-
-            BUFMAC_ROBOT_GOBACK_FRONTLINE_BUFFER, // bắt đầu go back vi tri đau line buffer
-            BUFMAC_ROBOT_WAIITING_GOBACK_FRONTLINE_BUFFER, // đợi
-            BUFMAC_ROBOT_CAME_GOBACK_FRONTLINE_BUFFER, // đã đến vị trí đầu line
-           
-
-            BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE, // vị trí check in liệu có quy trình nào tại MACHINE
+            BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE, //cho
             BUFMAC_ROBOT_CAME_CHECKIN_MACHINE, // đã đến vị trí
-            BUFMAC_ROBOT_ASK_GOINSIDE_PALLETZONE_AT_MACHINE, // robot yêu cầu được phép vào vùng thả pallet
-            BUFMAC_ROBOT_WAIITNG_ACCEPT_GOINSIDE_PALLETZONE_AT_MACHINE, // robot yêu cầu được phép vào vùng thả pallet
-            BUFMAC_ROBOT_ACCEPTED_GOINSIDE_PALLETZONE_AT_MACHINE, // robot được đồng ý vào vùng thả pallet
 
+            BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,  // cho phép dò line vàthả pallet
+            BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET, // đang trong tiến trình dò line và thả pallet
+            BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET, // hoàn thành dò line và thả pallet
 
-            BUFMAC_ROBOT_DETECTLINE_DROPDOWN_PALLET,  // cho phép dò line vàthả pallet
-            BUFMAC_ROBOT_WAITING_DETECTLINE_DROPDOWN_PALLET, // đang trong tiến trình dò line và thả pallet
-            BUFMAC_ROBOT_FINISED_DETECTLINE_DROPDOWN_PALLET, // hoàn thành dò line và thả pallet
-
-            BUFMAC_ROBOT_GOBACK_FRONTLINE , // quay lại vị trí đầu line
-            BUFMAC_ROBOT_CAME_GOBACK_FRONTLINE,
+            BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET, // quay lại vị trí đầu line
+            BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE,
             BUFMAC_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
         }
-        protected enum RobotGoToChargeReady
+
+        public enum BufferToReturn
         {
-            ROBCHAREA_IDLE,
-            ROBCHAREA_ROBOT_GOTO_FRONTLINE_CHARGER_READYSTATION, // ROBOT cho tiến vào vị trí đầu line charge su dung laser
-            ROBCHAREA_ROBOT_FINISED_GOTO_CHARGER_READYSTATION, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-            ROBCHAREA_ROBOT_START_DETECTLINE_TO_CHARGER_READYSTATION, // bắt đầu dò line để đến vị trí line trong buffer
-            ROBCHAREA_ROBOT_WAIITNG_DETECTLINE_TO_CHARGER_READYSTATION, // đang đợi dò line để đến vị trí line trong buffer
-            ROBCHAREA_ROBOT_CAME_POSITION_LINE_CHARGER_READYSTATION, // đến vị trí line trong statio charge va ready / nếu là ready thì release robot két thúc quy trình/ nếu là sạc thì chuyển sang trạng thái kế tiếp
+            BUFRET_IDLE,
+            BUFRET_ROBOT_GOTO_CHECKIN_BUFFER,
+            BUFRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
+            BUFRET_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
+            BUFRET_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER, // den dau line buffer, chuyen mode do line
+            BUFRET_ROBOT_WAITTING_GOTO_POINT_BRANCHING, // doi khu vuc buffer san sang de di vao
+            BUFRET_ROBOT_CAME_POINT_BRANCHING, //den dau line pallet, gui chieu quay (trai phai), va toa do pallet (option)
+            BUFRET_ROBOT_GOTO_PICKUP_PALLET_BUFFER,
+            BUFRET_ROBOT_WAITTING_PICKUP_PALLET_BUFFER, // doi robot do line den pallet  va tha pallet
+            BUFRET_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER, // doi robot di den dau line buffer.
 
-            ROBCHAREA_REQUEST_INFORMATION_ROBOT_AND_CHARGER,
-            ROBCHAREA_REQUEST_INFORMATION_ERROR, // lỗi thông tin kết nối trạm sạc ...
-            ROBCHAREA_ROBOT_APPROACH_POINTCHARGE_CHARGER_READYSTATION, // cho tiếp cận đến vị trí sạc
-            ROBCHAREA_ROBOT_APPROACHED_POINTCHARGE_CHARGER_READYSTATION, // đã đến tiếp cận đến vị trí sạc
+            BUFRET_ROBOT_GOTO_CHECKIN_RETURN, //cho
+            BUFRET_ROBOT_CAME_CHECKIN_RETURN, // đã đến vị trí
 
-            ROBCHAREA_CHARGER_CHECKSTATUS, //kiểm tra kết nối và trạng thái sạc
-            ROBCHAREA_ROBOT_ALLOW_CUTOFF_POWER_ROBOT, //cho phép cắt nguồn robot
-            ROBCHAREA_WAIITNG_CHARGEBATTERY, //dợi charge battery và thông tin giao tiếp server và trạm sạc
-            ROBCHAREA_FINISHED_CHARGEBATTERY, //Hoàn Thành charge battery và thông tin giao tiếp server và trạm sạc
-            ROBCHAREA_ROBOT_WAITING_RECONNECTING, //Robot mở nguồng và đợi connect lại
-            ROBCHAREA_ROBOT_CONNECTED_TO_SERVER, //robot đã connect lại với server
-            ROBCHAREA_ROBOT_CHECK_STATUS_OPERATION, //check điều kiện hoạt động
-            ROBCHAREA_ROBOT_STATUS_GOOD_OPERATION, //điều kiện hoạt động tốt 
-            ROBCHAREA_ROBOT_STATUS_BAD_OPERATION, //điều kiện hoạt động không tốt thông tin về procedure management chuyển sang quy trình xử lý sự cố
-            ROBCHAREA_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
+            BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,  // cho phép dò line vàthả pallet
+            BUFRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET, // đang trong tiến trình dò line và thả pallet
+            BUFRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET, // hoàn thành dò line và thả pallet
+
+            BUFRET_ROBOT_WAITTING_DROPDOWN_PALLET, // quay lại vị trí đầu line
+            BUFRET_ROBOT_WAITTING_GOTO_FRONTLINE,
+            BUFRET_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
         }
 
+        public enum MachineToReturn
+        {
+            MACRET_IDLE,
+            MACRET_ROBOT_GOTO_CHECKIN_BUFFER,
+            MACRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
+            MACRET_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
+            MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE, // den dau line buffer, chuyen mode do line
+            MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE,
+            MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE, // doi robot do line den pallet  va tha pallet
+            MACRET_ROBOT_WAITTING_GOBACK_FRONTLINE_MACHINE, // doi robot di den dau line buffer.
+
+            MACRET_ROBOT_GOTO_CHECKIN_RETURN, //cho
+            MACRET_ROBOT_CAME_CHECKIN_RETURN, // đã đến vị trí
+
+            MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,  // cho phép dò line vàthả pallet
+            MACRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET, // đang trong tiến trình dò line và thả pallet
+            MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET, // hoàn thành dò line và thả pallet
+
+            MACRET_ROBOT_WAITTING_DROPDOWN_PALLET, // quay lại vị trí đầu line
+            MACRET_ROBOT_WAITTING_GOTO_FRONTLINE,
+            MACRET_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
+        }
+        public enum ReturnToGate
+        {
+            RETGATE_IDLE,
+            RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_RETURN, // doi robot di den khu vuc checkin cua vung buffer
+            RETGATE_ROBOT_WAITTING_ZONE_RETURN_READY, // doi khu vuc buffer san sang de di vao
+            RETGATE_ROBOT_WAITTING_CAME_FRONTLINE_RETURN, // den dau line buffer, chuyen mode do line
+            RETGATE_ROBOT_GOTO_PICKUP_PALLET_RETURN,
+            RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN, // doi robot do line den pallet  va tha pallet
+            RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_RETURN, // doi robot di den dau line buffer.
+            RETGATE_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
+            RETGATE_ROBOT_GOTO_CHECKIN_GATE, // vị trí check in liệu có quy trình nào tại cổng
+            RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE,
+            RETGATE_ROBOT_CAME_CHECKIN_GATE, // đã đến vị trí, kiem tra khu vuc cong san sang de di vao.
+            RETGATE_ROBOT_WAITTING_GOTO_GATE, // doi robot di den khu vuc cong
+            RETGATE_ROBOT_CAME_GATE_POSITION, // da den khu vuc cong , gui yeu cau mo cong.
+            RETGATE_ROBOT_WAITTING_OPEN_DOOR,  //doi mo cong
+            RETGATE_ROBOT_OPEN_DOOR_SUCCESS, // mo cua thang cong ,gui toa do line de robot di vao gap hang
+            RETGATE_ROBOT_WAITTING_CAME_FRONTLINE_POSITION_PALLET_RETURN, //robot da den dau line , chuyen mode do line
+            RETGATE_ROBOT_CAME_FRONTLINE_POSITION_PALLET_RETURN, //robot da den dau line , chuyen mode do line
+            RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN, //cho robot den toa do pallet
+            RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN, // doi robot gap hang
+            RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE, //doi robot di tro lai dau line cong.
+            RETGATE_ROBOT_WAITTING_GOOUT_GATE, // doi robot di ra khoi cong
+            RETGATE_ROBOT_WAITTING_CLOSE_GATE, // doi dong cong.
+        }
+
+        public enum RobotGoToCharge
+        {
+            ROBCHAR_IDLE,
+            ROBCHAR_CHARGER_CHECKSTATUS, //kiểm tra kết nối và trạng thái sạc
+            ROBCHAR_ROBOT_GOTO_CHARGER, //robot be lai vao tram sac
+            ROBCHAR_ROBOT_START_CHARGE, //robot be lai vao tram sac
+            ROBCHAR_WAITTING_ROBOT_CONTACT_CHARGER, //robot tiep xuc tram sac           
+            ROBCHAR_ROBOT_ALLOW_CUTOFF_POWER_ROBOT, //cho phép cắt nguồn robot
+            ROBCHAR_ROBOT_WAITTING_CUTOFF_POWER_PC, //cho phép cắt nguồn robot
+            ROBCHAR_WAITTING_CHARGEBATTERY, //dợi charge battery và thông tin giao tiếp server và trạm sạc
+            ROBCHAR_FINISHED_CHARGEBATTERY, //Hoàn Thành charge battery và thông tin giao tiếp server và trạm sạc
+            ROBCHAR_ROBOT_WAITING_RECONNECTING, //Robot mở nguồng và đợi connect lại
+            ROBCHAR_ROBOT_STATUS_GOOD_OPERATION, //điều kiện hoạt động tốt 
+            ROBCHAR_ROBOT_STATUS_BAD_OPERATION, //điều kiện hoạt động không tốt thông tin về procedure management chuyển sang quy trình xử lý sự cố
+            ROBCHAR_ROBOT_RELEASED, // trả robot về robotmanagement để nhận quy trình mới
+        }
+        public enum RobotGoToReady
+        {
+            ROBREA_IDLE,
+            ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION, // ROBOT cho tiến vào vị trí đầu line charge su dung laser
+            ROBREA_ROBOT_WAITTING_GOTO_READYSTATION, // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
+            ROBREA_ROBOT_WAIITNG_DETECTLINE_TO_READYSTATION, // đang đợi dò line để đến vị trí line trong buffer
+            ROBREA_ROBOT_WAITTING_CAME_POSITION_READYSTATION, // đến vị 
+            ROBREA_ROBOT_RELEASED
+        }
     }
 }
+
+
+

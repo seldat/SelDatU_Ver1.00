@@ -36,7 +36,7 @@ namespace SeldatMRMS.Management
     public class RobotUnityService:RobotUnityControl
     {
         
-
+      
         public RobotUnityService()
         {
         }
@@ -92,14 +92,11 @@ namespace SeldatMRMS.Management
 
         public Point[] RiskAreaRightSide()  // From Point : TopHeader / TopTail / Middle TAil //Middle HEader
         {
-            Console.WriteLine("Right Side " + BottomHeader() + " " + BottomTail() + " " + MiddleTail() + " " + MiddleHeader());
-            return new Point[4] { BottomHeader(), BottomTail(), MiddleTail(), MiddleHeader() };
-           
+            return new Point[4] { TopHeader(), TopTail(), MiddleTail(), MiddleHeader() };
         }
         public Point[] RiskAreaLeftSide()  // From Point : BOttom Header / Bottom Tail / Middle TAil //Middle HEader
         {
-            Console.WriteLine("Left Side "+TopHeader() +" "+ TopTail() +" "+ MiddleTail()+" "+ MiddleHeader());
-            return new Point[4] { TopHeader(), TopTail(), MiddleTail(), MiddleHeader() };
+            return new Point[4] { BottomHeader(), BottomTail(), MiddleTail(), MiddleHeader() };
         }
         public Point[] FullRiskArea()
         {
@@ -107,13 +104,8 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIsCloseRiskArea(Point p)
         {
-            // return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
-            //Console.WriteLine("Vi tri robot "+ this.properties.NameID+" = " + properties.pose.Position);
-           // Console.WriteLine("Vi tien gan " + p.ToString());
-           // Console.WriteLine("kHOAN CACH " + ExtensionService.CalDistance(properties.pose.Position, p));
-
-            return ExtensionService.CalDistance(properties.pose.Position, p) < properties.DistanceIntersection ? true : false;
-
+            return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
+           
         }
         public bool FindHeaderIntersectsFullRiskArea(Point p)
         {
@@ -129,7 +121,6 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIntersectsRiskAreaLeftSide(Point p)
         {
-
             return ExtensionService.IsInPolygon(RiskAreaLeftSide(), p);
         }
         public bool FindHeaderIntersectsRiskAreaRightSide(Point p)

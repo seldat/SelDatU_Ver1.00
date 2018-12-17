@@ -16,11 +16,11 @@ namespace SeldatMRMS.Management.TrafficManager
         public void AddRobotUnityToTraffic(List<RobotUnity> elements)
         {
             RobotUnityListOnTraffic = elements;
-            RobotUnityListOnTraffic.ForEach(e => e.PoseCallBack += PoseRobotHandler);
+            RobotUnityListOnTraffic.ForEach(e => e.PoseHandler += PoseRobotHandler);
         }
         public void ReleaseRobotUnityToTraffic(List<RobotUnity> elements)
         {           
-            RobotUnityListOnTraffic.ForEach(e => e.PoseCallBack -= PoseRobotHandler);
+            RobotUnityListOnTraffic.ForEach(e => e.PoseHandler -= PoseRobotHandler);
             RobotUnityListOnTraffic.Clear();
         }
         public void PoseRobotHandler(Pose p, Object obj)

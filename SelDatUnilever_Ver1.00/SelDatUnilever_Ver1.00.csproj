@@ -79,31 +79,33 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Management\DeviceManagement\CollectionDataService.cs" />
+    <Compile Include="Management\ComSocket\RouterComPort.cs" />
+    <Compile Include="Management\ComSocket\TranferData.cs" />
     <Compile Include="Management\DeviceManagement\DeviceRegistrationService.cs" />
     <Compile Include="Management\DeviceManagement\DeviceItem.cs" />
     <Compile Include="Management\DoorServices\DoorElevator.cs" />
     <Compile Include="Management\DoorServices\DoorManagementService.cs" />
-    <Compile Include="Management\DoorServices\DoorMezzamineReturn.cs" />
-    <Compile Include="Management\DoorServices\DoorMezzamineService.cs" />
-    <Compile Include="Management\DoorServices\DoorMezzamineUp.cs" />
     <Compile Include="Management\DoorServices\DoorService.cs" />
+    <Compile Include="Management\ExtensionService.cs" />
+    <Compile Include="Management\ProcedureServices\CollectionDataService.cs" />
     <Compile Include="Management\ProcedureServices\ControlService.cs" />
     <Compile Include="Management\ProcedureServices\DBProcedureService.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureBufferToHopper.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureBufferToMachine.cs" />
+    <Compile Include="Management\ProcedureServices\ProcedureBufferToReturn.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureControlServices.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureForkLiftToBuffer.cs" />
+    <Compile Include="Management\ProcedureServices\ProcedureMachineToReturn.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureManagementService.cs" />
-    <Compile Include="Management\ProcedureServices\ProcedureReturnPalletToGround.cs" />
+    <Compile Include="Management\ProcedureServices\ProcedureMessages.cs" />
+    <Compile Include="Management\ProcedureServices\ProcedureReturnToGate.cs" />
     <Compile Include="Management\ProcedureServices\ProcedureRobotToChargeReady.cs" />
     <Compile Include="Management\ProcedureServices\RegisterProcedureService.cs" />
-    <Compile Include="Management\ExtensionService.cs" />
-    <Compile Include="Management\RobotManagent\RobotUnityControl.cs" />
-    <Compile Include="Management\RobotManagent\RobotUnityService.cs" />
     <Compile Include="Management\RobotManagent\RobotBaseService.cs" />
     <Compile Include="Management\RobotManagent\RobotManagementService.cs" />
     <Compile Include="Management\RobotManagent\RobotUnity.cs" />
+    <Compile Include="Management\RobotManagent\RobotUnityControl.cs" />
+    <Compile Include="Management\RobotManagent\RobotUnityService.cs" />
     <Compile Include="Management\RobotManagent\TrafficRobotUnity.cs" />
     <Compile Include="Management\TrafficManager\TrafficManagementService.cs" />
     <Compile Include="Management\TrafficManager\TrafficRounterService.cs" />

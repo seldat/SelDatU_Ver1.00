@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    public class RobotManagementService
+    class RobotManagementService
     {
         Dictionary<String,RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
         //readonly Dictionary<String, RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
@@ -68,26 +68,9 @@ namespace SeldatMRMS.Management.RobotManagent
             }
    
         }
-        public RobotUnity GetRobotNotAssignTask()
+        public void VerifyRobotUnity()
         {
-            RobotUnity robot=null;
-            if (RobotUnityTaskedList.Count == RobotUnityRegistedList.Count)
-                return null;
-            foreach(var r in RobotUnityRegistedList.Values)
-            {
-                if(!r.SelectedATask )
-                {
-                    robot = r;
-                    r.SelectedATask = true;
-                    RobotUnityTaskedList.Add(r.properties.NameID, r);
-                    break;
-                }
-            }
-            return robot;
-        }
-        public void RemoveRobotUnityInTask(String NameID)
-        {
-            RobotUnityTaskedList.Remove(NameID);
+
         }
 
     }

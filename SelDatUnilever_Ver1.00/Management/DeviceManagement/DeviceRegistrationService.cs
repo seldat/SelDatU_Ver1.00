@@ -34,23 +34,26 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         {
             return deviceItemList.Find(e => e.deviceID == deviceID);
         }
-        public override async Task handlePOSTRequest(HttpProcessor p, StreamReader inputData)
+        public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
-            MessageBox.Show("xxx"+inputData.ReadToEnd());
-            
             String data = inputData.ReadToEnd();
-            JObject results = JObject.Parse(data);
-            String deviceID = (String)results["DeviceID"];
-            if (HasDeviceItemAt(deviceID) >= 0)
-            {
-                FindDeviceItem(deviceID).rounter(data);
-            }
-            else
-            {
-                DeviceItem deviceItem = new DeviceItem();
-                deviceItem.rounter(data);
-                deviceItemList.Add(deviceItem);
-            }
+            DeviceItem deviceItem = new DeviceItem();
+            //deviceItem.rounter(data);
+            deviceItem.ParseDataOfForkLift(data);
+            deviceItemList.Add(deviceItem);
+            /* JObject results = JObject.Parse(data);
+             String deviceID = (String)results["DeviceID"];
+             if (HasDeviceItemAt(deviceID) >= 0)
+             {
+                 FindDeviceItem(deviceID).rounter(data);
+             }
+             else
+             {
+                 DeviceItem deviceItem = new DeviceItem();
+              //   deviceItem.rounter(data);
+                 deviceItem.ParseDataOfForkLift(data);
+                 deviceItemList.Add(deviceItem);
+             }*/
         }
         public List<DeviceItem> GetDeviceItemList()
         {

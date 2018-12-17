@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoorControllerService
 {
     public class DoorElevator:DoorService
     {
+        public DoorElevator(DoorInfoConfig cf):base(cf)
+        {
+
+        }
     }
 }

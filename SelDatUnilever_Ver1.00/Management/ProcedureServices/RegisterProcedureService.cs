@@ -13,15 +13,15 @@ namespace SeldatMRMS
     public class RegisterProcedureService
     {
         protected virtual bool Cancel() { return false; }
-         public class RegisterProcedureItem
+        public class RegisterProcedureItem
         {
             public ProcedureControlServices item;
             public ProcedureDataItems procedureDataItems;
             public RobotUnity robot;
-            public static bool currentErrorStatus=false;
+            public static bool currentErrorStatus = false;
         }
-        protected List<RegisterProcedureItem> RegisterProcedureItemList=new List<RegisterProcedureItem>();
-        public RegisterProcedureService() {}
+        protected List<RegisterProcedureItem> RegisterProcedureItemList = new List<RegisterProcedureItem>();
+        public RegisterProcedureService() { }
         public String GetAIDProcedure()
         {
             return "1234";
@@ -36,9 +36,9 @@ namespace SeldatMRMS
         {
 
         }
-        public void RegisteAnItem(ProcedureControlServices item, ProcedureDataItems procedureDataItems, RobotUnity robot,DoorService door)
+        public void RegisteAnItem(ProcedureControlServices item, ProcedureDataItems procedureDataItems, RobotUnity robot, DoorService door)
         {
-            RegisterProcedureItem itemprocedure = new RegisterProcedureItem() { item = item,robot=robot,procedureDataItems=procedureDataItems };
+            RegisterProcedureItem itemprocedure = new RegisterProcedureItem() { item = item, robot = robot, procedureDataItems = procedureDataItems };
             item.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
             RegisterProcedureItemList.Add(itemprocedure);
         }

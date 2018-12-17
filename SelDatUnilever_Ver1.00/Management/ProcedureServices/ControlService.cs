@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SeldatMRMS
 {
@@ -16,23 +15,25 @@ namespace SeldatMRMS
        {
             if (robot != null)
             {
-                robot.ZoneCallBack += ZoneCallBack;
+               // robot.ZoneHandler += ZoneHandler;
                 robot.FinishStatesCallBack += FinishStatesCallBack;
-                robot.PoseCallBack+= PoseCallBack;
-  
+               // robot.AmclPoseHandler += AmclPoseHandler;
+                //if(doorService!=null)
+                //    doorService.ReceiveRounterEvent += ReceiveRounterEvent;
             }
-            if (doorService != null)
-                doorService.ReceiveRounterEvent += ReceiveRounterEvent;
-        }
+            if(doorService!=null)
+            {
+
+            }
+       }
        // robot control
-       public virtual void ZoneCallBack(Communication.Message message) { }
+       public virtual void ZoneHandler(Communication.Message message) { }
        public virtual void FinishStatesCallBack(Int32 message) { }
-       public virtual void PoseCallBack(Pose p,Object obj) { }
+       public virtual void AmclPoseHandler(Communication.Message message) { }
        public virtual void CtrlRobotSpeed() { }
        public virtual void MoveBaseGoal() { }
        public virtual void AcceptDoSomething() { }
         // door control
        public virtual void ReceiveRounterEvent(String message) { }
-       public virtual void CtrlDoor(DoorService.DOORID id, byte cmd) { }
     }
 }

@@ -1,66 +1,194 @@
-﻿using SeldatMRMS.Management;
-using SeldatMRMS.Management.RobotManagent;
+﻿using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 
 namespace SeldatMRMS
 {
     public class ProcedureBufferToMachine : ProcedureControlServices
     {
-        private BufferToMachine StateBufferToMachine;
+        public struct DataBufferToMachine
+        {
+            public Pose PointCheckInBuffer;
+            public Pose PointFrontLineBuffer;
+            public PointDetectBranching PointDetectLineBranching;
+            public PointDetect PointPickPallet;
+            public Pose PointCheckInMachine;
+            public Pose PointFrontLineMachine;
+            public PointDetect PointDropPallet;
+        }
+        DataBufferToMachine points;
+        BufferToMachine StateBufferToMachine;
+        Thread ProBuferToMachine;
         RobotUnity robot;
-        public ProcedureBufferToMachine(RobotUnity robot):base(robot,null) {
+        ResponseCommand resCmd;
+        TrafficManagementService Traffic;
+        public ProcedureBufferToMachine(RobotUnity robot, DataBufferToMachine dataPoints,TrafficManagementService traffiicService) : base(robot, null)
+        {
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
             this.robot = robot;
+            this.points = dataPoints;
+            this.Traffic = traffiicService;
         }
-        public void Procedure()
+
+        public void Start(String content, BufferToMachine state = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER)
         {
-            switch(StateBufferToMachine)
+            StateBufferToMachine = state;
+            ProBuferToMachine = new Thread(this.Procedure);
+            ProBuferToMachine.Name = content;
+            ProBuferToMachine.Start(this);
+        }
+        public void Destroy()
+        {
+            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;
+        }
+        public void Procedure(object ojb)
+        {
+            ProcedureBufferToMachine BfToMa = (ProcedureBufferToMachine)ojb;
+            RobotUnity rb = BfToMa.robot;
+            DataBufferToMachine p = BfToMa.points;
+            TrafficManagementService Traffic = BfToMa.Traffic;
+            while (StateBufferToMachine != BufferToMachine.BUFMAC_ROBOT_RELEASED)
             {
-                case BufferToMachine.BUFMAC_IDLE: break;
-                case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: break; // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-                   //gửi toa độ laser 
-                    // Pose position = new Pose(new System.Windows.Point(10,10),0);
-                  //  this.robot.SendPoseStamped(position);
-                case BufferToMachine.BUFMAC_ROBOT_FINISHED_GOTO_CHECKIN_BUFFER: break; // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-
-                case BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_BUFFER: break; // ROBOT cho tiến vào vị trí đầu line // vẩn dò đường bằng laser
-                case BufferToMachine.BUFMAC_ROBOT_FINISED_GOTO_FRONTLINE_BUFFER: break; // hoàn thành đến vùng check in/ kiểm tra có robot đang làm việc vùng này và lấy vị trí line và pallet
-                case BufferToMachine.BUFMAC_ROBOT_START_DETECTLINE_TO_LINE_INSIDE_BUFFER: break; // bắt đầu dò line để đến vị trí line trong buffer
-                case BufferToMachine.BUFMAC_ROBOT_WAIITNG_DETECTLINE_TO_LINE_INSIDE_BUFFER: break; // đang đợi dò line để đến vị trí line trong buffer
-                case BufferToMachine.BUFMAC_ROBOT_CAME_LINE_INSIDE_BUFFER: break; // đến vị trí line trong buffer
-
-                case BufferToMachine.BUFMAC_ROBOT_START_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER: break; // bắt đầu dò line và vị trí pallet trong buffer
-                case BufferToMachine.BUFMAC_ROBOT_WAITING_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER: break; // bắt đầu dò line và vị trí pallet trong buffer
-                case BufferToMachine.BUFMAC_ROBOT_FINISED_DETECTLINE_PICKUP_PALLET_INSIDE_BUFFER: break; // bắt đầu dò line và vị trí pallet trong buffer // lưu vào cơ sở dữ liệu
-
-                case BufferToMachine.BUFMAC_ROBOT_GOBACK_FRONTLINE_BUFFER: break; // bắt đầu go back vi tri đau line buffer
-                case BufferToMachine.BUFMAC_ROBOT_WAIITING_GOBACK_FRONTLINE_BUFFER: break; // đợi
-                case BufferToMachine.BUFMAC_ROBOT_CAME_GOBACK_FRONTLINE_BUFFER: break; // đã đến vị trí đầu line
-
-
-                case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE: break; // vị trí check in liệu có quy trình nào tại MACHINE
-                case BufferToMachine.BUFMAC_ROBOT_CAME_CHECKIN_MACHINE: break; // đã đến vị trí
-                case BufferToMachine.BUFMAC_ROBOT_ASK_GOINSIDE_PALLETZONE_AT_MACHINE: break; // robot yêu cầu được phép vào vùng thả pallet
-                case BufferToMachine.BUFMAC_ROBOT_WAIITNG_ACCEPT_GOINSIDE_PALLETZONE_AT_MACHINE: break; // robot yêu cầu được phép vào vùng thả pallet
-                case BufferToMachine.BUFMAC_ROBOT_ACCEPTED_GOINSIDE_PALLETZONE_AT_MACHINE: break; // robot được đồng ý vào vùng thả pallet
-
-
-                case BufferToMachine.BUFMAC_ROBOT_DETECTLINE_DROPDOWN_PALLET: break;  // cho phép dò line vàthả pallet
-                case BufferToMachine.BUFMAC_ROBOT_WAITING_DETECTLINE_DROPDOWN_PALLET: break; // đang trong tiến trình dò line và thả pallet
-                case BufferToMachine.BUFMAC_ROBOT_FINISED_DETECTLINE_DROPDOWN_PALLET: break; // hoàn thành dò line và thả pallet
-
-                case BufferToMachine.BUFMAC_ROBOT_GOBACK_FRONTLINE: break; // quay lại vị trí đầu line
-                case BufferToMachine.BUFMAC_ROBOT_CAME_GOBACK_FRONTLINE: break;
-                case BufferToMachine.BUFMAC_ROBOT_RELEASED: break; // trả robot về robotmanagement để nhận quy trình mới
-
+                switch (StateBufferToMachine)
+                {
+                    case BufferToMachine.BUFMAC_IDLE:
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
+                        rb.SendPoseStamped(p.PointCheckInBuffer);
+                        StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
+                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
+                        {
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_ZONE_BUFFER_READY;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_ZONE_BUFFER_READY: // doi khu vuc buffer san sang de di vao
+                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineBuffer.Position))
+                        {
+                            rb.SendPoseStamped(p.PointFrontLineBuffer);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER:
+                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
+                        {
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_FORWARD_DIRECTION);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
+                        if (true == rb.CheckPointDetectLine(p.PointDetectLineBranching.xy, rb))
+                        {
+                            if (p.PointDetectLineBranching.brDir == BrDirection.DIR_LEFT)
+                            {
+                                rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
+                            }
+                            else if (p.PointDetectLineBranching.brDir == BrDirection.DIR_RIGHT)
+                            {
+                                rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
+                            }
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_CAME_POINT_BRANCHING:  //doi bobot re
+                        if ((resCmd == ResponseCommand.RESPONSE_FINISH_TURN_LEFT) || (resCmd == ResponseCommand.RESPONSE_FINISH_TURN_RIGHT))
+                        {
+                            rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER:
+                        if (true == rb.CheckPointDetectLine(p.PointPickPallet, rb))
+                        {
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER:
+                        if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
+                        {
+                            this.SaveDataToDb(points);
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER: // đợi
+                        if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
+                        {
+                            rb.SendPoseStamped(p.PointCheckInMachine);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE: // dang di
+                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
+                        {
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_CAME_CHECKIN_MACHINE;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_CAME_CHECKIN_MACHINE: // đã đến vị trí
+                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineMachine.Position))
+                        {
+                            rb.SendPoseStamped(p.PointFrontLineMachine);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
+                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
+                        {
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET:  // đang trong tiến trình dò line và thả pallet
+                        rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
+                        StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
+                        if (true == rb.CheckPointDetectLine(p.PointDropPallet, rb))
+                        {
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET:
+                        if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                        {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE:
+                        if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
+                        {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;
+                        }
+                        break;
+                    case BufferToMachine.BUFMAC_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
+                        break;
+                    default:
+                        break;
+                }
+                Thread.Sleep(5);
             }
-
-    }
-        public override void FinishStatesCallBack(Int32 message) { }
+            StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
+            try
+            {
+                ProBuferToMachine.Abort();
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("faillllllllllllllllllllll");
+                throw;
+            }
+        }
+        public override void FinishStatesCallBack(Int32 message)
+        {
+            this.resCmd = (ResponseCommand)message;
+        }
     }
 }

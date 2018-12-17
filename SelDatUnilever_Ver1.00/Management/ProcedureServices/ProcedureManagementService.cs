@@ -1,10 +1,4 @@
-﻿using SeldatMRMS.Management;
-using SeldatMRMS.Management.RobotManagent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SeldatMRMS.Management.RobotManagent;
 
 namespace SeldatMRMS
 {

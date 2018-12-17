@@ -13,20 +13,19 @@ namespace SelDatUnilever_Ver1._00.Communication.HttpBridge
         public event Action<String> ReceiveResponseHandler;
         public event Action<int> ErrorBridgeHandler;
         public BridgeClientRequest() { }
-        public async Task<object> PostCallAPI(string url, object jsonObject)
+        public async Task<String> PostCallAPI(string url, String jsonObject)
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var content = new StringContent("hello", Encoding.UTF8, "application/json");
+                    var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
                     var response = await client.PostAsync(url, content);
                     if (response != null)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
-                        ReceiveResponseHandler(jsonString);
                         Console.WriteLine(jsonString);
-                        return JsonConvert.DeserializeObject<object>(jsonString);
+                        return jsonString;
                     }
                 }
             }
@@ -46,8 +45,6 @@ namespace SelDatUnilever_Ver1._00.Communication.HttpBridge
                     if (response != null)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
-                        ReceiveResponseHandler(jsonString);
-                        Console.WriteLine(jsonString);
                         return jsonString;
                     }
                 }

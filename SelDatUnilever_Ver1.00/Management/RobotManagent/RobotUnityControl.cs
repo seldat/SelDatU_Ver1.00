@@ -11,18 +11,14 @@ using WebSocketSharp;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    public class RobotUnityControl:RosSocket
+	
+	public class RobotUnityControl:RosSocket
     {
-        public event Action<Pose, Object> PoseCallBack;
-        public event Action<Communication.Message> ZoneCallBack;
-        public event Action<Int32> FinishStatesCallBack;
+		public event Action<int> FinishStatesCallBack;
+		public event Action<Pose, Object> PoseHandler;
         public class Pose
         {
-            public Pose() // Angle gốc
-            {
-                
-            }
-            public Pose(Point p,double AngleW) // Angle gốc
+           public Pose(Point p,double AngleW) // Angle gốc
             {
                 this.Position = p;
                 this.AngleW = AngleW;
@@ -39,12 +35,6 @@ namespace SeldatMRMS.Management.RobotManagent
             }
            public Point Position { get; set; }
            public double AngleW { get; set; } // radian
-        }
-        public class LinePose
-        {
-            public LinePose() { }
-            public Pose BeginningPosition;
-            public double ThresholdDetectsMaker;
         }
         public enum RobotSpeedLevel
         {
@@ -73,6 +63,41 @@ namespace SeldatMRMS.Management.RobotManagent
             public bool CriticalLevel;
 
         }
+
+        public enum RequestCommandLineDetect
+        {
+            REQUEST_CHARGECTRL_CANCEL = 1201,
+            REQUEST_LINEDETECT_PALLETUP=1203,
+            REQUEST_LINEDETECT_PALLETDOWN=1204,
+
+            REQUEST_LINEDETECT_CHARGEAREA=1206,  
+            REQUEST_RETURN_LINE_CHARGEARE  = 1207,  
+            REQUEST_LINEDETECT_READYAREA=1208,
+        }
+
+        public enum RequestCommandPosPallet{
+            REQUEST_LINEDETECT_COMING_POSITION = 1205,
+            REQUEST_TURN_LEFT = 1210,
+            REQUEST_TURN_RIGHT = 1211,
+            REQUEST_FORWARD_DIRECTION = 1212,
+            REQUEST_GOBACK_FRONTLINE = 1213,
+            REQUEST_TURNOFF_PC = 1214
+        }
+
+        public enum ResponseCommand
+        {
+            RESPONSE_NONE = 0,
+            RESPONSE_LASER_CAME_POINT = 2000,
+            RESPONSE_LINEDETECT_PALLETUP = 3203,
+            RESPONSE_LINEDETECT_PALLETDOWN = 3204,
+            RESPONSE_FINISH_GOTO_POSITION = 3205,
+            RESPONSE_FINISH_DETECTLINE_CHARGEAREA = 3206,
+            RESPONSE_FINISH_RETURN_LINE_CHARGEAREA = 3207,
+            RESPONSE_FINISH_TURN_LEFT = 3210,
+            RESPONSE_FINISH_TURN_RIGHT = 3211,
+            RESPONSE_FINISH_GOBACK_FRONTLINE = 3213
+        }
+
         public virtual void updateparams(){}
         public virtual void OnOccurencyTrigger() { }
         public virtual void OnBatteryLowTrigger() { }
@@ -89,23 +114,27 @@ namespace SeldatMRMS.Management.RobotManagent
             public int publication_robotnavigation;
             public int publication_linedetectionctrl;
             public int publication_checkAliveTimeOut;
+            public int publication_postPallet;
+            public int publication_finishedStates;
         }
         ParamsRosSocket paramsRosSocket;
         public PropertiesRobotUnity properties;
         protected virtual void SupervisorTraffic() { }
         public RobotUnityControl()
         {
-            properties.pose = new Pose();
-            properties.DistanceIntersection = 40;
+
         }
         public void createRosTerms()
         {
             int subscription_robotInfo = this.Subscribe("/amcl_pose", "geometry_msgs/PoseWithCovarianceStamped", AmclPoseHandler);
             paramsRosSocket.publication_ctrlrobotdriving = this.Advertise("/ctrlRobotDriving", "std_msgs/Int32");
             int subscription_finishedStates = this.Subscribe("/finishedStates", "std_msgs/Int32", FinishedStatesHandler);
+            paramsRosSocket.publication_finishedStates = this.Advertise("/finishedStates", "std_msgs/Int32");
+
             paramsRosSocket.publication_robotnavigation = this.Advertise("/robot_navigation", "geometry_msgs/PoseStamped");
             paramsRosSocket.publication_checkAliveTimeOut = this.Advertise("/checkAliveTimeOut", "std_msgs/String"); 
             paramsRosSocket.publication_linedetectionctrl = this.Advertise("/linedetectionctrl", "std_msgs/Int32");
+            paramsRosSocket.publication_postPallet = this.Advertise("/pospallet","std_msgs/Int32");
         }
         private void AmclPoseHandler(Communication.Message message)
         {
@@ -117,12 +146,22 @@ namespace SeldatMRMS.Management.RobotManagent
             double posTheta = (double)2 * Math.Atan2(posThetaZ, posThetaW);
             properties.pose.Position = new Point(posX,posY);
             properties.pose.AngleW = posTheta;
-            PoseCallBack(properties.pose, this);
+            PoseHandler(properties.pose, this);
         }
         private void FinishedStatesHandler(Communication.Message message)
         {
             StandardInt32 standard = (StandardInt32)message;
-            FinishStatesCallBack(standard.data);
+            ///MessageBox.Show(standard.data+"");
+			FinishStatesCallBack(standard.data);
+
+		}
+
+        public void FinishedStatesPublish(int message)
+        {
+            StandardInt32 msg = new StandardInt32();
+            msg.data = message;
+            this.Publish(paramsRosSocket.publication_finishedStates, msg);
+
         }
         protected override void OnClosedEvent(object sender, CloseEventArgs e) {
             properties.IsConnected = false;
@@ -146,6 +185,19 @@ namespace SeldatMRMS.Management.RobotManagent
             msg.data = Convert.ToInt32(robotspeed);
             this.Publish(paramsRosSocket.publication_ctrlrobotdriving,msg);
         }
+
+        public void SendCmdLineDetectionCtrl(RequestCommandLineDetect cmd){
+            StandardInt32 msg = new StandardInt32();
+            msg.data = Convert.ToInt32(cmd);
+            this.Publish(paramsRosSocket.publication_linedetectionctrl,msg);
+        }
+
+        public void SendCmdPosPallet(RequestCommandPosPallet cmd){
+            StandardInt32 msg = new StandardInt32();
+            msg.data = Convert.ToInt32(cmd);
+            this.Publish(paramsRosSocket.publication_linedetectionctrl,msg);    
+        }
+
         protected override void OnOpenedEvent() {
             properties.IsConnected = true;
             Console.WriteLine("connected");

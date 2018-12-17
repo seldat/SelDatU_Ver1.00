@@ -1,253 +1,167 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
+﻿using SelDatUnilever_Ver1._00.Management.ComSocket;
+using System;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace DoorControllerService
 {
-    public class RouterComPort // TCP IP
+    public class DoorService : TranferData
     {
-        // ManualResetEvent instances signal completion.  
-        private static ManualResetEvent connectDone =new ManualResetEvent(false);
-        private static ManualResetEvent sendDone =new ManualResetEvent(false);
-        private static ManualResetEvent receiveDone =new ManualResetEvent(false);
-
-        // The response from the remote device.  
-        private static String response = String.Empty;
-        public static Socket client=null;
-        public String Ip { get; set; }
-        public Int32 Port { get; set; }
-        public class StateObject
+        private enum CmdDoor
         {
-            // Client socket.  
-            public Socket workSocket = null;
-            // Size of receive buffer.  
-            public const int BufferSize = 256;
-            // Receive buffer.  
-            public byte[] buffer = new byte[BufferSize];
-            // Received data string.  
-            public StringBuilder sb = new StringBuilder();
+            CMD_GET_ID_DOOR = 0x61,
+            RES_GET_ID_DOOR, /*0x62 */
+            CMD_SET_ID_DOOR, /*0x63 */
+            RES_SET_ID_DOOR, /*0x64 */
+            CMD_GET_STATUS_DOOR, /*0x65 */
+            RES_GET_STATUS_DOOR, /*0x66 */
+            CMD_OPEN_DOOR, /*0x67 */
+            RES_OPEN_DOOR, /*0x68 */
+            CMD_CLOSE_DOOR, /*0x69 */
+            RES_CLOSE_DOOR, /*0x6A */
         }
-        public static void Connect(EndPoint remoteEP, Socket client)
+        public enum DoorId
         {
-            client.BeginConnect(remoteEP,
-                new AsyncCallback(ConnectCallback), client);
-
-            connectDone.WaitOne();
+            DOOR_MEZZAMINE_UP_FRONT = 0x01,
+            DOOR_MEZZAMINE_UP_BACK, /* 0x02 */
+            DOOR_MEZZAMINE_RETURN_FRONT, /* 0x03 */
+            DOOR_MEZZAMINE_RETURN_BACK, /* 0x04 */
+            DOOR_ELEVATOR, /* 0x05 */
         }
-        public void Close()
+        public enum DoorStatus
         {
-            if(client!=null)
-            {
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-            }
+            DOOR_CLOSE = 0x01,
+            DOOR_OPEN, /* 0x02 */
+            DOOR_CLOSING, /* 0x03 */
+            DOOR_OPENING, /* 0x04 */
+            DOOR_ERROR /* 0x05 */
         }
-        private static void ConnectCallback(IAsyncResult ar)
-        {
-            try
-            {
-                // Retrieve the socket from the state object.  
-                Socket client = (Socket)ar.AsyncState;
 
-                // Complete the connection.  
-                client.EndConnect(ar);
-
-                Console.WriteLine("Socket connected to {0}",
-                    client.RemoteEndPoint.ToString());
-
-                // Signal that the connection has been made.  
-                connectDone.Set();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+        public struct DoorInfoConfig{
+           public String ip;
+            public Int32 port;
+            public DoorId id;   
         }
-        public RouterComPort()
-        {
 
-        }
-        private static void Receive(Socket client)
+        public DoorService(DoorInfoConfig cf):base(cf.ip,cf.port)
         {
-            try
-            {
-                // Create the state object.  
-                StateObject state = new StateObject();
-                state.workSocket = client;
+            this.SetId(cf.id);
+        }
+         public bool GetId(ref DataReceive data)
+        {
+            bool ret = false;
+            byte[] dataSend = new byte[6];
 
-                // Begin receiving the data from the remote device.  
-                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReceiveCallback), state);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            dataSend[0] = 0xFA;
+            dataSend[1] = 0x55;
+            dataSend[2] = (byte)CmdDoor.CMD_GET_ID_DOOR;
+            dataSend[3] = 0x04;
+            dataSend[4] = 0x00;
+            dataSend[5] = CalChecksum(dataSend,3);
+            ret = this.Tranfer(dataSend,ref data);
+            return ret;
         }
-        private static void ReceiveCallback(IAsyncResult ar)
+        public bool SetId(DoorId id)
         {
-            try
+            bool ret = false;
+            byte[] dataSend = new byte[7];
+
+            dataSend[0] = 0xFA;
+            dataSend[1] = 0x55;
+            dataSend[2] = (byte)CmdDoor.CMD_SET_ID_DOOR;
+            dataSend[3] = 0x05;
+            dataSend[4] = 0x00;
+            dataSend[5] = (byte)id;
+            dataSend[6] = CalChecksum(dataSend,4);
+            ret = this.Tranfer(dataSend);
+            return ret;
+        }
+        public bool GetStatus(ref DataReceive data,DoorId id)
+        {
+            bool ret = false;
+            byte[] dataSend = new byte[7];
+
+            dataSend[0] = 0xFA;
+            dataSend[1] = 0x55;
+            dataSend[2] = (byte)CmdDoor.CMD_GET_STATUS_DOOR;
+            dataSend[3] = 0x05;
+            dataSend[4] = 0x00;
+            dataSend[5] = (byte)id;
+            dataSend[6] = CalChecksum(dataSend,4);
+            ret = this.Tranfer(dataSend,ref data);
+            return ret;
+        }
+        public bool Open(DoorId id)
+        {
+            bool ret = false;
+            byte[] dataSend = new byte[7];
+
+            dataSend[0] = 0xFA;
+            dataSend[1] = 0x55;
+            dataSend[2] = (byte)CmdDoor.CMD_OPEN_DOOR;
+            dataSend[3] = 0x05;
+            dataSend[4] = 0x00;
+            dataSend[5] = (byte)id;
+            dataSend[6] = CalChecksum(dataSend,4);
+            ret = this.Tranfer(dataSend);
+            return ret;
+        }
+        public bool Close(DoorId id)
+        {
+            bool ret = false;
+            byte[] dataSend = new byte[7];
+
+            dataSend[0] = 0xFA;
+            dataSend[1] = 0x55;
+            dataSend[2] = (byte)CmdDoor.CMD_CLOSE_DOOR;
+            dataSend[3] = 0x05;
+            dataSend[4] = 0x00;
+            dataSend[5] = (byte)id;
+            dataSend[6] = CalChecksum(dataSend,4);
+            ret = this.Tranfer(dataSend);
+            return ret;
+        }
+
+        public bool WaitOpen(DoorId id, UInt32 timeOut)
+        {
+            bool result = true;
+            Stopwatch sw = new Stopwatch();
+            DataReceive status = new DataReceive();
+            this.Open(id);
+            sw.Start();
+            do 
             {
-                // Retrieve the state object and the client socket   
-                // from the asynchronous state object.  
-                StateObject state = (StateObject)ar.AsyncState;
-                Socket client = state.workSocket;
-                // Read data from the remote device.  
-                int bytesRead = client.EndReceive(ar);
-                if (bytesRead > 0)
+                Thread.Sleep(100);
+                if (sw.ElapsedMilliseconds > timeOut)
                 {
-                    // There might be more data, so store the data received so far.  
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-                    //  Get the rest of the data.  
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                        new AsyncCallback(ReceiveCallback), state);
+                    result = false;
+                    break;
                 }
-                else
+                this.GetStatus(ref status,id);
+            } while (status.data[0] != (byte)DoorStatus.DOOR_OPEN);
+            sw.Stop();
+            return result;
+        }
+
+        public bool WaitClose(DoorId id, UInt32 timeOut)
+        {
+            bool result = true;
+            Stopwatch sw = new Stopwatch();
+            DataReceive status = new DataReceive();
+            this.Close(id);
+            sw.Start();
+            do 
+            {
+                Thread.Sleep(100);
+                if (sw.ElapsedMilliseconds > timeOut)
                 {
-                    // All the data has arrived; put it in response.  
-                    if (state.sb.Length > 1)
-                    {
-                        response = state.sb.ToString();
-                    }
-                    // Signal that all bytes have been received.  
-                    receiveDone.Set();
+                    result = false;
+                    break;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-        private static void Send(Socket client, String data)
-        {
-            // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
-
-            // Begin sending the data to the remote device.  
-            client.BeginSend(byteData, 0, byteData.Length, 0,
-                new AsyncCallback(SendCallback), client);
-        }
-
-        private static void SendCallback(IAsyncResult ar)
-        {
-            try
-            {
-                // Retrieve the socket from the state object.  
-                Socket client = (Socket)ar.AsyncState;
-
-                // Complete sending the data to the remote device.  
-                int bytesSent = client.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
-
-                // Signal that all bytes have been sent.  
-                sendDone.Set();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-        private void StartClient(String ip,Int32 port)
-        {
-            this.Ip = ip;
-            this.Port = port;
-            // Connect to a remote device.  
-            try
-            {
-                // Establish the remote endpoint for the socket.  
-                // The name of the   
-                IPEndPoint remoteEP = new IPEndPoint(IPAddress.Parse("192.168.1.22"), 11000);
-                // Create a TCP/IP socket.  
-                client = new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
-                // Connect to the remote endpoint.  
-                client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
-                connectDone.WaitOne();
-
-                // Send test data to the remote device.  
-               // Send(client, "This is a LLLLLlll test<EOF>");
-              //  sendDone.WaitOne();
-
-                // Receive the response from the remote device.  
-              //  Receive(client);
-              //  receiveDone.WaitOne();
-
-                // Write the response to the console.  
-               // Console.WriteLine("Response received : {0}", response);
-
-                // Release the socket.  
-                // client.Shutdown(SocketShutdown.Both);
-               // client.Close();
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-        public virtual void SendCMD(byte[] buffer)
-        {
-            string txt = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            Send(client,txt);
-        }
-        public void close()
-        {
-            if (client != null)
-            {
-                if (client.Connected)
-                {
-                    client.Shutdown(SocketShutdown.Both);
-                    client.Close();
-                }
-            }
-        }
-        public virtual void CheckAlive() { }
-    }
-    public class DoorService : RouterComPort
-    {
-        public override void SendCMD(byte [] data) { }
-        public event Action<String> ReceiveRounterEvent;
-        public virtual void CheckStatusSensor(byte[] data) { }
-        public enum DOORID
-        {
-            DOOR_MEZZAMINE_UP_FRONT = 1,
-            DOOR_MEZZAMINE_UP_BACK = 2,
-            DOOR_ELEVATOR = 3,
-            DOOR_MEZZAMINE_RETURN_FRONT = 4,
-            DOOR_MEZZAMINE_RETURN_BACK = 5
-        }
-        public enum PROCEDURETRACKING_MEZZAMINE
-        {
-            CHECK_SWITCH_CLOSE,
-            CHECK_SWITCH_CLOSE_THEN_OPEN,
-            CLOSE_TO_OPEN_FINISH,
-            CHECK_SWITCH_OPEN,
-            CHECK_SWITCH_OPEN_THEN_CLOSE,
-            OPEN_TO_CLOSE_FINISH,
-            DOOR_ERROR_APPEAR
-        }
-        public const byte HEADER_RESPONSE = 0xAA;
-        public const byte TAIL_RESPONSE = 0x0A;
-        public const byte SWITCHON = 0x01;
-        public const byte SWITCHOFF = 0x00;
-        public const byte SERVER_CMD_CHECK_SWITCHCLOSE = 10;
-        public const byte SERVER_CMD_CHECK_SWITCHOPEN = 10;
-        public const byte SERVER_CMD_OPENDOOR = 11;
-        public const byte SERVER_CMD_CLOSEDOOR= 11;
-        public DoorService() { }
-        public void TransmittedDataPackage(DOORID id,byte cmd)
-        {
-            byte[] package = new byte[4]; // 2 bytes header and tail, 1 byte id , 1 byte cmd 5 byte data
-            package[0] = 0xFF;
-            package[1] = (byte)id;
-            //  Buffer.BlockCopy(cmd,0,package,2,cmd.Length);
-            package[2] = cmd;
-            package[3] = 0x0F;  // new line
-            SendCMD(package);
+                this.GetStatus(ref status,id);
+            } while (status.data[0] != (byte)DoorStatus.DOOR_CLOSE);
+            sw.Stop();
+            return result;
         }
     }
 }
