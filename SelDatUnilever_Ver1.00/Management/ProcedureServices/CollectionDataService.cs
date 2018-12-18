@@ -17,6 +17,7 @@ namespace SelDatUnilever_Ver1
     {
         public DataPallet() { }
         public bool hasMainLine { get; set; }
+        public Pose linePos;
         public double ThresholdDetectsMaker_MainLine;
         public double ThresholdDetectsMaker_SubLine;
         public double rot = 1; // 1 : CCW / -1: CW

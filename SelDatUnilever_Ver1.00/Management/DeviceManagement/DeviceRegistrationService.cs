@@ -37,12 +37,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
             String data = inputData.ReadToEnd();
-            DeviceItem deviceItem = new DeviceItem();
-            //deviceItem.rounter(data);
-            deviceItem.ParseDataOfForkLift(data);
-            deviceItemList.Add(deviceItem);
-            /* JObject results = JObject.Parse(data);
-             String deviceID = (String)results["DeviceID"];
+            JObject results = JObject.Parse(data);
+             String deviceID = (String)results["userName"];
              if (HasDeviceItemAt(deviceID) >= 0)
              {
                  FindDeviceItem(deviceID).rounter(data);
@@ -50,10 +46,10 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
              else
              {
                  DeviceItem deviceItem = new DeviceItem();
-              //   deviceItem.rounter(data);
-                 deviceItem.ParseDataOfForkLift(data);
+                 deviceItem.ParseData(data);
                  deviceItemList.Add(deviceItem);
-             }*/
+             }
+            p.writeSuccess();
         }
         public List<DeviceItem> GetDeviceItemList()
         {

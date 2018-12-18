@@ -18,6 +18,19 @@ namespace SeldatMRMS
             public Pose PointCheckInMachine;
             public Pose PointFrontLineMachine;
             public PointDetect PointDropPallet;
+            public void updateCheckin(ProcedureBufferToMachine prBM)
+            {
+                prBM.GetCheckIn();
+                PointCheckInBuffer = prBM.checkInBuffer[0];
+                PointFrontLineBuffer = prBM.checkInBuffer[1];
+
+            }
+            public void updatePalletMachine(ProcedureBufferToMachine prBM)
+            {
+                var order = prBM.order;
+                PointFrontLineMachine = order.PalletAtMachine.linePos;
+            }
+
         }
         DataBufferToMachine points;
         BufferToMachine StateBufferToMachine;

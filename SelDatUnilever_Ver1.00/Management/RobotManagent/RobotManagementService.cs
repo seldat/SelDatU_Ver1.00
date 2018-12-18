@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    class RobotManagementService
+    public class RobotManagementService
     {
-        Dictionary<String,RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
-        //readonly Dictionary<String, RobotUnity> RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
+        Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
         Dictionary<String, RobotUnity> RobotUnityTaskedList = new Dictionary<string, RobotUnity>();
         public RobotManagementService() { }
         public void LoadRobotUnityConfigure()
@@ -68,9 +67,19 @@ namespace SeldatMRMS.Management.RobotManagent
             }
    
         }
-        public void VerifyRobotUnity()
+        public RobotUnity getRobotUnityTask()
         {
-
+            RobotUnity robot = null;
+            foreach(RobotUnity r in RobotUnityTaskedList.Values)
+            {
+                if(!r.SelectedATask)
+                {
+                    r.SelectedATask = false;
+                    robot = r;
+                    break;
+                }
+            }
+            return robot;
         }
 
     }

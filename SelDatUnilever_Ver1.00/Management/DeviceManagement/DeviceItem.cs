@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 {
     public class DeviceItem
     {
+      
         public enum TabletConTrol
         {
             TABLET_MACHINE = 10000,
@@ -29,7 +31,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public int planID { get; set; }
             public int productID { get; set; }
             public int productDetailID { get; set; }
-            public String typeRequest; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
+            public String typeReq; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
             public String activeDate;
             public int timeWorkID;
             public String palletStatus;
@@ -37,6 +39,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public int updUsrId;
             public String dataRequest;
             public bool status = false; // chua hoan thanh
+            public DataPallet PalletAtMachine;
+            public String userName;
         }
         public string deviceID { get; set; } // dia chi Emei
         public string codeID { get; set; }
@@ -89,16 +93,52 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         {
 
         }
-        public void ParseDataOfForkLift(String dataReq)
+        public void ParseData(String dataReq)
         {
-            OrderItem order = new OrderItem();
+            MessageBox.Show(dataReq);
             JObject results = JObject.Parse(dataReq);
-            order.productDetailID = (int)results["productDetailId"];
-            order.productID = (int)results["productId"];
-            order.timeWorkID = (int)results["timeWorkId"];
-            order.palletStatus =(String)results["palletStatus"];
-            order.dataRequest = dataReq;
-            oneOrderList.Add(order);
+            String typeReq= (String)results["typeReq"];
+            if (typeReq.Equals("FL"))
+            {
+                OrderItem order = new OrderItem();
+                order.typeReq = typeReq;
+                order.userName = (String)results["userName"];
+                order.productDetailID = (int)results["productDetailId"];
+                order.productID = (int)results["productId"];
+                order.timeWorkID = (int)results["timeWorkId"];
+                order.palletStatus = (String)results["palletStatus"];
+                order.dataRequest = dataReq;
+                oneOrderList.Add(order);
+            }
+            else if (typeReq.Equals("MC"))
+            {
+                OrderItem order = new OrderItem();
+                order.typeReq = typeReq;
+                order.userName= (String)results["userName"];
+                order.productDetailID = (int)results["productDetailId"];
+                order.productID = (int)results["productId"];
+                order.timeWorkID = (int)results["timeWorkId"];
+                order.palletStatus = (String)results["palletStatus"];
+                var linePos = results["position"];
+                double lposX= (double)linePos["X"];
+                double lposY = (double)linePos["Y"];
+                double angle = (double)linePos["Angle"]; // chu y radian 
+                double threshold = (double)linePos["threshold"]; // nguong pallet
+                order.PalletAtMachine = new DataPallet() {linePos=new Pose(lposX,lposY,angle), ThresholdDetectsMaker_SubLine=threshold };
+                order.dataRequest = dataReq;
+                oneOrderList.Add(order);
+            }
+            else if (typeReq.Equals("RT"))
+            {
+                OrderItem order = new OrderItem();
+                order.userName = (String)results["userName"];
+                order.productDetailID = (int)results["productDetailId"];
+                order.productID = (int)results["productId"];
+                order.timeWorkID = (int)results["timeWorkId"];
+                order.palletStatus = (String)results["palletStatus"];
+                order.dataRequest = dataReq;
+                oneOrderList.Add(order);
+            }
         }
 
     }

@@ -36,7 +36,7 @@ namespace SelDatUnilever_Ver1._00
         {
      
             InitializeComponent();
-            RobotUnity robot1 = new RobotUnity(canvas);
+         /*   RobotUnity robot1 = new RobotUnity(canvas);
             robot1.properties.NameID = "robot1";
             RobotUnity robot2 = new RobotUnity(canvas);
             robot2.properties.NameID = "robot2";
@@ -58,12 +58,12 @@ namespace SelDatUnilever_Ver1._00
             robot2.initialPos(300,300);
             robot3.initialPos(400,400);
             TrafficManagementService traffic = new TrafficManagementService();
-            traffic.LoadConfigureZone();
+            traffic.LoadConfigureZone();*/
 
-            //deviceRegistrationService=new DeviceRegistrationService(9000);
-            //deviceRegistrationService.listen();
-            string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
-
+            deviceRegistrationService=new DeviceRegistrationService(9000);
+            deviceRegistrationService.listen();
+            //string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+            /*
             JArray results = JArray.Parse(text);
             foreach (var result in results)
             {
@@ -82,7 +82,7 @@ namespace SelDatUnilever_Ver1._00
                     double dataPalletItem_subThreshold = (double)dataPalletItemResults["subThreshold"];
                       break;
                 }
-            }
+            }*/
 
             /*  string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
 

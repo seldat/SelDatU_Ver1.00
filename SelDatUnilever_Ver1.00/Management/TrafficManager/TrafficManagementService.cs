@@ -9,7 +9,7 @@ using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SeldatMRMS.Management.TrafficManager
 {
-    class TrafficManagementService:TrafficRounterService
+    public class TrafficManagementService:TrafficRounterService
     {
       
         public TrafficManagementService() { }

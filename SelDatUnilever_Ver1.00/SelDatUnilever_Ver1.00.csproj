@@ -79,6 +79,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\ChargerCtrl\ChargerCtrl.cs" />
+    <Compile Include="Management\ChargerCtrl\ChargerManagementService.cs" />
     <Compile Include="Management\ComSocket\RouterComPort.cs" />
     <Compile Include="Management\ComSocket\TranferData.cs" />
     <Compile Include="Management\DeviceManagement\DeviceRegistrationService.cs" />

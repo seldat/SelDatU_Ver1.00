@@ -25,7 +25,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                 case ProcessAssignAnTask.PROC_IDLE:
                     break;
                 case ProcessAssignAnTask.PROC_REQUEST_ROBOT:
-                    robotTemp = robotManageService.GetRobotNotAssignTask();
+                    robotTemp = robotManageService.getRobotUnityTask();
                     if(robotTemp!=null)
                     {
                         processAssignAnTaskState = ProcessAssignAnTask.PROC_REQUEST_TASK;

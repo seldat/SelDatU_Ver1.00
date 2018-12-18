@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace SelDatUnilever_Ver1._00.Management.TrafficManager
 {
-    class TrafficRounterService
+   public class TrafficRounterService
     {
         protected List<RobotUnity> RobotUnityListOnTraffic = new List<RobotUnity>();
         public class ZoneRegister
