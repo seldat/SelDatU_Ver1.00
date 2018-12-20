@@ -1,4 +1,5 @@
-﻿using SeldatMRMS.Management.RobotManagent;
+﻿using SeldatMRMS;
+using SeldatMRMS.Management.RobotManagent;
 using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
@@ -20,28 +21,34 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
         }
         public event Action<bool> FinishTaskCallBack;
         protected ProcessAssignAnTask processAssignAnTaskState;
+        protected ProcedureManagementService procedureService;
         public RobotManagementService robotManageService;
-        public DeviceRegistrationService deviceRegistrationService;
-        protected void RegistryService(RobotManagementService robotManageService)
+        
+        public List<DeviceItem> deviceItemsList;
+        public void RegistryService(RobotManagementService robotManageService)
         {
             this.robotManageService = robotManageService;
         }
-        protected void RegistryService(DeviceRegistrationService deviceRegistrationService)
+        public void RegistryService(ProcedureManagementService procedureService)
         {
-            this.deviceRegistrationService = deviceRegistrationService;
+            this.procedureService = procedureService;
+        }
+        public void RegistryService(List<DeviceItem> deviceItemsList)
+        {
+            this.deviceItemsList = deviceItemsList;
         }
         public TaskRounterService() {
             processAssignAnTaskState = ProcessAssignAnTask.PROC_IDLE;
         }
         public void MoveElementToEnd()
         {
-            var element = deviceRegistrationService.GetDeviceItemList()[0];
-            deviceRegistrationService.GetDeviceItemList().RemoveAt(0);
-            deviceRegistrationService.GetDeviceItemList().Add(element);
+            var element = deviceItemsList[0];
+            deviceItemsList.RemoveAt(0);
+            deviceItemsList.Add(element);
         }
         public OrderItem Gettask()
         {
-            OrderItem item = deviceRegistrationService.GetDeviceItemList()[0].GetOrder();
+            OrderItem item = deviceItemsList[0].GetOrder();
             return item;
         }
 

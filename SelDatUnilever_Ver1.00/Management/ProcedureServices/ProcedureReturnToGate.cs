@@ -33,12 +33,12 @@ namespace SeldatMRMS
         const UInt32 TIME_OUT_OPEN_DOOR = 600000;/* ms */
         const UInt32 TIME_OUT_CLOSE_DOOR = 600000;/* ms */
 
-        public ProcedureReturnToGate(RobotUnity robot, DoorManagementService doorservice, DataReturnToGate dataPoints,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineReturnBack)
+        public ProcedureReturnToGate(RobotUnity robot, DoorManagementService doorservice,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineReturnBack)
         {
             StateReturnToGate = ReturnToGate.RETGATE_IDLE;
             resCmd = ResponseCommand.RESPONSE_NONE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points = new DataReturnToGate();
             this.door = doorservice;
             this.Traffic = traffiicService;
         }

@@ -17,7 +17,7 @@ namespace SeldatMRMS
 
     public class ProcedureForkLiftToBuffer : ProcedureControlServices
     {
-        public struct DataForkLiftToBuffer
+        public class DataForkLiftToBuffer
         {
             public Pose PointCheckInGate;
             public Pose PointOfGate;
@@ -38,12 +38,12 @@ namespace SeldatMRMS
         const UInt32 TIME_OUT_OPEN_DOOR = 600000;/* ms */
         const UInt32 TIME_OUT_CLOSE_DOOR = 600000;/* ms */
 
-        public ProcedureForkLiftToBuffer(RobotUnity robot, DoorManagementService doorservice, DataForkLiftToBuffer dataPoints,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineUpBack)
+        public ProcedureForkLiftToBuffer(RobotUnity robot, DoorManagementService doorservice,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineUpBack)
         {
             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_IDLE;
             resCmd = ResponseCommand.RESPONSE_NONE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points = new DataForkLiftToBuffer();
             this.door = doorservice.DoorMezzamineUpBack;
             this.Traffic = traffiicService;
         }

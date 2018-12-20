@@ -24,11 +24,11 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public ProcedureMachineToReturn(RobotUnity robot, DataMachineToReturn dataPoints,TrafficManagementService traffiicService) : base(robot, null)
+        public ProcedureMachineToReturn(RobotUnity robot,TrafficManagementService traffiicService) : base(robot, null)
         {
             StateMachineToReturn = MachineToReturn.MACRET_IDLE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points = new DataMachineToReturn();
             this.Traffic = traffiicService;
         }
 

@@ -30,14 +30,8 @@ namespace SeldatMRMS
         }
         public struct ProcedureDataItems
         {
-            public String ProcedureID { get; set; }
-            public String OperationType { get; set; }
-            public String RobotTaskID { get; set; }
+
             public DateTime StartTaskTime { get; set; }
-            public String ProductName { get; set; }
-            public String ProductCode { get; set; }
-            public String StationInfo { get; set; } //[name station]-[line number]-[pallet in line]
-            public String DeliveryInfo { get; set; } //[Machine]-[Name];[Hopper];[Gate];[Return]-[name pallet in return]
             public DateTime EndTime { get; set; }
             public String StatusProcedureDelivered { get; set; }
             public String ErrorStatusID { get; set; } // if have

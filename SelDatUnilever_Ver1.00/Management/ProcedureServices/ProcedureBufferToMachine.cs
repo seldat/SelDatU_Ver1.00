@@ -38,11 +38,11 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public ProcedureBufferToMachine(RobotUnity robot, DataBufferToMachine dataPoints,TrafficManagementService traffiicService) : base(robot, null)
+        public ProcedureBufferToMachine(RobotUnity robot,TrafficManagementService traffiicService) : base(robot, null)
         {
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points = new DataBufferToMachine();
             this.Traffic = traffiicService;
         }
 

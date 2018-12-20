@@ -1,4 +1,5 @@
 ﻿using SeldatMRMS.Communication;
+using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,6 +62,7 @@ namespace SeldatMRMS.Management.RobotManagent
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
             public String CurrentLevel;
             public bool CriticalLevel;
+            public ChargerCtrl.ChargerId chargeID;
 
         }
 

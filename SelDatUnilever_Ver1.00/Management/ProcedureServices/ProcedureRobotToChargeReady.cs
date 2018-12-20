@@ -184,11 +184,11 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         RobotGoToReady StateRobotGoToReady;
-        public ProcedureRobotToReady(RobotUnity robot, DataRobotToReady dataPoints) : base(robot, null)
+        public ProcedureRobotToReady(RobotUnity robot) : base(robot, null)
         {
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points =new DataRobotToReady();
         }
         public void Start(String content, RobotGoToReady state = RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION)
         {

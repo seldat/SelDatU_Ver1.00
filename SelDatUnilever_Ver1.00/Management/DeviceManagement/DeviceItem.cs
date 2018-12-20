@@ -12,6 +12,14 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
     public class DeviceItem
     {
       
+        public enum TyeRequest
+        {
+            TYPEREQUEST_FORLIFT_TO_BUFFER=1,
+            TYPEREQUEST_BUFFER_TO_MACHINE=2,
+            TYPEREQUEST_BUFFER_TO_RETURN=3,
+            TYPEREQUEST_MACHINE_TO_RETURN=4,
+            TYPEREQUEST_RETURN_TO_GATE = 4,
+        }
         public enum TabletConTrol
         {
             TABLET_MACHINE = 10000,
@@ -31,7 +39,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public int planID { get; set; }
             public int productID { get; set; }
             public int productDetailID { get; set; }
-            public String typeReq; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
+            public TyeRequest typeReq; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
             public String activeDate;
             public int timeWorkID;
             public String palletStatus;
@@ -97,11 +105,11 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         {
             MessageBox.Show(dataReq);
             JObject results = JObject.Parse(dataReq);
-            String typeReq= (String)results["typeReq"];
-            if (typeReq.Equals("FL"))
+            int typeReq= (int)results["typeReq"];
+            if (typeReq==(int)TyeRequest. TYPEREQUEST_FORLIFT_TO_BUFFER)
             {
                 OrderItem order = new OrderItem();
-                order.typeReq = typeReq;
+                order.typeReq = (TyeRequest)typeReq;
                 order.userName = (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
                 order.productID = (int)results["productId"];
@@ -110,10 +118,10 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.dataRequest = dataReq;
                 oneOrderList.Add(order);
             }
-            else if (typeReq.Equals("MC"))
+            else if (typeReq == (int)TyeRequest.TYPEREQUEST_BUFFER_TO_MACHINE)
             {
                 OrderItem order = new OrderItem();
-                order.typeReq = typeReq;
+                order.typeReq = (TyeRequest)typeReq;
                 order.userName= (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
                 order.productID = (int)results["productId"];
@@ -128,9 +136,10 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.dataRequest = dataReq;
                 oneOrderList.Add(order);
             }
-            else if (typeReq.Equals("RT"))
+            else if (typeReq == (int)TyeRequest.TYPEREQUEST_MACHINE_TO_RETURN)
             {
                 OrderItem order = new OrderItem();
+                order.typeReq = (TyeRequest)typeReq;
                 order.userName = (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
                 order.productID = (int)results["productId"];

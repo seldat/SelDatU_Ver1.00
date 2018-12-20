@@ -25,11 +25,11 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public ProcedureBufferToReturn(RobotUnity robot, DataForkBufferToReturn dataPoints,TrafficManagementService traffiicService) : base(robot, null)
+        public ProcedureBufferToReturn(RobotUnity robot,TrafficManagementService traffiicService) : base(robot, null)
         {
             StateBufferToReturn = BufferToReturn.BUFRET_IDLE;
             this.robot = robot;
-            this.points = dataPoints;
+            this.points = new DataForkBufferToReturn();
             this.Traffic = traffiicService;
         }
 
