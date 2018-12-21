@@ -9,28 +9,26 @@ namespace SeldatMRMS
 {
     public class ProcedureBufferToMachine : ProcedureControlServices
     {
-        public struct DataBufferToMachine
+        public class DataBufferToMachine
         {
-            public Pose PointCheckInBuffer;
-            public Pose PointFrontLineBuffer;
+            private ProcedureBufferToMachine prBM;
+            public DataBufferToMachine(ProcedureBufferToMachine prBM) { this.prBM = prBM; }
+            public Pose PointCheckInBuffer() {
+                prBM.GetCheckIn();
+                return  prBM.checkInBuffer[0];
+            }
+            public Pose PointFrontLineBuffer() {
+                prBM.GetCheckIn();
+                return  prBM.checkInBuffer[1];
+            }
             public PointDetectBranching PointDetectLineBranching;
             public PointDetect PointPickPallet;
             public Pose PointCheckInMachine;
-            public Pose PointFrontLineMachine;
+            public Pose PointFrontLineMachine()
+            {
+               return prBM.order.PalletAtMachine.linePos;
+            }
             public PointDetect PointDropPallet;
-            public void updateCheckin(ProcedureBufferToMachine prBM)
-            {
-                prBM.GetCheckIn();
-                PointCheckInBuffer = prBM.checkInBuffer[0];
-                PointFrontLineBuffer = prBM.checkInBuffer[1];
-
-            }
-            public void updatePalletMachine(ProcedureBufferToMachine prBM)
-            {
-                var order = prBM.order;
-                PointFrontLineMachine = order.PalletAtMachine.linePos;
-            }
-
         }
         DataBufferToMachine points;
         BufferToMachine StateBufferToMachine;
@@ -42,7 +40,7 @@ namespace SeldatMRMS
         {
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
             this.robot = robot;
-            this.points = new DataBufferToMachine();
+            this.points = new DataBufferToMachine(this);
             this.Traffic = traffiicService;
         }
 
@@ -70,7 +68,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_IDLE:
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-                        rb.SendPoseStamped(p.PointCheckInBuffer);
+                        rb.SendPoseStamped(p.PointCheckInBuffer());
                         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
