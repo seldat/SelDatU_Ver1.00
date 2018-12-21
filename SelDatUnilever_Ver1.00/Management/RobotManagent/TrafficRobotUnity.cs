@@ -40,12 +40,12 @@ namespace SeldatMRMS.Management
             DIR_LEFT,
             DIR_RIGHT
 		}
-        public struct PointDetect{
+        public class PointDetect{
             public Point p;
             public MvDirection mvDir;
         }
 
-        public struct PointDetectBranching{
+        public class PointDetectBranching{
             public PointDetect xy;
             public BrDirection brDir;
         }
