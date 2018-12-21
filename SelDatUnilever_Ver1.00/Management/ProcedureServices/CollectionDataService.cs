@@ -57,7 +57,50 @@ namespace SelDatUnilever_Ver1
             }
             return null;
         }
-        public void GetCheckIn()
+        public Pose GetCheckInBuffer()
+        {
+            Pose poseTemp = null;
+            JArray results = JArray.Parse(order.dataRequest);
+            foreach (var result in results)
+            {
+                int temp_productDetailID = (int)result["productDetailId"];
+                if (temp_productDetailID == order.productDetailID)
+                {
+                    var bufferResults = result["buffers"];
+                    var checkinResults = bufferResults[0]["bufferCheckIn"];
+                    var bCIn = checkinResults[0];
+                    double x = (double)bCIn["X"];
+                    double y = (double)bCIn["Y"];
+                    double angle = (double)bCIn["A"];
+                     poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                    break;
+                }
+            }
+            return poseTemp;
+        }
+        public Pose GetFrontLineBuffer()
+        {
+            Pose poseTemp = null;
+            JArray results = JArray.Parse(order.dataRequest);
+            foreach (var result in results)
+            {
+                int temp_productDetailID = (int)result["productDetailId"];
+                if (temp_productDetailID == order.productDetailID)
+                {
+                    var bufferResults = result["buffers"];
+                    var checkinResults = bufferResults[0]["bufferCheckIn"];
+                    var bCIn = checkinResults[1];
+                    double x = (double)bCIn["X"];
+                    double y = (double)bCIn["Y"];
+                    double angle = (double)bCIn["A"];
+                    poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                    break;
+                }
+            }
+            return poseTemp;
+        }
+
+        /*public void GetCheckInBuffer()
         {
             JArray results = JArray.Parse(order.dataRequest);
             foreach (var result in results)
@@ -78,7 +121,7 @@ namespace SelDatUnilever_Ver1
                     }
                 }
             }
-        }
+        }*/
         public PointDetectBranching GetPointDetectBranching()
         {
             PointDetectBranching tempPDB = null;
@@ -98,10 +141,12 @@ namespace SelDatUnilever_Ver1
                     if (dataPalletItem_hasBranch)
                     {
                         var pDBResults = dataPalletItemResults["pointDBr"];
-                        double pX = (double)pDBResults["point"]["X"];
-                        double pY = (double)pDBResults["point"]["Y"];
-                        int pDBmvDir = (int)pDBResults["point"]["mvDir"];
-                        int pDBbrvDir = (int)pDBResults["point"]["brvDir"];
+                        MessageBox.Show(pDBResults.ToString());
+                        var pDBRPs = pDBResults["point"];
+                        double pX = (double)pDBRPs["X"];
+                        double pY = (double)pDBRPs["Y"];
+                        int pDBmvDir = (int)pDBResults["mvDir"];
+                        int pDBbrvDir = (int)pDBResults["brDir"];
                         PointDetect pointDet = new PointDetect() { p = new Point(pX, pY),mvDir=(TrafficRobotUnity.MvDirection)pDBmvDir };
                         tempPDB = new PointDetectBranching() { xy = pointDet,brDir=(TrafficRobotUnity.BrDirection)pDBbrvDir };
                     }
@@ -133,9 +178,10 @@ namespace SelDatUnilever_Ver1
                     order.updUsrId = (int)palletResults[0]["updUsrId"];
                     var dataPalletItemResults = palletResults[0]["dataPallet"];
                     var ppalets = dataPalletItemResults["pallet"];
-                    double pX = (double)ppalets["point"]["X"];
-                    double pY = (double)ppalets["point"]["Y"];
-                    int pDBmvDir = (int)ppalets["point"]["mvDir"];
+                    var pppoints = ppalets["point"];
+                    double pX = (double)pppoints["X"];
+                    double pY = (double)pppoints["Y"];
+                    int pDBmvDir = (int)ppalets["mvDir"];
                     tempPD = new PointDetect() { p = new Point(pX, pY), mvDir = (TrafficRobotUnity.MvDirection)pDBmvDir };
                     break;
                 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using SeldatMRMS;
+using SeldatMRMS.Management;
 using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
@@ -69,7 +70,7 @@ namespace SelDatUnilever_Ver1._00
 
             //chargerCtrl.StopCharge();
 
-            robot = new RobotUnity();
+          /*  robot = new RobotUnity();
             robot.Start("ws://192.168.109.128:9090");
             robot.properties.pose = new Pose(new System.Windows.Point(30, 8), 0);
             door = new DoorManagementService();
@@ -79,7 +80,7 @@ namespace SelDatUnilever_Ver1._00
             traffiicService.LoadConfigureZone();
             ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
             pr.RegistrationTranfficService(traffiicService);
-            pr.Start();
+            pr.Start();*/
             /*end*/
          /*   RobotUnity robot1 = new RobotUnity(canvas);
             robot1.properties.NameID = "robot1";
@@ -105,10 +106,10 @@ namespace SelDatUnilever_Ver1._00
             TrafficManagementService traffic = new TrafficManagementService();
             traffic.LoadConfigureZone();*/
 
-            deviceRegistrationService=new DeviceRegistrationService(9000);
-            deviceRegistrationService.listen();
-            //string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
-            /*
+          //  deviceRegistrationService=new DeviceRegistrationService(9000);
+          //  deviceRegistrationService.listen();
+            string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+         
             JArray results = JArray.Parse(text);
             foreach (var result in results)
             {
@@ -117,17 +118,17 @@ namespace SelDatUnilever_Ver1._00
                 {
                     var bufferResults = result["buffers"];
                     var palletResults = bufferResults[0]["pallets"];
-
                     var dataPalletItemResults = palletResults[0]["dataPallet"];
-                    int palletId = (int)palletResults[0]["palletId"];
-                    int updUsrId = (int)palletResults[0]["updUsrId"];
-                    bool dataPalletItem_hasMainLine = (bool)dataPalletItemResults["hasMainLine"];
-                    double dataPalletItem_rot = (double)dataPalletItemResults["rot"];
-                    double dataPalletItem_mainThreshold = (double)dataPalletItemResults["mainThreshold"];
-                    double dataPalletItem_subThreshold = (double)dataPalletItemResults["subThreshold"];
-                      break;
+                   // bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
+                    var ppalets = dataPalletItemResults["pallet"];
+                    var pppoints = ppalets["point"];
+                    double pX = (double)pppoints["X"];
+                    double pY = (double)pppoints["Y"];
+                    int pDBmvDir = (int)ppalets["mvDir"];
+                    MessageBox.Show(pX.ToString());
+                    break;
                 }
-            }*/
+            }
 
             /*  string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
 

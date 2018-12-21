@@ -58,7 +58,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_IDLE:
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-                        rb.SendPoseStamped(p.PointCheckInBuffer());
+                        rb.SendPoseStamped(p.PointCheckInBuffer);
                         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer

@@ -47,7 +47,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public int updUsrId;
             public String dataRequest;
             public bool status = false; // chua hoan thanh
-            public DataPallet PalletAtMachine;
+     
             public String userName;
         }
         public string deviceID { get; set; } // dia chi Emei
@@ -132,7 +132,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 double lposY = (double)linePos["Y"];
                 double angle = (double)linePos["Angle"]; // chu y radian 
                 double threshold = (double)linePos["threshold"]; // nguong pallet
-                order.PalletAtMachine = new DataPallet() {linePos=new Pose(lposX,lposY,angle), ThresholdDetectsMaker_SubLine=threshold };
+               // order.PalletAtMachine = new DataPallet() {linePos=new Pose(lposX,lposY,angle), ThresholdDetectsMaker_SubLine=threshold };
                 order.dataRequest = dataReq;
                 oneOrderList.Add(order);
             }
