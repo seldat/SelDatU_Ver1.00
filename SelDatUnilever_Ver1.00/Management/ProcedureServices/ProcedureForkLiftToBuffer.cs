@@ -19,16 +19,16 @@ namespace SeldatMRMS
     {
         public struct DataForkLiftToBuffer
         {
-            public Pose PointCheckInGate;
-            public Pose PointOfGate;
-            public Pose PointFrontLineGate;
-            public PointDetect PointPickPalletIn;
-            public Pose PointCheckInBuffer;
-            public Pose PointFrontLineBuffer;
-            public PointDetectBranching PointDetectLineBranching;
-            public PointDetect PointDropPallet;
+            // public Pose PointCheckInGate;
+            // public Pose PointOfGate;
+            // public Pose PointFrontLineGate;
+            // public PointDetect PointPickPalletIn;
+            // public Pose PointCheckInBuffer;
+            // public Pose PointFrontLineBuffer;
+            // public PointDetectBranching PointDetectLineBranching;
+            // public PointDetect PointDropPallet;
         }
-        DataForkLiftToBuffer points;
+        // DataForkLiftToBuffer points;
         ForkLiftToBuffer StateForkLiftToBuffer;
         Thread ProForkLiftToBuffer;
         RobotUnity robot;
@@ -43,10 +43,10 @@ namespace SeldatMRMS
             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_IDLE;
             resCmd = ResponseCommand.RESPONSE_NONE;
             this.robot = robot;
-            this.points = new DataForkLiftToBuffer();
+            // this.points = new DataForkLiftToBuffer();
             this.door = doorservice.DoorMezzamineUpBack;
-            this.points.PointFrontLineGate = this.door.config.PointFrontLine;
-            this.points.PointPickPalletIn = this.door.config.PointOfPallet;
+            // this.points.PointFrontLineGate = this.door.config.PointFrontLine;
+            // this.points.PointPickPalletIn = this.door.config.PointOfPallet;
             this.Traffic = traffiicService;
 
         }
@@ -64,7 +64,7 @@ namespace SeldatMRMS
         {
             ProcedureForkLiftToBuffer FlToBuf = (ProcedureForkLiftToBuffer)ojb;
             RobotUnity rb = FlToBuf.robot;
-            DataForkLiftToBuffer p = FlToBuf.points;
+            // DataForkLiftToBuffer p = FlToBuf.points;
             DoorService ds = FlToBuf.door;
             TrafficManagementService Traffic = FlToBuf.Traffic;
             while (StateForkLiftToBuffer != ForkLiftToBuffer.FORBUF_ROBOT_RELEASED)
@@ -76,13 +76,13 @@ namespace SeldatMRMS
                     case ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
                         if (Traffic.RobotIsInArea("OPA4", rb.properties.pose.Position))
                         {
-                            rb.SendPoseStamped(p.PointCheckInGate);
-                            //StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE; 
-                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;
+                            rb.SendPoseStamped(ds.config.PointFrontLine);
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_CAME_CHECKIN_GATE;
                         }
                         else
                         {
-                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_CAME_CHECKIN_GATE;
+                            rb.SendPoseStamped(ds.config.PointCheckInGate);
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE:
@@ -93,9 +93,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_CAME_CHECKIN_GATE: // đã đến vị trí, kiem tra va cho khu vuc cong san sang de di vao.
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineBuffer.Position))
+                        if (false == Traffic.HasRobotUnityinArea(ds.config.PointFrontLine.Position))
                         {
-                            rb.SendPoseStamped(p.PointOfGate);
+                            rb.SendPoseStamped( ds.config.PointFrontLine);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_GATE;
                         }
                         break;
@@ -127,22 +127,11 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_OPEN_DOOR_SUCCESS: // mo cua thang cong ,gui toa do line de robot di vao gap hang
-                        rb.SendPoseStamped(p.PointFrontLineGate);
-                        StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_PALLET_IN;
-                        break;
-                    case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_PALLET_IN:
-                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
-                        {
-                            resCmd = ResponseCommand.RESPONSE_NONE;
-                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_CAME_FRONTLINE_PALLET_IN;
-                        }
-                        break;
-                    case ForkLiftToBuffer.FORBUF_ROBOT_CAME_FRONTLINE_PALLET_IN:
                         rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                         StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_PALLET_IN;
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_PALLET_IN:
-                        if (true == rb.CheckPointDetectLine(p.PointPickPalletIn, rb))
+                        if (true == rb.CheckPointDetectLine(ds.config.PointOfPallet, rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_PICKUP_PALLET_IN;
@@ -152,21 +141,13 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.F);
+                            // FlToBuf.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE;
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE:
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
-                        {
-                            resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendPoseStamped(p.PointOfGate);
-                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOOUT_GATE;
-                        }
-                        break;
-                    case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOOUT_GATE: // doi robot di ra khoi cong
-                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             if (ds.Close(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK))
@@ -182,7 +163,7 @@ namespace SeldatMRMS
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
                         if (true == ds.WaitClose(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK, TIME_OUT_CLOSE_DOOR))
                         {
-                            rb.SendPoseStamped(p.PointCheckInBuffer);
+                            rb.SendPoseStamped(FlToBuf.GetCheckInBuffer());
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         }
                         break;
@@ -194,9 +175,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_ZONE_BUFFER_READY: // doi khu vuc buffer san sang de di vao
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineBuffer.Position))
+                        if (false == Traffic.HasRobotUnityinArea(FlToBuf.GetFrontLineBuffer().Position))
                         {
-                            rb.SendPoseStamped(p.PointFrontLineBuffer);
+                            rb.SendPoseStamped(FlToBuf.GetFrontLineBuffer());
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER;
                         }
                         break;
@@ -209,13 +190,13 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
-                        if (true == rb.CheckPointDetectLine(p.PointDetectLineBranching.xy, rb))
+                        if (true == rb.CheckPointDetectLine(FlToBuf.GetPointDetectBranching().xy, rb))
                         {
-                            if (p.PointDetectLineBranching.brDir == BrDirection.DIR_LEFT)
+                            if (FlToBuf.GetPointDetectBranching().brDir == BrDirection.DIR_LEFT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
                             }
-                            else if (p.PointDetectLineBranching.brDir == BrDirection.DIR_RIGHT)
+                            else if (FlToBuf.GetPointDetectBranching().brDir == BrDirection.DIR_RIGHT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
                             }
@@ -231,7 +212,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_GOTO_DROPDOWN_PALLET_BUFFER:
-                        if (true == rb.CheckPointDetectLine(p.PointDropPallet, rb))
+                        if (true == rb.CheckPointDetectLine(FlToBuf.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_DROPDOWN_PALLET_BUFFER;
@@ -241,7 +222,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.W);
+                            FlToBuf.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }

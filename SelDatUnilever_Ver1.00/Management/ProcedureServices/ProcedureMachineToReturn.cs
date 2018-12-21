@@ -11,11 +11,11 @@ namespace SeldatMRMS
     {
         public struct DataMachineToReturn
         {
-            public Pose PointFrontLineMachine;
-            public PointDetect PointPickPallet;
-            public Pose PointCheckInReturn;
-            public Pose PointFrontLineReturn;
-            public PointDetect PointDropPallet;
+            // public Pose PointFrontLineMachine;
+            // public PointDetect PointPickPallet;
+            // public Pose PointCheckInReturn;
+            // public Pose PointFrontLineReturn;
+            // public PointDetect PointDropPallet;
         }
         DataMachineToReturn points;
         MachineToReturn StateMachineToReturn;
@@ -54,7 +54,7 @@ namespace SeldatMRMS
                     case MachineToReturn.MACRET_IDLE:
                         break;
                     case MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_MACHINE: // doi khu vuc buffer san sang de di vao
-                        rb.SendPoseStamped(p.PointFrontLineMachine);
+                        rb.SendPoseStamped(BfToRe.GetFrontLineMachine());
                         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE;
                         break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE:
@@ -66,7 +66,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE:
-                        if (true == rb.CheckPointDetectLine(p.PointPickPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE;
@@ -76,7 +76,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.F);
+                            BfToRe.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOBACK_FRONTLINE_MACHINE;
                         }
@@ -85,7 +85,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendPoseStamped(p.PointCheckInReturn);
+                            rb.SendPoseStamped(BfToRe.GetCheckInReturn());
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_GOTO_CHECKIN_RETURN;
                         }
                         break;
@@ -97,9 +97,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineReturn.Position))
+                        if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
                         {
-                            rb.SendPoseStamped(p.PointFrontLineReturn);
+                            rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
                         break;
@@ -115,7 +115,7 @@ namespace SeldatMRMS
                         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
                         break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
-                        if (true == rb.CheckPointDetectLine(p.PointDropPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_DROPDOWN_PALLET;
@@ -125,7 +125,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.W);
+                            BfToRe.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }

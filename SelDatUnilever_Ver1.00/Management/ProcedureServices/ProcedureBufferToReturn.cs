@@ -11,15 +11,15 @@ namespace SeldatMRMS
     {
         public struct DataForkBufferToReturn
         {
-            public Pose PointCheckInBuffer;
-            public Pose PointFrontLineBuffer;
-            public PointDetectBranching PointDetectLineBranching;
-            public PointDetect PointPickPallet;
-            public Pose PointCheckInReturn;
-            public Pose PointFrontLineReturn;
-            public PointDetect PointDropPallet;
+            // public Pose PointCheckInBuffer;
+            // public Pose PointFrontLineBuffer;
+            // public PointDetectBranching PointDetectLineBranching;
+            // public PointDetect PointPickPallet;
+            // public Pose PointCheckInReturn;
+            // public Pose PointFrontLineReturn;
+            // public PointDetect PointDropPallet;
         }
-        DataForkBufferToReturn points;
+        // DataForkBufferToReturn points;
         BufferToReturn StateBufferToReturn;
         Thread ProBuferToReturn;
         RobotUnity robot;
@@ -29,7 +29,7 @@ namespace SeldatMRMS
         {
             StateBufferToReturn = BufferToReturn.BUFRET_IDLE;
             this.robot = robot;
-            this.points = new DataForkBufferToReturn();
+            // this.points = new DataForkBufferToReturn();
             this.Traffic = traffiicService;
         }
 
@@ -47,7 +47,7 @@ namespace SeldatMRMS
         {
             ProcedureBufferToReturn BfToRe = (ProcedureBufferToReturn)ojb;
             RobotUnity rb = BfToRe.robot;
-            DataForkBufferToReturn p = BfToRe.points;
+            // DataForkBufferToReturn p = BfToRe.points;
             TrafficManagementService Traffic = BfToRe.Traffic;
             while (StateBufferToReturn != BufferToReturn.BUFRET_ROBOT_RELEASED)
             {
@@ -56,7 +56,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_IDLE:
                         break;
                     case BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_BUFFER: // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-                        rb.SendPoseStamped(p.PointCheckInBuffer);
+                        rb.SendPoseStamped(BfToRe.GetCheckInBuffer());
                         StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         break;
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
@@ -67,9 +67,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_ZONE_BUFFER_READY: // doi khu vuc buffer san sang de di vao
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineBuffer.Position))
+                        if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineBuffer().Position))
                         {
-                            rb.SendPoseStamped(p.PointFrontLineBuffer);
+                            rb.SendPoseStamped(BfToRe.GetFrontLineBuffer());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER;
                         }
                         break;
@@ -82,13 +82,13 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
-                        if (true == rb.CheckPointDetectLine(p.PointDetectLineBranching.xy, rb))
+                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointDetectBranching().xy, rb))
                         {
-                            if (p.PointDetectLineBranching.brDir == BrDirection.DIR_LEFT)
+                            if (BfToRe.GetPointDetectBranching().brDir == BrDirection.DIR_LEFT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
                             }
-                            else if (p.PointDetectLineBranching.brDir == BrDirection.DIR_RIGHT)
+                            else if (BfToRe.GetPointDetectBranching().brDir == BrDirection.DIR_RIGHT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
                             }
@@ -104,7 +104,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_GOTO_PICKUP_PALLET_BUFFER:
-                        if (true == rb.CheckPointDetectLine(p.PointPickPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
@@ -114,7 +114,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.F);
+                            BfToRe.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }
@@ -123,7 +123,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendPoseStamped(p.PointCheckInReturn);
+                            rb.SendPoseStamped(BfToRe.GetCheckInReturn());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_RETURN;
                         }
                         break;
@@ -135,9 +135,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineReturn.Position))
+                        if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
                         {
-                            rb.SendPoseStamped(p.PointFrontLineReturn);
+                            rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
                         break;
@@ -153,7 +153,7 @@ namespace SeldatMRMS
                         StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
                         break;
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
-                        if (true == rb.CheckPointDetectLine(p.PointDropPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_DROPDOWN_PALLET;
@@ -163,7 +163,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.W);
+                            BfToRe.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }

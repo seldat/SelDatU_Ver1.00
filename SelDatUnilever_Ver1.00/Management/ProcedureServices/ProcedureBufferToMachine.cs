@@ -11,17 +11,14 @@ namespace SeldatMRMS
     {
         public class DataBufferToMachine
         {
-            private ProcedureBufferToMachine prBM;
-            public DataBufferToMachine(ProcedureBufferToMachine prBM) { this.prBM = prBM; }
-            public Pose PointCheckInBuffer;
-            public Pose PointFrontLineBuffer;
-            public PointDetectBranching PointDetectLineBranching;
-            public PointDetect PointPickPallet;
-            public Pose PointCheckInMachine;
-            public Pose PointFrontLineMachine;
-            public PointDetect PointDropPallet;
+            // public Pose PointCheckInBuffer;
+            // public Pose PointFrontLineBuffer;
+            // public PointDetectBranching PointDetectLineBranching;
+            // public PointDetect PointPickPallet;
+            // public Pose PointFrontLineMachine;
+            // public PointDetect PointDropPallet;
         }
-        DataBufferToMachine points;
+        // DataBufferToMachine points;
         BufferToMachine StateBufferToMachine;
         Thread ProBuferToMachine;
         RobotUnity robot;
@@ -31,7 +28,7 @@ namespace SeldatMRMS
         {
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
             this.robot = robot;
-            this.points = new DataBufferToMachine(this);
+            // this.points = new DataBufferToMachine();
             this.Traffic = traffiicService;
         }
 
@@ -49,7 +46,7 @@ namespace SeldatMRMS
         {
             ProcedureBufferToMachine BfToMa = (ProcedureBufferToMachine)ojb;
             RobotUnity rb = BfToMa.robot;
-            DataBufferToMachine p = BfToMa.points;
+            // DataBufferToMachine p = BfToMa.points;
             TrafficManagementService Traffic = BfToMa.Traffic;
             while (StateBufferToMachine != BufferToMachine.BUFMAC_ROBOT_RELEASED)
             {
@@ -58,7 +55,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_IDLE:
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER: // bắt đầu rời khỏi vùng GATE đi đến check in/ đảm bảo check out vùng cổng để robot kế tiếp vào làm việc
-                        rb.SendPoseStamped(p.PointCheckInBuffer);
+                        rb.SendPoseStamped(BfToMa.GetCheckInBuffer());
                         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
@@ -69,9 +66,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_ZONE_BUFFER_READY: // doi khu vuc buffer san sang de di vao
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineBuffer.Position))
+                        if (false == Traffic.HasRobotUnityinArea(BfToMa.GetFrontLineBuffer().Position))
                         {
-                            rb.SendPoseStamped(p.PointFrontLineBuffer);
+                            rb.SendPoseStamped(BfToMa.GetFrontLineBuffer());
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER;
                         }
                         break;
@@ -84,13 +81,13 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
-                        if (true == rb.CheckPointDetectLine(p.PointDetectLineBranching.xy, rb))
+                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointDetectBranching().xy, rb))
                         {
-                            if (p.PointDetectLineBranching.brDir == BrDirection.DIR_LEFT)
+                            if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_LEFT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
                             }
-                            else if (p.PointDetectLineBranching.brDir == BrDirection.DIR_RIGHT)
+                            else if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_RIGHT)
                             {
                                 rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
                             }
@@ -106,7 +103,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER:
-                        if (true == rb.CheckPointDetectLine(p.PointPickPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
@@ -116,7 +113,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.F);
+                            BfToMa.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }
@@ -125,7 +122,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendPoseStamped(p.PointFrontLineMachine);
+                            rb.SendPoseStamped(BfToMa.GetFrontLineMachine());
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
                         break;
@@ -141,7 +138,7 @@ namespace SeldatMRMS
                         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
-                        if (true == rb.CheckPointDetectLine(p.PointDropPallet, rb))
+                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET;
@@ -151,7 +148,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.UpdatePalletState(PalletStatus.W);
+                            BfToMa.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }

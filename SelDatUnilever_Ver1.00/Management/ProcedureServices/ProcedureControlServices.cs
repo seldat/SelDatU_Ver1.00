@@ -29,12 +29,12 @@ namespace SeldatMRMS
             FORBUF_ROBOT_CAME_GATE_POSITION, // da den khu vuc cong , gui yeu cau mo cong.
             FORBUF_ROBOT_WAITTING_OPEN_DOOR,  //doi mo cong
             FORBUF_ROBOT_OPEN_DOOR_SUCCESS, // mo cua thang cong ,gui toa do line de robot di vao gap hang
-            FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
-            FORBUF_ROBOT_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
+            // FORBUF_ROBOT_WAITTING_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
+            // FORBUF_ROBOT_CAME_FRONTLINE_PALLET_IN, //robot da den dau line , chuyen mode do line
             FORBUF_ROBOT_WAITTING_GOTO_PALLET_IN, //cho robot den toa do pallet
             FORBUF_ROBOT_WAITTING_PICKUP_PALLET_IN, // doi robot gap hang
             FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE, //doi robot di tro lai dau line cong.
-            FORBUF_ROBOT_WAITTING_GOOUT_GATE, // doi robot di ra khoi cong
+            // FORBUF_ROBOT_WAITTING_GOOUT_GATE, // doi robot di ra khoi cong
             FORBUF_ROBOT_WAITTING_CLOSE_GATE, // doi dong cong.
             FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
             FORBUF_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
@@ -133,12 +133,9 @@ namespace SeldatMRMS
             RETGATE_ROBOT_CAME_GATE_POSITION, // da den khu vuc cong , gui yeu cau mo cong.
             RETGATE_ROBOT_WAITTING_OPEN_DOOR,  //doi mo cong
             RETGATE_ROBOT_OPEN_DOOR_SUCCESS, // mo cua thang cong ,gui toa do line de robot di vao gap hang
-            RETGATE_ROBOT_WAITTING_CAME_FRONTLINE_POSITION_PALLET_RETURN, //robot da den dau line , chuyen mode do line
-            RETGATE_ROBOT_CAME_FRONTLINE_POSITION_PALLET_RETURN, //robot da den dau line , chuyen mode do line
             RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN, //cho robot den toa do pallet
             RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN, // doi robot gap hang
             RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE, //doi robot di tro lai dau line cong.
-            RETGATE_ROBOT_WAITTING_GOOUT_GATE, // doi robot di ra khoi cong
             RETGATE_ROBOT_WAITTING_CLOSE_GATE, // doi dong cong.
         }
 

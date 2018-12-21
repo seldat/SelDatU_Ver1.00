@@ -188,6 +188,25 @@ namespace SelDatUnilever_Ver1
             }
             return tempPD;
         }
+
+        public Pose GetFrontLineMachine()
+        {
+            Pose poseTemp = null;
+
+            return poseTemp;
+        }
+
+        public Pose GetCheckInReturn()
+        {
+            Pose poseTemp = null;
+            return poseTemp;
+        }
+
+        public Pose GetFrontLineReturn()
+        {
+            Pose poseTemp = null;
+            return poseTemp;
+        }
         public void UpdatePalletState(PalletStatus palletStatus)
         {
             String url = "http://192.168.1.17:8081/robot/rest/plan/updatePalletStatus";

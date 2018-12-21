@@ -43,6 +43,7 @@ namespace DoorControllerService
            public String ip;
             public Int32 port;
             public DoorId id;   
+            public Pose PointCheckInGate;
             public Pose PointFrontLine;
             public PointDetect PointOfPallet;
         }

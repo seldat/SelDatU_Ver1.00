@@ -67,7 +67,7 @@ namespace SeldatMRMS
                         RegisterProcedureItemList.Add(itemprocrc);
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_READY:
-                        ProcedureRobotToReady procrr = new ProcedureRobotToReady(robot);
+                        ProcedureRobotToReady procrr = new ProcedureRobotToReady(robot,robot.properties.chargeID);
                         ProcedureDataItems procrrDataItems = new ProcedureDataItems();
                         procrrDataItems.StartTaskTime = DateTime.Now;
                         RegisterProcedureItem itemprocrr = new RegisterProcedureItem() { item = procrr, robot = robot, procedureDataItems = procrrDataItems };
