@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
 
 namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
@@ -48,6 +50,12 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
                 ptemp.id = (ChargerId)int.Parse(row.Field<String>("ID").ToString());
                 ptemp.ip = row.Field<String>("IP");
                 ptemp.port = int.Parse(row.Field<String>("Port"));
+                ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),
+                                                double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
+                                                double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
+                ptemp.PointOfPallet.p.X = double.Parse(row.Field<String>("PointOfPallet").Split(',')[0]);
+                ptemp.PointOfPallet.p.Y = double.Parse(row.Field<String>("PointOfPallet").Split(',')[1]);
+                ptemp.PointOfPallet.mvDir = (MvDirection)int.Parse(row.Field<String>("PointOfPallet").Split(',')[2]);
                 CfChargerStationList.Add(ptemp);
             }
             con.Close();

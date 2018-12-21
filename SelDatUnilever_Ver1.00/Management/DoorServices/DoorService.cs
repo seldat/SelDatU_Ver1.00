@@ -2,6 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 
 namespace DoorControllerService
 {
@@ -41,10 +43,14 @@ namespace DoorControllerService
            public String ip;
             public Int32 port;
             public DoorId id;   
+            public Pose PointFrontLine;
+            public PointDetect PointOfPallet;
         }
 
+        public DoorInfoConfig config;
         public DoorService(DoorInfoConfig cf):base(cf.ip,cf.port)
         {
+            this.config = cf;
             this.SetId(cf.id);
         }
          public bool GetId(ref DataReceive data)

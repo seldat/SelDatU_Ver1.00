@@ -1,8 +1,13 @@
 ﻿using SeldatMRMS.Management.RobotManagent;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using static DoorControllerService.DoorService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
@@ -46,9 +51,6 @@ namespace SeldatMRMS
                     break;
                 case ChargerId.CHARGER_ID_3:
                     chargerCtrl = charger.ChargerStation_3;
-                    break;
-                case ChargerId.CHARGER_ID_4:
-                    chargerCtrl = charger.ChargerStation_4;
                     break;
                 default: break;
             }
@@ -166,20 +168,49 @@ namespace SeldatMRMS
     {
         public struct DataRobotToReady
         {
-            public Pose PointFrontLineReadyStation;
-            public PointDetect PointPrepareStop;
+            public Pose PointFrontLine;
+            public PointDetect PointOfCharger;
         }
-
         DataRobotToReady points;
+        List<DataRobotToReady> DataRobotToReadyList;
         Thread ProRobotToReady;
         RobotUnity robot;
         ResponseCommand resCmd;
         RobotGoToReady StateRobotGoToReady;
-        public ProcedureRobotToReady(RobotUnity robot) : base(robot, null)
+        public ProcedureRobotToReady(RobotUnity robot,ChargerId id) : base(robot, null)
         {
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
             this.robot = robot;
-            this.points =new DataRobotToReady();
+            LoadChargerConfigure();
+            points = DataRobotToReadyList[(int)id];
+        }
+        public void LoadChargerConfigure()
+        {
+            string name = "Charger";
+            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Configure.xlsx");
+            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
+                            path +
+                            ";Extended Properties='Excel 12.0 XML;HDR=YES;';";
+            OleDbConnection con = new OleDbConnection(constr);
+            OleDbCommand oconn = new OleDbCommand("Select * From [" + name + "$]", con);
+            con.Open();
+
+            OleDbDataAdapter sda = new OleDbDataAdapter(oconn);
+            DataTable data = new DataTable();
+            sda.Fill(data);
+            DataRobotToReadyList  = new List<DataRobotToReady>();
+            foreach (DataRow row in data.Rows)
+            {
+                DataRobotToReady ptemp = new DataRobotToReady();
+                ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),
+                                                double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
+                                                double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
+                ptemp.PointOfCharger.p.X = double.Parse(row.Field<String>("PointOfCharger").Split(',')[0]);
+                ptemp.PointOfCharger.p.Y = double.Parse(row.Field<String>("PointOfCharger").Split(',')[1]);
+                ptemp.PointOfCharger.mvDir = (MvDirection)int.Parse(row.Field<String>("PointOfCharger").Split(',')[2]);
+                DataRobotToReadyList.Add(ptemp);
+            }
+            con.Close();
         }
         public void Start(RobotGoToReady state = RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION)
         {
@@ -204,7 +235,7 @@ namespace SeldatMRMS
                     case RobotGoToReady.ROBREA_IDLE:
                         break;
                     case RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION: // ROBOT cho tiến vào vị trí đầu line charge su dung laser
-                        rb.SendPoseStamped(p.PointFrontLineReadyStation);
+                        rb.SendPoseStamped(p.PointFrontLine);
                         StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_WAITTING_GOTO_READYSTATION;
                         break;
                     case RobotGoToReady.ROBREA_ROBOT_WAITTING_GOTO_READYSTATION: // Robot dang di toi dau line ready station
@@ -215,7 +246,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case RobotGoToReady.ROBREA_ROBOT_WAIITNG_DETECTLINE_TO_READYSTATION: // đang đợi dò line để đến vị trí line trong buffer
-                        if (true == rb.CheckPointDetectLine(p.PointPrepareStop, rb))
+                        if (true == rb.CheckPointDetectLine(p.PointOfCharger, rb))
                         {
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
                             StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_WAITTING_CAME_POSITION_READYSTATION;
