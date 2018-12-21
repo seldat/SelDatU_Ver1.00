@@ -15,22 +15,20 @@ namespace SeldatMRMS
             public Pose PointFrontLineBuffer;
             public PointDetectBranching PointDetectLineBranching;
             public PointDetect PointPickPallet;
-            public Pose PointCheckInMachine;
             public Pose PointFrontLineMachine;
             public PointDetect PointDropPallet;
-            public void updateCheckin(ProcedureBufferToMachine prBM)
+            public Pose updateCheckin(ProcedureBufferToMachine prBM)
             {
                 prBM.GetCheckIn();
                 PointCheckInBuffer = prBM.checkInBuffer[0];
                 PointFrontLineBuffer = prBM.checkInBuffer[1];
-
+                return prBM.checkInBuffer[0];
             }
             public void updatePalletMachine(ProcedureBufferToMachine prBM)
             {
                 var order = prBM.order;
                 PointFrontLineMachine = order.PalletAtMachine.linePos;
             }
-
         }
         DataBufferToMachine points;
         BufferToMachine StateBufferToMachine;
@@ -46,11 +44,10 @@ namespace SeldatMRMS
             this.Traffic = traffiicService;
         }
 
-        public void Start(String content, BufferToMachine state = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER)
+        public void Start(BufferToMachine state = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER)
         {
             StateBufferToMachine = state;
             ProBuferToMachine = new Thread(this.Procedure);
-            ProBuferToMachine.Name = content;
             ProBuferToMachine.Start(this);
         }
         public void Destroy()
@@ -76,6 +73,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_ZONE_BUFFER_READY;
                         }
                         break;
@@ -89,6 +87,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_FORWARD_DIRECTION);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
                         }
@@ -110,6 +109,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_CAME_POINT_BRANCHING:  //doi bobot re
                         if ((resCmd == ResponseCommand.RESPONSE_FINISH_TURN_LEFT) || (resCmd == ResponseCommand.RESPONSE_FINISH_TURN_RIGHT))
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER;
                         }
@@ -124,7 +124,8 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
-                            this.SaveDataToDb(points);
+                            resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }
@@ -132,19 +133,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER: // đợi
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
-                            rb.SendPoseStamped(p.PointCheckInMachine);
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE: // dang di
-                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
-                        {
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_CAME_CHECKIN_MACHINE;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_CAME_CHECKIN_MACHINE: // đã đến vị trí
-                        if (false == Traffic.HasRobotUnityinArea(p.PointFrontLineMachine.Position))
-                        {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendPoseStamped(p.PointFrontLineMachine);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
@@ -152,6 +141,7 @@ namespace SeldatMRMS
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
                         }
                         break;
@@ -170,6 +160,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }
@@ -189,15 +180,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
-            try
-            {
-                ProBuferToMachine.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
         public override void FinishStatesCallBack(Int32 message)
         {

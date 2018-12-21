@@ -50,7 +50,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
         }
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.ip, cf.port)
         {
-            // this.SetId(cf.id);
+            this.SetId(cf.id);
         }
         public bool GetId(ref DataReceive data)
         {

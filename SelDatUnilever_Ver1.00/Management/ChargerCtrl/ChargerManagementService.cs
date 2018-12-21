@@ -45,9 +45,9 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             foreach (DataRow row in data.Rows)
             {
                 ChargerInfoConfig ptemp = new ChargerInfoConfig();
-                ptemp.id = row.Field<ChargerId>("ID");
+                ptemp.id = (ChargerId)int.Parse(row.Field<String>("ID").ToString());
                 ptemp.ip = row.Field<String>("IP");
-                ptemp.port = row.Field<Int32>("Port");
+                ptemp.port = int.Parse(row.Field<String>("Port"));
                 CfChargerStationList.Add(ptemp);
             }
             con.Close();

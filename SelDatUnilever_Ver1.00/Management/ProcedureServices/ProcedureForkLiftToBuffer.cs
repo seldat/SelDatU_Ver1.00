@@ -17,7 +17,7 @@ namespace SeldatMRMS
 
     public class ProcedureForkLiftToBuffer : ProcedureControlServices
     {
-        public class DataForkLiftToBuffer
+        public struct DataForkLiftToBuffer
         {
             public Pose PointCheckInGate;
             public Pose PointOfGate;
@@ -46,12 +46,12 @@ namespace SeldatMRMS
             this.points = new DataForkLiftToBuffer();
             this.door = doorservice.DoorMezzamineUpBack;
             this.Traffic = traffiicService;
+            
         }
-        public void Start(String content, ForkLiftToBuffer state = ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE)
+        public void Start(ForkLiftToBuffer state = ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE)
         {
             StateForkLiftToBuffer = state;
             ProForkLiftToBuffer = new Thread(this.Procedure);
-            ProForkLiftToBuffer.Name = content;
             ProForkLiftToBuffer.Start(this);
         }
         public void Destroy()
@@ -72,8 +72,15 @@ namespace SeldatMRMS
                     case ForkLiftToBuffer.FORBUF_IDLE:
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
-                        rb.SendPoseStamped(p.PointCheckInGate);
-                        StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
+                        if (Traffic.RobotIsInArea("OPA4",rb.properties.pose.Position))
+                        {
+                            rb.SendPoseStamped(p.PointCheckInGate);
+                            //StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE; 
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;
+                        }
+                        else{
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_CAME_CHECKIN_GATE;
+                        }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
@@ -97,13 +104,21 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_CAME_GATE_POSITION: // da den khu vuc cong , gui yeu cau mo cong.
-                        ds.Open(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK);
-                        StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_OPEN_DOOR;
+                        if(ds.Open(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK)){
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_OPEN_DOOR;
+                        }
+                        else{
+
+                        }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_OPEN_DOOR:  //doi mo cong
                         if (true == ds.WaitOpen(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK, TIME_OUT_OPEN_DOOR))
                         {
                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_OPEN_DOOR_SUCCESS;
+                        }
+                        else
+                        {
+
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_OPEN_DOOR_SUCCESS: // mo cua thang cong ,gui toa do line de robot di vao gap hang
@@ -132,6 +147,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE;
                         }
@@ -148,8 +164,14 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            ds.Close(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK);
-                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE;
+                            if (ds.Close(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK))
+                            {
+                                StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE;
+                            }
+                            else
+                            {
+
+                            }
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
@@ -214,7 +236,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.SaveDataToDb(points);
+                            this.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }
@@ -234,15 +256,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_IDLE;
-            try
-            {
-                ProForkLiftToBuffer.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
 
         public override void FinishStatesCallBack(Int32 message)

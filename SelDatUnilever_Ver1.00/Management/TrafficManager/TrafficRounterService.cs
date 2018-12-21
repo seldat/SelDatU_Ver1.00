@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,8 +35,10 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
         public void LoadConfigureZone()
         {
             string name = "Area";
+            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(),"Configure.xlsx");
+            MessageBox.Show(path);
             string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
-                            "C:\\Users\\luat.tran\\source\\repos\\Unilever\\SelDatUnilever_Ver1.00\\SelDatUnilever_Ver1.00\\Management\\TrafficManager\\Configure.xlsx" +
+                            path +
                             ";Extended Properties='Excel 12.0 XML;HDR=YES;';";
             OleDbConnection con = new OleDbConnection(constr);
             OleDbCommand oconn = new OleDbCommand("Select * From [" + name + "$]", con);
@@ -49,7 +52,7 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
             {
                 ZoneRegister zone = new ZoneRegister();
                 zone.NameID = row.Field<string>("Name");
-                zone.Index =int.Parse(row.Field<string>("Index"));
+                zone.Index = int.Parse(row.Field<string>("Index"));
                 x = double.Parse(row.Field<string>("Point1").Split(',')[0]);
                 y = double.Parse(row.Field<string>("Point1").Split(',')[1]);
                 zone.Point1 = new Point(x, y);
@@ -70,9 +73,9 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
         public int FindIndexZoneRegister(Point p)
         {
             int index = -1;
-            foreach(ZoneRegister z in ZoneRegisterList.Values)
+            foreach (ZoneRegister z in ZoneRegisterList.Values)
             {
-                if(ExtensionService.IsInPolygon(z.GetZone(),p))
+                if (ExtensionService.IsInPolygon(z.GetZone(), p))
                 {
                     index = z.Index;
                     break;
@@ -82,8 +85,8 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
         }
         public int FindAmoutOfRobotUnityinArea(String areaName)
         {
-            int amout=0;
-            foreach(RobotUnity r in RobotUnityListOnTraffic)
+            int amout = 0;
+            foreach (RobotUnity r in RobotUnityListOnTraffic)
             {
 
                 if (ExtensionService.IsInPolygon(ZoneRegisterList["areaName"].GetZone(), r.properties.pose.Position))
@@ -96,7 +99,6 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
         public String DetermineRobotUnityinArea(Point position)
         {
             String zoneName = "";
-            bool hasRobot = false;
             foreach (var r in ZoneRegisterList.Values) // xác định khu vực đến
             {
 
@@ -132,7 +134,7 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
             return hasRobot;
         }
         public bool HasRobotUnityinArea(String AreaName)
-        { 
+        {
             bool hasRobot = false;
             foreach (RobotUnity r in RobotUnityListOnTraffic) // xác định robot có trong khu vực
             {
@@ -145,5 +147,21 @@ namespace SelDatUnilever_Ver1._00.Management.TrafficManager
             return hasRobot;
         }
 
+        public bool RobotIsInArea(String AreaName, Point position)
+        {
+            bool ret = false;
+            foreach (var r in ZoneRegisterList.Values) // xác định khu vực đến
+            {
+                if (r.NameID.Equals(AreaName))
+                {
+                    if (ExtensionService.IsInPolygon(r.GetZone(), position))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            return ret;
+        }
     }
 }

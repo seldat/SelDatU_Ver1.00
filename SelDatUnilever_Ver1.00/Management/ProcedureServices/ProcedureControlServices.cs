@@ -59,8 +59,8 @@ namespace SeldatMRMS
             BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER, // doi robot do line den pallet  va tha pallet
             BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER, // doi robot di den dau line buffer.
 
-            BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE, //cho
-            BUFMAC_ROBOT_CAME_CHECKIN_MACHINE, // đã đến vị trí
+            // BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE, //cho
+            // BUFMAC_ROBOT_CAME_CHECKIN_MACHINE, // đã đến vị trí
 
             BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,  // cho phép dò line vàthả pallet
             BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET, // đang trong tiến trình dò line và thả pallet
@@ -99,9 +99,7 @@ namespace SeldatMRMS
         public enum MachineToReturn
         {
             MACRET_IDLE,
-            MACRET_ROBOT_GOTO_CHECKIN_BUFFER,
-            MACRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER, // doi robot di den khu vuc checkin cua vung buffer
-            MACRET_ROBOT_WAITTING_ZONE_BUFFER_READY, // doi khu vuc buffer san sang de di vao
+            MACRET_ROBOT_GOTO_FRONTLINE_MACHINE,
             MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE, // den dau line buffer, chuyen mode do line
             MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE,
             MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE, // doi robot do line den pallet  va tha pallet

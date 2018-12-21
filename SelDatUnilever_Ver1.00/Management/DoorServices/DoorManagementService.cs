@@ -42,9 +42,9 @@ namespace SeldatMRMS.Management.DoorServices
             foreach (DataRow row in data.Rows)
             {
                 DoorInfoConfig ptemp = new DoorInfoConfig();
-                ptemp.id = row.Field<DoorId>("ID");
+                ptemp.id = (DoorId)int.Parse(row.Field<String>("ID").ToString());
                 ptemp.ip = row.Field<String>("IP");
-                ptemp.port = row.Field<Int32>("Port");
+                ptemp.port = int.Parse(row.Field<String>("Port"));
                 DoorInfoConfigList.Add(ptemp);
             }
             con.Close();

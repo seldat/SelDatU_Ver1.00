@@ -33,11 +33,10 @@ namespace SeldatMRMS
             this.Traffic = traffiicService;
         }
 
-        public void Start(String content, BufferToReturn state = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_BUFFER)
+        public void Start(BufferToReturn state = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_BUFFER)
         {
             StateBufferToReturn = state;
             ProBuferToReturn = new Thread(this.Procedure);
-            ProBuferToReturn.Name = content;
             ProBuferToReturn.Start(this);
         }
         public void Destroy()
@@ -63,6 +62,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_ZONE_BUFFER_READY;
                         }
                         break;
@@ -76,6 +76,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_CAME_FRONTLINE_BUFFER:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_FORWARD_DIRECTION);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
                         }
@@ -97,6 +98,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_CAME_POINT_BRANCHING:  //doi bobot re
                         if ((resCmd == ResponseCommand.RESPONSE_FINISH_TURN_LEFT) || (resCmd == ResponseCommand.RESPONSE_FINISH_TURN_RIGHT))
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_PICKUP_PALLET_BUFFER;
                         }
@@ -109,9 +111,10 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_PICKUP_PALLET_BUFFER:
-                        if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                        if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
-                            // this.SaveDataToDb(points);
+                            resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
                         }
@@ -119,6 +122,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER: // đợi
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendPoseStamped(p.PointCheckInReturn);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_RETURN;
                         }
@@ -126,6 +130,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_RETURN: // dang di
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_CAME_CHECKIN_RETURN;
                         }
                         break;
@@ -139,6 +144,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
+                            resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
                         }
                         break;
@@ -157,6 +163,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }
@@ -176,15 +183,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateBufferToReturn = BufferToReturn.BUFRET_IDLE;
-            try
-            {
-                ProBuferToReturn.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
         public override void FinishStatesCallBack(Int32 message)
         {
