@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SeldatMRMS.Management;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
 using SelDatUnilever_Ver1._00.Management.ProcedureServices;
 using System;
@@ -8,20 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.DeviceManagement.DeviceItem;
 
 namespace SelDatUnilever_Ver1
 {
 
-    public class DataPallet
-    {
-        public DataPallet() { }
-        public bool hasMainLine { get; set; }
-        public Pose linePos;
-        public double ThresholdDetectsMaker_MainLine;
-        public double ThresholdDetectsMaker_SubLine;
-        public double rot = 1; // 1 : CCW / -1: CW
-    }
+ 
     public class CollectionDataService
     {
         public enum PalletStatus
@@ -37,7 +31,6 @@ namespace SelDatUnilever_Ver1
         //public String activeDate;
        // public int timeWorkID;
         public List<Pose> checkInBuffer=new List<Pose>();
-        public DataPallet dataPalletItem;
         protected BridgeClientRequest clientRequest;
         public CollectionDataService() {
             clientRequest = new BridgeClientRequest();
@@ -86,11 +79,13 @@ namespace SelDatUnilever_Ver1
                 }
             }
         }
-        public void GetDataPallet()
+        public PointDetectBranching GetPointDetectBranching()
         {
+            PointDetectBranching tempPDB = null;
             JArray results = JArray.Parse(order.dataRequest);
             foreach (var result in results)
             {
+                
                 int temp_productDetailID = (int)result["productDetailId"];
                 if (temp_productDetailID == order.productDetailID)
                 {
@@ -99,14 +94,53 @@ namespace SelDatUnilever_Ver1
                     order.palletId = (int)palletResults[0]["palletId"];
                     order.updUsrId = (int)palletResults[0]["updUsrId"];
                     var dataPalletItemResults = palletResults[0]["dataPallet"];
-                    bool dataPalletItem_hasMainLine = (bool)dataPalletItemResults["hasMainLine"];
-                    double dataPalletItem_rot = (double)dataPalletItemResults["rot"];
-                    double dataPalletItem_mainThreshold = (double)dataPalletItemResults["mainThreshold"];
-                    double dataPalletItem_subThreshold = (double)dataPalletItemResults["subThreshold"];
-                    dataPalletItem = new DataPallet() { hasMainLine = dataPalletItem_hasMainLine,rot=dataPalletItem_rot,ThresholdDetectsMaker_MainLine=dataPalletItem_mainThreshold,ThresholdDetectsMaker_SubLine=dataPalletItem_subThreshold };
+                    bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
+                    if (dataPalletItem_hasBranch)
+                    {
+                        var pDBResults = dataPalletItemResults["pointDBr"];
+                        double pX = (double)pDBResults["point"]["X"];
+                        double pY = (double)pDBResults["point"]["Y"];
+                        int pDBmvDir = (int)pDBResults["point"]["mvDir"];
+                        int pDBbrvDir = (int)pDBResults["point"]["brvDir"];
+                        PointDetect pointDet = new PointDetect() { p = new Point(pX, pY),mvDir=(TrafficRobotUnity.MvDirection)pDBmvDir };
+                        tempPDB = new PointDetectBranching() { xy = pointDet,brDir=(TrafficRobotUnity.BrDirection)pDBbrvDir };
+                    }
+                    
+                    /* var ppalets = dataPalletItemResults["pallet"];
+                     double ppX = (double)ppalets["point"]["X"];
+                     double ppY = (double)ppalets["point"]["Y"];
+                     int ppDBmvDir = (int)ppalets["point"]["mvDir"];
+                     */
                     break;
                 }
             }
+            return tempPDB;
+        }
+
+        public PointDetect GetPointPallet()
+        {
+            PointDetect tempPD = null;
+            JArray results = JArray.Parse(order.dataRequest);
+            foreach (var result in results)
+            {
+
+                int temp_productDetailID = (int)result["productDetailId"];
+                if (temp_productDetailID == order.productDetailID)
+                {
+                    var bufferResults = result["buffers"];
+                    var palletResults = bufferResults[0]["pallets"];
+                    order.palletId = (int)palletResults[0]["palletId"];
+                    order.updUsrId = (int)palletResults[0]["updUsrId"];
+                    var dataPalletItemResults = palletResults[0]["dataPallet"];
+                    var ppalets = dataPalletItemResults["pallet"];
+                    double pX = (double)ppalets["point"]["X"];
+                    double pY = (double)ppalets["point"]["Y"];
+                    int pDBmvDir = (int)ppalets["point"]["mvDir"];
+                    tempPD = new PointDetect() { p = new Point(pX, pY), mvDir = (TrafficRobotUnity.MvDirection)pDBmvDir };
+                    break;
+                }
+            }
+            return tempPD;
         }
         public void UpdatePalletState(PalletStatus palletStatus)
         {
