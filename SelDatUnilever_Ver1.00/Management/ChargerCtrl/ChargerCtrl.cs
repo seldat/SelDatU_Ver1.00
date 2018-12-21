@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Threading;
 using SelDatUnilever_Ver1._00.Management.ComSocket;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 
 namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
 {
@@ -12,7 +14,6 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             CHARGER_ID_1 = 1,
             CHARGER_ID_2,
             CHARGER_ID_3,
-            CHARGER_ID_4
         }
 
         public enum ChargerState
@@ -47,6 +48,8 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             public String ip;
             public Int32 port;
             public ChargerId id;
+            public Pose PointFrontLine;
+            public PointDetect PointOfPallet;
         }
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.ip, cf.port)
         {

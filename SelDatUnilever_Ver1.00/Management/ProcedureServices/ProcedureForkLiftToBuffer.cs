@@ -38,15 +38,17 @@ namespace SeldatMRMS
         const UInt32 TIME_OUT_OPEN_DOOR = 600000;/* ms */
         const UInt32 TIME_OUT_CLOSE_DOOR = 600000;/* ms */
 
-        public ProcedureForkLiftToBuffer(RobotUnity robot, DoorManagementService doorservice,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineUpBack)
+        public ProcedureForkLiftToBuffer(RobotUnity robot, DoorManagementService doorservice, TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineUpBack)
         {
             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_IDLE;
             resCmd = ResponseCommand.RESPONSE_NONE;
             this.robot = robot;
             this.points = new DataForkLiftToBuffer();
             this.door = doorservice.DoorMezzamineUpBack;
+            this.points.PointFrontLineGate = this.door.config.PointFrontLine;
+            this.points.PointPickPalletIn = this.door.config.PointOfPallet;
             this.Traffic = traffiicService;
-            
+
         }
         public void Start(ForkLiftToBuffer state = ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE)
         {
@@ -72,13 +74,14 @@ namespace SeldatMRMS
                     case ForkLiftToBuffer.FORBUF_IDLE:
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
-                        if (Traffic.RobotIsInArea("OPA4",rb.properties.pose.Position))
+                        if (Traffic.RobotIsInArea("OPA4", rb.properties.pose.Position))
                         {
                             rb.SendPoseStamped(p.PointCheckInGate);
                             //StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_GATE; 
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;
                         }
-                        else{
+                        else
+                        {
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_CAME_CHECKIN_GATE;
                         }
                         break;
@@ -104,17 +107,19 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_CAME_GATE_POSITION: // da den khu vuc cong , gui yeu cau mo cong.
-                        if(ds.Open(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK)){
+                        if (ds.Open(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK))
+                        {
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_OPEN_DOOR;
                         }
-                        else{
+                        else
+                        {
 
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_OPEN_DOOR:  //doi mo cong
                         if (true == ds.WaitOpen(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK, TIME_OUT_OPEN_DOOR))
                         {
-                           StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_OPEN_DOOR_SUCCESS;
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_OPEN_DOOR_SUCCESS;
                         }
                         else
                         {
@@ -175,10 +180,10 @@ namespace SeldatMRMS
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
-                        if (true == ds.WaitClose(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK,TIME_OUT_CLOSE_DOOR))
+                        if (true == ds.WaitClose(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK, TIME_OUT_CLOSE_DOOR))
                         {
-                           rb.SendPoseStamped(p.PointCheckInBuffer);
-                           StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
+                            rb.SendPoseStamped(p.PointCheckInBuffer);
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER;
                         }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_GOTO_CHECKIN_BUFFER: // doi robot di den khu vuc checkin cua vung buffer
