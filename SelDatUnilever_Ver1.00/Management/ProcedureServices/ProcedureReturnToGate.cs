@@ -42,11 +42,10 @@ namespace SeldatMRMS
             this.door = doorservice;
             this.Traffic = traffiicService;
         }
-        public void Start(String content, ReturnToGate state = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_RETURN)
+        public void Start(ReturnToGate state = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_RETURN)
         {
             StateReturnToGate = state;
             ProReturnToGate = new Thread(this.Procedure);
-            ProReturnToGate.Name = content;
             ProReturnToGate.Start(this);
         }
         public void Destroy()
@@ -99,7 +98,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            this.SaveDataToDb(points);
+                            this.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_RETURN;
                         }
@@ -172,6 +171,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
+                            this.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE;
                         }
@@ -188,8 +188,14 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            ds.Close(DoorService.DoorId.DOOR_MEZZAMINE_RETURN_BACK);
-                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_CLOSE_GATE;
+                            if (ds.Close(DoorService.DoorId.DOOR_MEZZAMINE_RETURN_BACK))
+                            {
+                                StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_CLOSE_GATE;
+                            }
+                            else
+                            {
+
+                            }
                         }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
@@ -207,15 +213,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateReturnToGate = ReturnToGate.RETGATE_IDLE;
-            try
-            {
-                ProReturnToGate.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
 
         public override void FinishStatesCallBack(Int32 message)

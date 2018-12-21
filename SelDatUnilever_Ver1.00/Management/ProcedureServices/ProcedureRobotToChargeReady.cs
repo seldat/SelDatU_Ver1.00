@@ -139,15 +139,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateRobotToCharge = RobotGoToCharge.ROBCHAR_IDLE;
-            try
-            {
-                ProRobotToCharger.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
 
         private bool CheckReconnectServer(UInt32 timeOut)
@@ -190,11 +181,10 @@ namespace SeldatMRMS
             this.robot = robot;
             this.points =new DataRobotToReady();
         }
-        public void Start(String content, RobotGoToReady state = RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION)
+        public void Start(RobotGoToReady state = RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION)
         {
             StateRobotGoToReady = state;
             ProRobotToReady = new Thread(this.Procedure);
-            ProRobotToReady.Name = content;
             ProRobotToReady.Start(this);
         }
         public void Destroy()
@@ -243,15 +233,6 @@ namespace SeldatMRMS
                 Thread.Sleep(5);
             }
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
-            try
-            {
-                ProRobotToReady.Abort();
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("faillllllllllllllllllllll");
-                throw;
-            }
         }
 
         public override void FinishStatesCallBack(Int32 message)

@@ -15,5 +15,6 @@
         <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="78,124,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>
         <RadioButton Name="selRobot3" Content="Robot3" HorizontalAlignment="Left" Margin="78,144,0,0" VerticalAlignment="Top" Checked="selRobot3_Checked"/>
         <RadioButton Content="Robot4" HorizontalAlignment="Left" Margin="78,164,0,0" VerticalAlignment="Top"/>
+        <Button Content="CamePoint" HorizontalAlignment="Left" Margin="394,31,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click"/>
     </Grid>
 </Window>

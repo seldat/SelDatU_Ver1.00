@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using SeldatMRMS;
+using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
+using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
+using static SeldatMRMS.ProcedureForkLiftToBuffer;
+using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
+using static SelDatUnilever_Ver1._00.Management.ComSocket.RouterComPort;
 
 namespace SelDatUnilever_Ver1._00
 {
@@ -27,15 +33,54 @@ namespace SelDatUnilever_Ver1._00
     /// </summary>
     public partial class MainWindow : Window
     {
-
         Dictionary<String, RobotUnity> robotlist = new Dictionary<string, RobotUnity>();
         List<RobotUnity> robottrafficlist = new List<RobotUnity>();
         String namerobot = "robot1";
         DeviceRegistrationService deviceRegistrationService;
+
+        /* Chau test */
+        RobotUnity robot;
+        DoorManagementService door;
+        ChargerManagementService charger;
+        /*End*/
+
         public MainWindow()
         {
-     
             InitializeComponent();
+            /*Chau test*/
+            //ChargerInfoConfig cf;
+            //cf.id = ChargerId.CHARGER_ID_1;
+            //cf.ip = "127.0.0.1";
+            //cf.port = 10001;
+            //ChargerCtrl chargerCtrl = new ChargerCtrl(cf);
+            //DataReceive id = new DataReceive();
+            //chargerCtrl.GetId(ref id);
+            //Console.WriteLine("id :{0}", id.data);
+
+            //chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
+
+            //chargerCtrl.StartCharge();
+
+            //DataReceive state = new DataReceive();
+            //chargerCtrl.GetState(ref state);
+
+            //DataReceive batLevel = new DataReceive();
+            //chargerCtrl.GetBatteryLevel(ref batLevel);
+
+            //chargerCtrl.StopCharge();
+
+            robot = new RobotUnity();
+            robot.Start("ws://192.168.109.128:9090");
+            robot.properties.pose = new Pose(new System.Windows.Point(30, 8), 0);
+            door = new DoorManagementService();
+            // ProcedureBufferToMachine pr = new ProcedureBufferToMachine(robot);
+
+            TrafficManagementService traffiicService = new TrafficManagementService();
+            traffiicService.LoadConfigureZone();
+            ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
+            pr.RegistrationTranfficService(traffiicService);
+            pr.Start();
+            /*end*/
          /*   RobotUnity robot1 = new RobotUnity(canvas);
             robot1.properties.NameID = "robot1";
             RobotUnity robot2 = new RobotUnity(canvas);
@@ -202,5 +247,11 @@ namespace SelDatUnilever_Ver1._00
         {
             namerobot = "robot3";
         }
+        /*Chau test*/
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            robot.FinishedStatesPublish(2000);
+        }
+        /*End*/
     }
 }

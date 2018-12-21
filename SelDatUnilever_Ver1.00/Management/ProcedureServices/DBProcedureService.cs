@@ -10,10 +10,10 @@ namespace SeldatMRMS
 {
     public class DBProcedureService:CollectionDataService
     {
-        public void SaveDataToDb(object ojb){
-            /* Hien thuc giup em */
-            Console.WriteLine("Save data to database\r\n");
-        }
+        // public void SaveDataToDb(object ojb){
+        //     /* Hien thuc giup em */
+        //     Console.WriteLine("Save data to database\r\n");
+        // }
         public DBProcedureService() { }
         public struct RobotSensor
         {
