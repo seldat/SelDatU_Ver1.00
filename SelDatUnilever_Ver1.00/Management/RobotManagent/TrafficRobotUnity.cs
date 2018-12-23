@@ -45,6 +45,10 @@ namespace SeldatMRMS.Management
             public MvDirection mvDir;
         }
 
+        public class PointFrontLine{
+            public Pose p;
+            public bool hasBranch;
+        }
         public class PointDetectBranching{
             public PointDetect xy;
             public BrDirection brDir;
