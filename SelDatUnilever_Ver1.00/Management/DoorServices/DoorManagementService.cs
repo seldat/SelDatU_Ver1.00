@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
+using System.Windows;
 using static DoorControllerService.DoorService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
@@ -44,7 +45,7 @@ namespace SeldatMRMS.Management.DoorServices
             foreach (DataRow row in data.Rows)
             {
                 DoorInfoConfig ptemp = new DoorInfoConfig();
-                ptemp.id = (DoorId)int.Parse(row.Field<String>("ID").ToString());
+                ptemp.id = (DoorId)double.Parse(row.Field<String>("ID").ToString());
                 ptemp.ip = row.Field<String>("IP");
                 ptemp.port = int.Parse(row.Field<String>("Port"));
                 ptemp.PointCheckInGate = new Pose(double.Parse(row.Field<String>("PointCheckInGate").Split(',')[0]),
@@ -53,9 +54,7 @@ namespace SeldatMRMS.Management.DoorServices
                 ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
-                ptemp.PointOfPallet.p.X = double.Parse(row.Field<String>("PointOfPallet").Split(',')[0]);
-                ptemp.PointOfPallet.p.Y = double.Parse(row.Field<String>("PointOfPallet").Split(',')[1]);
-                ptemp.PointOfPallet.mvDir = (MvDirection)int.Parse(row.Field<String>("PointOfPallet").Split(',')[2]);
+                ptemp.infoPallet = row.Field<String>("InfoPallet").ToString();
  
                 DoorInfoConfigList.Add(ptemp);
             }

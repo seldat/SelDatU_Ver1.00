@@ -32,7 +32,9 @@ namespace SeldatMRMS
         const UInt32 TIME_OUT_OPEN_DOOR = 600000;/* ms */
         const UInt32 TIME_OUT_CLOSE_DOOR = 600000;/* ms */
 
-        public ProcedureReturnToGate(RobotUnity robot, DoorManagementService doorservice,TrafficManagementService traffiicService) : base(robot, doorservice.DoorMezzamineReturnBack)
+        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+
+        public ProcedureReturnToGate(RobotUnity robot, DoorManagementService doorservice,TrafficManagementService traffiicService) : base(robot)
         {
             StateReturnToGate = ReturnToGate.RETGATE_IDLE;
             resCmd = ResponseCommand.RESPONSE_NONE;
@@ -53,11 +55,11 @@ namespace SeldatMRMS
         }
         public void Procedure(object ojb)
         {
-            ProcedureReturnToGate FlToBuf = (ProcedureReturnToGate)ojb;
-            RobotUnity rb = FlToBuf.robot;
-            // DataReturnToGate p = FlToBuf.points;
-            DoorService ds = FlToBuf.door.DoorMezzamineReturnBack;
-            TrafficManagementService Traffic = FlToBuf.Traffic;
+            ProcedureReturnToGate ReToGate = (ProcedureReturnToGate)ojb;
+            RobotUnity rb = ReToGate.robot;
+            // DataReturnToGate p = ReToGate.points;
+            DoorService ds = ReToGate.door.DoorMezzamineReturnBack;
+            TrafficManagementService Traffic = ReToGate.Traffic;
             while (StateReturnToGate != ReturnToGate.RETGATE_ROBOT_RELEASED)
             {
                 switch (StateReturnToGate)
@@ -72,9 +74,9 @@ namespace SeldatMRMS
                         }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_ZONE_RETURN_READY: // doi khu vuc buffer san sang de di vao
-                        if (false == Traffic.HasRobotUnityinArea(FlToBuf.GetFrontLineReturn().Position))
+                        if (false == Traffic.HasRobotUnityinArea(ReToGate.GetFrontLineReturn().Position))
                         {
-                            rb.SendPoseStamped(FlToBuf.GetFrontLineReturn());
+                            rb.SendPoseStamped(ReToGate.GetFrontLineReturn());
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_CAME_FRONTLINE_RETURN;
                         }
                         break;
@@ -82,37 +84,42 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
-                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_GOTO_PICKUP_PALLET_RETURN;
-                        }
-                        break;
-                    case ReturnToGate.RETGATE_ROBOT_GOTO_PICKUP_PALLET_RETURN:
-                        if (true == rb.CheckPointDetectLine(FlToBuf.GetPointPallet(), rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            rb.SendCmdAreaPallet(ReToGate.GetInfoOfPalletReturn());
+                            // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN;
                         }
                         break;
+                    // case ReturnToGate.RETGATE_ROBOT_GOTO_PICKUP_PALLET_RETURN:
+                    //     if (true == rb.CheckPointDetectLine(ReToGate.GetPointPallet(), rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN;
+                    //     }
+                    //     break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            FlToBuf.UpdatePalletState(PalletStatus.F);
+                            ReToGate.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_RETURN;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;    
                         }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_RETURN: // đợi
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_GOTO_CHECKIN_GATE;
+                            rb.SendPoseStamped(ds.config.PointCheckInGate);
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
                         }
                         break;
-                    case ReturnToGate.RETGATE_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
-                        rb.SendPoseStamped(ds.config.PointCheckInGate);
-                        StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
-                        break;
+                    // case ReturnToGate.RETGATE_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
+                    //     rb.SendPoseStamped(ds.config.PointCheckInGate);
+                    //     StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
+                    //     break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
@@ -141,27 +148,31 @@ namespace SeldatMRMS
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_OPEN_DOOR:  //doi mo cong
                         if (true == ds.WaitOpen(DoorService.DoorId.DOOR_MEZZAMINE_RETURN_BACK,TIME_OUT_OPEN_DOOR))
                         {
-                           StateReturnToGate = ReturnToGate.RETGATE_ROBOT_OPEN_DOOR_SUCCESS;
+                            rb.SendCmdAreaPallet(ds.config.infoPallet);
+                           StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN;
                         }
                         break;
-                    case ReturnToGate.RETGATE_ROBOT_OPEN_DOOR_SUCCESS: // mo cua thang cong ,gui toa do line de robot di vao
-                        rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
-                        StateReturnToGate = ReturnToGate.RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN;
-                        break;
-                    case ReturnToGate.RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN:
-                        if (true == rb.CheckPointDetectLine(ds.config.PointOfPallet, rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
-                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN;
-                        }
-                        break;
+                    // case ReturnToGate.RETGATE_ROBOT_OPEN_DOOR_SUCCESS: // mo cua thang cong ,gui toa do line de robot di vao
+                    //     rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
+                    //     StateReturnToGate = ReturnToGate.RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN;
+                    //     break;
+                    // case ReturnToGate.RETGATE_ROBOT_GOTO_POSITION_PALLET_RETURN:
+                    //     if (true == rb.CheckPointDetectLine(ds.config.PointOfPallet, rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN;
+                    //     }
+                    //     break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_DROPDOWN_PALLET_RETURN: // doi robot gap hang
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            // FlToBuf.UpdatePalletState(PalletStatus.W);
+                            // ReToGate.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;    
                         }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_GOBACK_FRONTLINE_GATE:
@@ -186,7 +197,7 @@ namespace SeldatMRMS
                         break;
                     
                     case ReturnToGate.RETGATE_ROBOT_RELEASED: // trả robot về robotmanagement để nhận quy trình mới
-
+                        ReleaseProcedureHandler(this);
                         break;
                     default: break;
                 }

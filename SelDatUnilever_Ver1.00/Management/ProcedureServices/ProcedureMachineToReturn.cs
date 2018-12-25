@@ -23,7 +23,8 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public ProcedureMachineToReturn(RobotUnity robot,TrafficManagementService traffiicService) : base(robot, null)
+        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+        public ProcedureMachineToReturn(RobotUnity robot,TrafficManagementService traffiicService) : base(robot)
         {
             StateMachineToReturn = MachineToReturn.MACRET_IDLE;
             this.robot = robot;
@@ -61,17 +62,18 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
+                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletMachine());
+                            // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE;
                         }
                         break;
-                    case MachineToReturn.MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE:
-                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
-                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE;
-                        }
-                        break;
+                    // case MachineToReturn.MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE:
+                    //     if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE;
+                    //     }
+                    //     break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
@@ -79,6 +81,9 @@ namespace SeldatMRMS
                             BfToRe.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOBACK_FRONTLINE_MACHINE;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_GOBACK_FRONTLINE_MACHINE: // đợi
@@ -93,34 +98,35 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_CAME_CHECKIN_RETURN;
-                        }
-                        break;
-                    case MachineToReturn.MACRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
-                        if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
-                        {
-                            rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
-                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
-                        }
-                        break;
-                    case MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
-                        if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
-                        {
-                            resCmd = ResponseCommand.RESPONSE_NONE;
-                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
-                        }
-                        break;
-                    case MachineToReturn.MACRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET:  // đang trong tiến trình dò line và thả pallet
-                        rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
-                        StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
-                        break;
-                    case MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
-                        if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn());
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_DROPDOWN_PALLET;
                         }
                         break;
+                    // case MachineToReturn.MACRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
+                    //     if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
+                    //     {
+                    //         rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
+                    //         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
+                    //     }
+                    //     break;
+                    // case MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
+                    //     if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
+                    //     {
+                    //         resCmd = ResponseCommand.RESPONSE_NONE;
+                    //         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
+                    //     }
+                    //     break;
+                    // case MachineToReturn.MACRET_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET:  // đang trong tiến trình dò line và thả pallet
+                    //     rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
+                    //     StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
+                    //     break;
+                    // case MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
+                    //     if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_DROPDOWN_PALLET;
+                    //     }
+                    //     break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
@@ -128,6 +134,9 @@ namespace SeldatMRMS
                             BfToRe.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_FRONTLINE;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_FRONTLINE:
@@ -138,6 +147,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
+                        ReleaseProcedureHandler(this);
                         break;
                     default:
                         break;

@@ -59,13 +59,13 @@ namespace SeldatMRMS
         }
         protected virtual void ReleaseProcedureItemHandler(ProcedureControlServices item)
         {
-            Task.Run(() =>
+           /* Task.Run(() =>
             {
                 var element = RegisterProcedureItemList.Find(e => e.item == item);
                 element.procedureDataItems.EndTime = DateTime.Now;
                 element.procedureDataItems.StatusProcedureDelivered = "OK";
                 RegisterProcedureItemList.Remove(element);
-            });
+            });*/
         }
         protected virtual void ErrorApprearInProcedureItem(ProcedureControlServices item)
         {

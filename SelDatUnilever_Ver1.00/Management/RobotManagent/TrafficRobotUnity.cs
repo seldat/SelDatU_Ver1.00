@@ -29,29 +29,37 @@ namespace SeldatMRMS.Management
             HEADER_TOUCH_SIDE,
             HEADER_TOUCH_NOTOUCH
         }
-        public enum MvDirection{
-            INCREASE_X = 0,
-			INCREASE_Y,
-			DECREASE_X,
-			DECREASE_Y
-		}
-        public enum BrDirection{
-            FORWARD = 0,
-            DIR_LEFT,
-            DIR_RIGHT
-		}
-        public class PointDetect{
-            public Point p;
-            public MvDirection mvDir;
-        }
+        // public enum MvDirection{
+        //     INCREASE_X = 0,
+		// 	INCREASE_Y,
+		// 	DECREASE_X,
+		// 	DECREASE_Y
+		// // }
+        // public enum BrDirection{
+        //     FORWARD = 0,
+        //     DIR_LEFT,
+        //     DIR_RIGHT
+		// }
+        // public class PointDetect {
+        //     public Point p;
+        //     public MvDirection mvDir;
+        //     public PointDetect(Point p, MvDirection mv)
+        //     {
+        //         this.p = p;
+        //         mvDir = mv;
+        //     }
+        // }
 
-        public class PointFrontLine{
-            public Pose p;
-            public bool hasBranch;
-        }
-        public class PointDetectBranching{
-            public PointDetect xy;
-            public BrDirection brDir;
+        // public class PointDetectBranching{
+        //     public PointDetect xy;
+        //     public BrDirection brDir;
+        // }
+        public class JInfoPallet{
+            public String pallet;
+            public Int32 bay;
+            public String hasSubLine;
+            public String direction;
+            public Int32 row;
         }
         private List<RobotUnity> RobotUnitylist;
         private Dictionary<String,RobotUnity> RobotUnityRiskList=new Dictionary<string, RobotUnity>();
@@ -183,47 +191,47 @@ namespace SeldatMRMS.Management
 		// 	return true;
         // }
 
-        public Boolean CheckPointDetectLine(PointDetect p, RobotUnity rb)
-		{
-            Boolean ret = false;
-            switch (p.mvDir)
-            {
-                case MvDirection.INCREASE_X:
-                    if(rb.properties.pose.Position.X > p.p.X){
-                        ret = true;
-                    }
-                    else{
-                        ret = false;
-                    }
-                    break;
-                case MvDirection.INCREASE_Y:
-                    if(rb.properties.pose.Position.Y > p.p.Y){
-                        ret = true;
-                    }
-                    else{
-                        ret = false;
-                    }
-                    break;
-                case MvDirection.DECREASE_X:
-                    if(rb.properties.pose.Position.X < p.p.X){
-                        ret = true;
-                    }
-                    else{
-                        ret = false;
-                    }
-                    break;
-                case MvDirection.DECREASE_Y:
-                    if(rb.properties.pose.Position.Y < p.p.Y){
-                        ret = true;
-                    }
-                    else{
-                        ret = false;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return ret;
-        }
+        // public Boolean CheckPointDetectLine(PointDetect p, RobotUnity rb)
+		// {
+        //     Boolean ret = false;
+        //     switch (p.mvDir)
+        //     {
+        //         case MvDirection.INCREASE_X:
+        //             if(rb.properties.pose.Position.X > p.p.X){
+        //                 ret = true;
+        //             }
+        //             else{
+        //                 ret = false;
+        //             }
+        //             break;
+        //         case MvDirection.INCREASE_Y:
+        //             if(rb.properties.pose.Position.Y > p.p.Y){
+        //                 ret = true;
+        //             }
+        //             else{
+        //                 ret = false;
+        //             }
+        //             break;
+        //         case MvDirection.DECREASE_X:
+        //             if(rb.properties.pose.Position.X < p.p.X){
+        //                 ret = true;
+        //             }
+        //             else{
+        //                 ret = false;
+        //             }
+        //             break;
+        //         case MvDirection.DECREASE_Y:
+        //             if(rb.properties.pose.Position.Y < p.p.Y){
+        //                 ret = true;
+        //             }
+        //             else{
+        //                 ret = false;
+        //             }
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        //     return ret;
+        // }
     }
 }

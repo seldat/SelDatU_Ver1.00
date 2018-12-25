@@ -74,7 +74,7 @@ namespace SeldatMRMS.Management.RobotManagent
             {
                 if(!r.SelectedATask)
                 {
-                    r.SelectedATask = false;
+                    r.SelectedATask = true;
                     robot = r;
                     break;
                 }

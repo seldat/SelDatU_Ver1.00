@@ -24,7 +24,8 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public ProcedureBufferToMachine(RobotUnity robot,TrafficManagementService traffiicService) : base(robot, null)
+        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+        public ProcedureBufferToMachine(RobotUnity robot,TrafficManagementService traffiicService) : base(robot)
         {
             StateBufferToMachine = BufferToMachine.BUFMAC_IDLE;
             this.robot = robot;
@@ -76,39 +77,39 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_FORWARD_DIRECTION);
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
-                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointDetectBranching().xy, rb))
-                        {
-                            if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_LEFT)
-                            {
-                                rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
-                            }
-                            else if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_RIGHT)
-                            {
-                                rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
-                            }
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_CAME_POINT_BRANCHING:  //doi bobot re
-                        if ((resCmd == ResponseCommand.RESPONSE_FINISH_TURN_LEFT) || (resCmd == ResponseCommand.RESPONSE_FINISH_TURN_RIGHT))
-                        {
-                            resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER:
-                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            rb.SendCmdAreaPallet(BfToMa.GetInfoOfPalletBuffer());
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
                         }
                         break;
+                    // case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING:
+                    //     if (true == rb.CheckPointDetectLine(BfToMa.GetPointDetectBranching().xy, rb))
+                    //     {
+                    //         if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_LEFT)
+                    //         {
+                    //             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_LEFT);
+                    //         }
+                    //         else if (BfToMa.GetPointDetectBranching().brDir == BrDirection.DIR_RIGHT)
+                    //         {
+                    //             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_TURN_RIGHT);
+                    //         }
+                    //         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_BRANCHING;
+                    //     }
+                    //     break;
+                    // case BufferToMachine.BUFMAC_ROBOT_CAME_POINT_BRANCHING:  //doi bobot re
+                    //     if ((resCmd == ResponseCommand.RESPONSE_FINISH_TURN_LEFT) || (resCmd == ResponseCommand.RESPONSE_FINISH_TURN_RIGHT))
+                    //     {
+                    //         resCmd = ResponseCommand.RESPONSE_NONE;
+                    //         rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
+                    //         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER;
+                    //     }
+                    //     break;
+                    // case BufferToMachine.BUFMAC_ROBOT_GOTO_PICKUP_PALLET_BUFFER:
+                    //     if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
+                    //     }
+                    //     break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_PICKUP_PALLET_BUFFER:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETUP)
                         {
@@ -116,6 +117,9 @@ namespace SeldatMRMS
                             BfToMa.UpdatePalletState(PalletStatus.F);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;    
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOBACK_FRONTLINE_BUFFER: // đợi
@@ -130,20 +134,21 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET;
-                        }
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET:  // đang trong tiến trình dò line và thả pallet
-                        rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
-                        StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
-                        break;
-                    case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
-                        if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
-                        {
-                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                            rb.SendCmdAreaPallet(BfToMa.GetInfoOfPalletMachine());
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET;
                         }
                         break;
+                    // case BufferToMachine.BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET:  // đang trong tiến trình dò line và thả pallet
+                    //     rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETDOWN);
+                    //     StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET;
+                    //     break;
+                    // case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET:
+                    //     if (true == rb.CheckPointDetectLine(BfToMa.GetPointPallet(), rb))
+                    //     {
+                    //         rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_LINEDETECT_COMING_POSITION);
+                    //         StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET;
+                    //     }
+                    //     break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
                         {
@@ -151,6 +156,9 @@ namespace SeldatMRMS
                             BfToMa.UpdatePalletState(PalletStatus.W);
                             rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;    
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_WAITTING_GOTO_FRONTLINE:
@@ -161,6 +169,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
+                        ReleaseProcedureHandler(this);
                         break;
                     default:
                         break;

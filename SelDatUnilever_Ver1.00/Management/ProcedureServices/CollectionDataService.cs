@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SeldatMRMS.Management;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
 using SelDatUnilever_Ver1._00.Management.ProcedureServices;
@@ -72,7 +73,7 @@ namespace SelDatUnilever_Ver1
                     double x = (double)bCIn["X"];
                     double y = (double)bCIn["Y"];
                     double angle = (double)bCIn["A"];
-                     poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                    poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
                     break;
                 }
             }
@@ -122,72 +123,72 @@ namespace SelDatUnilever_Ver1
                 }
             }
         }*/
-        public PointDetectBranching GetPointDetectBranching()
-        {
-            PointDetectBranching tempPDB = null;
-            JArray results = JArray.Parse(order.dataRequest);
-            foreach (var result in results)
-            {
+        // public PointDetectBranching GetPointDetectBranching()
+        // {
+        //     PointDetectBranching tempPDB = null;
+        //     JArray results = JArray.Parse(order.dataRequest);
+        //     foreach (var result in results)
+        //     {
                 
-                int temp_productDetailID = (int)result["productDetailId"];
-                if (temp_productDetailID == order.productDetailID)
-                {
-                    var bufferResults = result["buffers"];
-                    var palletResults = bufferResults[0]["pallets"];
-                    order.palletId = (int)palletResults[0]["palletId"];
-                    order.updUsrId = (int)palletResults[0]["updUsrId"];
-                    var dataPalletItemResults = palletResults[0]["dataPallet"];
-                    bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
-                    if (dataPalletItem_hasBranch)
-                    {
-                        var pDBResults = dataPalletItemResults["pointDBr"];
-                        MessageBox.Show(pDBResults.ToString());
-                        var pDBRPs = pDBResults["point"];
-                        double pX = (double)pDBRPs["X"];
-                        double pY = (double)pDBRPs["Y"];
-                        int pDBmvDir = (int)pDBResults["mvDir"];
-                        int pDBbrvDir = (int)pDBResults["brDir"];
-                        PointDetect pointDet = new PointDetect() { p = new Point(pX, pY),mvDir=(TrafficRobotUnity.MvDirection)pDBmvDir };
-                        tempPDB = new PointDetectBranching() { xy = pointDet,brDir=(TrafficRobotUnity.BrDirection)pDBbrvDir };
-                    }
+        //         int temp_productDetailID = (int)result["productDetailId"];
+        //         if (temp_productDetailID == order.productDetailID)
+        //         {
+        //             var bufferResults = result["buffers"];
+        //             var palletResults = bufferResults[0]["pallets"];
+        //             order.palletId = (int)palletResults[0]["palletId"];
+        //             order.updUsrId = (int)palletResults[0]["updUsrId"];
+        //             var dataPalletItemResults = palletResults[0]["dataPallet"];
+        //             bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
+        //             if (dataPalletItem_hasBranch)
+        //             {
+        //                 var pDBResults = dataPalletItemResults["pointDBr"];
+        //                 MessageBox.Show(pDBResults.ToString());
+        //                 var pDBRPs = pDBResults["point"];
+        //                 double pX = (double)pDBRPs["X"];
+        //                 double pY = (double)pDBRPs["Y"];
+        //                 int pDBmvDir = (int)pDBResults["mvDir"];
+        //                 int pDBbrvDir = (int)pDBResults["brDir"];
+        //                 PointDetect pointDet = new PointDetect(new Point(pX, pY),(TrafficRobotUnity.MvDirection)pDBmvDir);
+        //                 tempPDB = new PointDetectBranching() { xy = pointDet,brDir=(TrafficRobotUnity.BrDirection)pDBbrvDir };
+        //             }
                     
-                    /* var ppalets = dataPalletItemResults["pallet"];
-                     double ppX = (double)ppalets["point"]["X"];
-                     double ppY = (double)ppalets["point"]["Y"];
-                     int ppDBmvDir = (int)ppalets["point"]["mvDir"];
-                     */
-                    break;
-                }
-            }
-            return tempPDB;
-        }
+        //             /* var ppalets = dataPalletItemResults["pallet"];
+        //              double ppX = (double)ppalets["point"]["X"];
+        //              double ppY = (double)ppalets["point"]["Y"];
+        //              int ppDBmvDir = (int)ppalets["point"]["mvDir"];
+        //              */
+        //             break;
+        //         }
+        //     }
+        //     return tempPDB;
+        // }
 
-        public PointDetect GetPointPallet()
-        {
-            PointDetect tempPD = null;
-            JArray results = JArray.Parse(order.dataRequest);
-            foreach (var result in results)
-            {
+        // public PointDetect GetPointPallet()
+        // {
+        //     PointDetect tempPD = null;
+        //     JArray results = JArray.Parse(order.dataRequest);
+        //     foreach (var result in results)
+        //     {
 
-                int temp_productDetailID = (int)result["productDetailId"];
-                if (temp_productDetailID == order.productDetailID)
-                {
-                    var bufferResults = result["buffers"];
-                    var palletResults = bufferResults[0]["pallets"];
-                    order.palletId = (int)palletResults[0]["palletId"];
-                    order.updUsrId = (int)palletResults[0]["updUsrId"];
-                    var dataPalletItemResults = palletResults[0]["dataPallet"];
-                    var ppalets = dataPalletItemResults["pallet"];
-                    var pppoints = ppalets["point"];
-                    double pX = (double)pppoints["X"];
-                    double pY = (double)pppoints["Y"];
-                    int pDBmvDir = (int)ppalets["mvDir"];
-                    tempPD = new PointDetect() { p = new Point(pX, pY), mvDir = (TrafficRobotUnity.MvDirection)pDBmvDir };
-                    break;
-                }
-            }
-            return tempPD;
-        }
+        //         int temp_productDetailID = (int)result["productDetailId"];
+        //         if (temp_productDetailID == order.productDetailID)
+        //         {
+        //             var bufferResults = result["buffers"];
+        //             var palletResults = bufferResults[0]["pallets"];
+        //             order.palletId = (int)palletResults[0]["palletId"];
+        //             order.updUsrId = (int)palletResults[0]["updUsrId"];
+        //             var dataPalletItemResults = palletResults[0]["dataPallet"];
+        //             var ppalets = dataPalletItemResults["pallet"];
+        //             var pppoints = ppalets["point"];
+        //             double pX = (double)pppoints["X"];
+        //             double pY = (double)pppoints["Y"];
+        //             int pDBmvDir = (int)ppalets["mvDir"];
+        //             tempPD = new PointDetect(new Point(pX, pY), (TrafficRobotUnity.MvDirection)pDBmvDir);
+        //             break;
+        //         }
+        //     }
+        //     return tempPD;
+        // }
 
         public Pose GetFrontLineMachine()
         {
@@ -207,6 +208,48 @@ namespace SelDatUnilever_Ver1
             Pose poseTemp = null;
             return poseTemp;
         }
+
+        /*
+         */
+        public String GetInfoOfPalletBuffer()
+        {
+            JInfoPallet infoPallet = new JInfoPallet();
+
+            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.bay = 1;
+            infoPallet.hasSubLine = "yes"; /* no */
+            infoPallet.direction = "left"; /* right */
+            infoPallet.row = 2;
+
+            return JsonConvert.SerializeObject(infoPallet);
+        }
+
+        public String GetInfoOfPalletMachine()
+        {
+            JInfoPallet infoPallet = new JInfoPallet();
+
+            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.bay = 1;
+            infoPallet.hasSubLine = "yes"; /* no */
+            infoPallet.direction = "left"; /* right */
+            infoPallet.row = 2;
+
+            return JsonConvert.SerializeObject(infoPallet);
+        }
+
+        public String GetInfoOfPalletReturn()
+        {
+            JInfoPallet infoPallet = new JInfoPallet();
+
+            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.bay = 1;
+            infoPallet.hasSubLine = "yes"; /* no */
+            infoPallet.direction = "left"; /* right */
+            infoPallet.row = 2;
+
+            return JsonConvert.SerializeObject(infoPallet);
+        }
+
         public void UpdatePalletState(PalletStatus palletStatus)
         {
             String url = "http://192.168.1.17:8081/robot/rest/plan/updatePalletStatus";
