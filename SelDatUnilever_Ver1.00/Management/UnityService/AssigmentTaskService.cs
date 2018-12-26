@@ -15,9 +15,9 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
        
         private RobotUnity robotTemp;
         public AssigmentTaskService() { }
-        public void FinishTask(String deviceId)
+        public void FinishTask(String userName)
         {
-            var item = deviceItemsList.Find(e => e.deviceID == deviceId);
+            var item = deviceItemsList.Find(e => e.userName == userName);
             item.RemoveFirstOrder();
         }
         public async Task Process()

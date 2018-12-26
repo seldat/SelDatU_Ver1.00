@@ -65,7 +65,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public DataPallet palletAtMachine;
             public String userName;
         }
-        public string deviceID { get; set; } // dia chi Emei
+        public string userName { get; set; } // dia chi Emei
         public string codeID { get; set; }
         public List<OrderItem> oneOrderList { get; set; }
         public int orderedAmount = 0;
@@ -177,6 +177,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.activeDate = (string)results["activeDate"];
                     order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst = (string)results["datapallet"][i];
+
                     JObject stuffPallet = JObject.Parse(jsonDPst);
                     double xx = (double)stuffPallet["line"]["X"];
                     double yy = (double)stuffPallet["line"]["Y"];

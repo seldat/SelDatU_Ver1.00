@@ -55,11 +55,10 @@ namespace SeldatMRMS
                 default: break;
             }
         }
-        public void Start(String content, RobotGoToCharge state = RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS)
+        public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS)
         {
             StateRobotToCharge = state;
             ProRobotToCharger = new Thread(this.Procedure);
-            ProRobotToCharger.Name = content;
             ProRobotToCharger.Start(this);
         }
         public void Destroy()

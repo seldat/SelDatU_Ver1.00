@@ -19,34 +19,35 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
        {
             deviceItemList = new List<DeviceItem>();
         }
-       public void RemoveDeviceItem(String deviceID)
+       public void RemoveDeviceItem(String userName)
        {
             if (deviceItemList.Count > 0)
             {
-                deviceItemList.RemoveAt(deviceItemList.FindIndex(e => e.deviceID == deviceID));
+                deviceItemList.RemoveAt(deviceItemList.FindIndex(e => e.userName == userName));
             }
        }
-        public int HasDeviceItemAt(String deviceID)
+        public int HasDeviceItemAt(String userName)
         {
-            return deviceItemList.FindIndex(e=>e.deviceID.Equals(deviceID));
+            return deviceItemList.FindIndex(e=>e.userName.Equals(userName));
             //
         }
-        public DeviceItem FindDeviceItem(String deviceID)
+        public DeviceItem FindDeviceItem(String userName)
         {
-            return deviceItemList.Find(e => e.deviceID == deviceID);
+            return deviceItemList.Find(e => e.userName == userName);
         }
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
             String data = inputData.ReadToEnd();
             JObject results = JObject.Parse(data);
-             String deviceID = (String)results["userName"];
-             if (HasDeviceItemAt(deviceID) >= 0)
+             String userName = (String)results["userName"];
+             if (HasDeviceItemAt(userName) >= 0)
              {
-                 FindDeviceItem(deviceID).ParseData(data);
+                 FindDeviceItem(userName).ParseData(data);
              }
              else
              {
                  DeviceItem deviceItem = new DeviceItem();
+                 deviceItem.userName = userName;
                  deviceItem.ParseData(data);
                  deviceItemList.Add(deviceItem);
              }

@@ -33,6 +33,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocfb = new RegisterProcedureItem() { item = procfb, robot = robot, procedureDataItems = profbDataItems };
                         procfb.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocfb);
+                        procfb.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_MACHINE:
                         ProcedureBufferToMachine procbm = new ProcedureBufferToMachine(robot, trafficService);
@@ -41,6 +42,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbm = new RegisterProcedureItem() { item = procbm, robot = robot, procedureDataItems = prcobmDataItems };
                         procbm.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbm);
+                        procbm.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_RETURN: 
                         ProcedureBufferToReturn procbr = new ProcedureBufferToReturn(robot, trafficService);
@@ -49,6 +51,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbr = new RegisterProcedureItem() { item = procbr, robot = robot, procedureDataItems = prcobrDataItems };
                         procbr.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbr);
+                        procbr.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_MACHINE_TO_RETURN:
                         ProcedureMachineToReturn procmr = new ProcedureMachineToReturn(robot, trafficService);
@@ -57,6 +60,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocmr = new RegisterProcedureItem() { item = procmr, robot = robot, procedureDataItems = prcomrDataItems };
                         procmr.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocmr);
+                        procmr.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE:
                         ProcedureRobotToCharger procrc = new ProcedureRobotToCharger(robot, chargerService,robot.properties.chargeID);
@@ -65,6 +69,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocrc = new RegisterProcedureItem() { item = procrc, robot = robot, procedureDataItems = procrcDataItems};
                         procrc.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocrc);
+                        procrc.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_READY:
                         ProcedureRobotToReady procrr = new ProcedureRobotToReady(robot,robot.properties.chargeID);
@@ -73,6 +78,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocrr = new RegisterProcedureItem() { item = procrr, robot = robot, procedureDataItems = procrrDataItems };
                         procrr.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocrr);
+                        procrr.Start();
                     break;
 
             }
