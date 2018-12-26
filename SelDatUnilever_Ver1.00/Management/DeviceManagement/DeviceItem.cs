@@ -6,12 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
+using static SeldatMRMS.Management.TrafficRobotUnity;
 
 namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 {
     public class DeviceItem
     {
-      
+        public enum PalletCtrl
+        {
+            Pallet_CTRL_DOWN =0,
+            Pallet_CTRL_UP = 1
+
+        }
+        public class DataPallet
+        {
+            public int row;
+            public int bay;
+            public int direct;
+            public PalletCtrl palletCtrl;
+            public Pose linePos;
+        }
         public enum TyeRequest
         {
             TYPEREQUEST_FORLIFT_TO_BUFFER=1,
@@ -35,8 +49,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         public class OrderItem
         {
             public OrderItem() { }
-            public String OrderID;
-            public int planID { get; set; }
+            public String OrderId;
+            public int planId { get; set; }
             public int productID { get; set; }
             public int productDetailID { get; set; }
             public TyeRequest typeReq; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
@@ -45,9 +59,10 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public String palletStatus;
             public int palletId;
             public int updUsrId;
+            public int lengthPallet;
             public String dataRequest;
             public bool status = false; // chua hoan thanh
-     
+            public DataPallet palletAtMachine;
             public String userName;
         }
         public string deviceID { get; set; } // dia chi Emei
@@ -103,7 +118,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
         }
         public void ParseData(String dataReq)
         {
-            MessageBox.Show(dataReq);
+
             JObject results = JObject.Parse(dataReq);
             int typeReq= (int)results["typeReq"];
             if (typeReq==(int)TyeRequest. TYPEREQUEST_FORLIFT_TO_BUFFER)
@@ -114,29 +129,67 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.productDetailID = (int)results["productDetailId"];
                 order.productID = (int)results["productId"];
                 order.timeWorkID = (int)results["timeWorkId"];
+                order.activeDate = (string)results["activeDate"];
                 order.palletStatus = (String)results["palletStatus"];
                 order.dataRequest = dataReq;
                 oneOrderList.Add(order);
             }
             else if (typeReq == (int)TyeRequest.TYPEREQUEST_BUFFER_TO_MACHINE)
             {
-                OrderItem order = new OrderItem();
-                order.typeReq = (TyeRequest)typeReq;
-                order.userName= (String)results["userName"];
-                order.productDetailID = (int)results["productDetailId"];
-                order.productID = (int)results["productId"];
-                order.timeWorkID = (int)results["timeWorkId"];
-                order.palletStatus = (String)results["palletStatus"];
-                var linePos = results["position"];
-                double lposX= (double)linePos["X"];
-                double lposY = (double)linePos["Y"];
-                double angle = (double)linePos["Angle"]; // chu y radian 
-                double threshold = (double)linePos["threshold"]; // nguong pallet
-               // order.PalletAtMachine = new DataPallet() {linePos=new Pose(lposX,lposY,angle), ThresholdDetectsMaker_SubLine=threshold };
-                order.dataRequest = dataReq;
-                oneOrderList.Add(order);
+                int len = (int)results["length"];
+
+                for (int i = 0; i < len; i++)
+                {
+                    OrderItem order = new OrderItem();
+                    order.typeReq = (TyeRequest)typeReq;
+                    order.userName = (String)results["userName"];
+                    order.productDetailID = (int)results["productDetailId"];
+                    order.productID = (int)results["productId"];
+                    order.planId=(int)results["planId"];
+                    order.timeWorkID = (int)results["timeWorkId"];
+                    order.activeDate = (string)results["activeDate"];
+                    order.palletStatus = (String)results["palletStatus"];
+                    String jsonDPst=(string)results["datapallet"][i];
+                    JObject stuffPallet =JObject.Parse(jsonDPst);
+                    double xx = (double)stuffPallet["line"]["X"];
+                    double yy = (double)stuffPallet["line"]["Y"];
+                    double angle = (double)stuffPallet["line"]["Angle"];
+                    int row = (int)stuffPallet["pallet"]["row"];
+                    int bay = (int)stuffPallet["pallet"]["bay"];
+                    int direct = (int)stuffPallet["pallet"]["direct"];
+                    order.palletAtMachine = new DataPallet() {linePos=new Pose(xx,yy,angle), row=row, bay=bay,direct=direct};
+                    order.dataRequest = dataReq;
+                    oneOrderList.Add(order);
+                }
             }
             else if (typeReq == (int)TyeRequest.TYPEREQUEST_MACHINE_TO_RETURN)
+            {
+                int len = (int)results["length"];
+
+                for (int i = 0; i < len; i++)
+                {
+                    OrderItem order = new OrderItem();
+                    order.typeReq = (TyeRequest)typeReq;
+                    order.userName = (String)results["userName"];
+                    order.productDetailID = (int)results["productDetailId"];
+                    order.productID = (int)results["productId"];
+                    order.timeWorkID = (int)results["timeWorkId"];
+                    order.activeDate = (string)results["activeDate"];
+                    order.palletStatus = (String)results["palletStatus"];
+                    String jsonDPst = (string)results["datapallet"][i];
+                    JObject stuffPallet = JObject.Parse(jsonDPst);
+                    double xx = (double)stuffPallet["line"]["X"];
+                    double yy = (double)stuffPallet["line"]["Y"];
+                    double angle = (double)stuffPallet["line"]["Angle"];
+                    int row = (int)stuffPallet["pallet"]["row"];
+                    int bay = (int)stuffPallet["pallet"]["bay"];
+                    int direct = (int)stuffPallet["pallet"]["direct"];
+                    order.palletAtMachine = new DataPallet() { linePos = new Pose(xx, yy, angle), row = row, bay = bay, direct = direct };
+                    order.dataRequest = dataReq;
+                    oneOrderList.Add(order);
+                }
+            }
+            else if (typeReq == (int)TyeRequest.TYPEREQUEST_BUFFER_TO_RETURN)
             {
                 OrderItem order = new OrderItem();
                 order.typeReq = (TyeRequest)typeReq;
@@ -144,6 +197,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.productDetailID = (int)results["productDetailId"];
                 order.productID = (int)results["productId"];
                 order.timeWorkID = (int)results["timeWorkId"];
+                order.activeDate = (string)results["activeDate"];
                 order.palletStatus = (String)results["palletStatus"];
                 order.dataRequest = dataReq;
                 oneOrderList.Add(order);
@@ -152,3 +206,29 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 
     }
 }
+/*
+ * {
+  "deviceId": "1",
+  "productId": "4",
+  "productDetailId": "16",
+  "typeReq": "2",
+  "userName": "tab1",
+  "planId": 1,
+  "activeDate": "2018-12-25",
+  "length":3,
+  "datapallet": [
+    {
+      "line":{"X":1,"X":1,Angle:""},
+      "pallet": {"row":1,"bay":2,"direct":1}
+    },
+    {
+      "line":{"X":1,"X":1,Angle:""},
+      "pallet": {"row":1,"bay":2,"direct":1}
+    },
+    {
+      "line":{"X":1,"X":1,Angle:""},
+      "pallet": {"row":1,"bay":2,"direct":1}
+    }
+  ]
+}
+ */

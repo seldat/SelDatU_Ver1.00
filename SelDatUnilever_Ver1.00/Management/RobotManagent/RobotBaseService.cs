@@ -9,6 +9,7 @@ namespace SeldatMRMS.Management.RobotManagent
     public class RobotBaseService:TrafficRobotUnity
     {
         public bool SelectedATask { get; set; }
+       
         public struct LoadedConfigureInformation
         {
             public bool IsLoadedStatus { get; set; }

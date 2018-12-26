@@ -161,7 +161,54 @@ namespace SelDatUnilever_Ver1
             }
             return tempPDB;
         }
+        public String GetDataPallet()
+        {
+            String data = null;
+            JArray results = JArray.Parse(order.dataRequest);
+            foreach (var result in results)
+            {
 
+                int temp_productDetailID = (int)result["productDetailId"];
+                if (temp_productDetailID == order.productDetailID)
+                {
+                    var bufferResults = result["buffers"];
+                    var palletResults = bufferResults[0]["pallets"];
+                    order.palletId = (int)palletResults[0]["palletId"];
+                    order.updUsrId = (int)palletResults[0]["updUsrId"];
+                    var dataPalletItemResults = palletResults[0]["dataPallet"];
+                    bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
+                    dynamic product = new JObject();
+                    if (dataPalletItem_hasBranch)
+                    {
+                        int direct = (int)dataPalletItemResults["direct"];
+                        int row = (int)dataPalletItemResults["row"];
+                        int bay = (int)dataPalletItemResults["bay"];
+                        product.direct = direct;
+                        product.row = row;
+                        product.bay = bay;
+                        data = product.ToString();
+                    }
+                    else
+                    {
+                        int direct = (int)dataPalletItemResults["direct"];
+                        int row = (int)dataPalletItemResults["row"];
+                        int bay = (int)dataPalletItemResults["bay"];
+                        product.direct = direct;
+                        product.row = row;
+                        product.bay = bay;
+                        data = product.ToString();
+                    }
+
+                    /* var ppalets = dataPalletItemResults["pallet"];
+                     double ppX = (double)ppalets["point"]["X"];
+                     double ppY = (double)ppalets["point"]["Y"];
+                     int ppDBmvDir = (int)ppalets["point"]["mvDir"];
+                     */
+                    break;
+                }
+            }
+            return data ;
+        }
         public PointDetect GetPointPallet()
         {
             PointDetect tempPD = null;
@@ -191,9 +238,7 @@ namespace SelDatUnilever_Ver1
 
         public Pose GetFrontLineMachine()
         {
-            Pose poseTemp = null;
-
-            return poseTemp;
+            return order.palletAtMachine.linePos;
         }
 
         public Pose GetCheckInReturn()

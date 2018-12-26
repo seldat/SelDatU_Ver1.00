@@ -39,7 +39,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                             }
                             Task.Delay(10).Wait();
                             break;
-                        case ProcessAssignAnTask.PROC_REQUEST_TASK:
+                        case ProcessAssignAnTask.PROC_REQUEST_TASK:// kiem tra truong hop kg co task
                             OrderItem orderItem = Gettask();
                             if (orderItem != null)
                             {

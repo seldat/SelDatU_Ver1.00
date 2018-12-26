@@ -61,7 +61,7 @@ namespace SeldatMRMS.Management.RobotManagent
             public String LaserOperation;
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
             public String CurrentLevel;
-            public bool CriticalLevel;
+            public bool criticalLevelBattery;
             public ChargerCtrl.ChargerId chargeID;
 
         }
@@ -168,6 +168,12 @@ namespace SeldatMRMS.Management.RobotManagent
         protected override void OnClosedEvent(object sender, CloseEventArgs e) {
             properties.IsConnected = false;
             base.OnClosedEvent(sender,e);
+        }
+        public void UpdateRiskAraParams(double L1,double L2,double WS)
+        {
+            properties.L1 = L1;
+            properties.L2 = L2;
+            properties.WS = WS;
         }
         public void SendPoseStamped(Pose pose)
         {

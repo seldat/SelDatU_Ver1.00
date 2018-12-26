@@ -28,7 +28,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
        }
         public int HasDeviceItemAt(String deviceID)
         {
-            return deviceItemList.FindIndex(e=>e.deviceID==deviceID);
+            return deviceItemList.FindIndex(e=>e.deviceID.Equals(deviceID));
+            //
         }
         public DeviceItem FindDeviceItem(String deviceID)
         {
@@ -41,7 +42,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
              String deviceID = (String)results["userName"];
              if (HasDeviceItemAt(deviceID) >= 0)
              {
-                 FindDeviceItem(deviceID).rounter(data);
+                 FindDeviceItem(deviceID).ParseData(data);
              }
              else
              {
