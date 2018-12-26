@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using static DoorControllerService.DoorService;
+using static SeldatMRMS.Management.RobotManagent.RobotBaseService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
@@ -27,7 +28,8 @@ namespace SeldatMRMS
         DataReceive statusCharger;
         const UInt32 TIME_OUT_WAIT_STATE = 60000;
         const UInt32 TIME_OUT_ROBOT_RECONNECT_SERVER = 180000;
-        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+        public override event Action<Object> ReleaseProcedureHandler;
+        public override event Action<Object> ErrorProcedureHandler;
         public byte getBatteryLevel(){
             return batLevel.data[0];
         }
@@ -55,8 +57,10 @@ namespace SeldatMRMS
                 default: break;
             }
         }
-        public void Start(String content, RobotGoToCharge state = RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS)
+        public void Start(String content, RobotGoToCharge state = RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER)
         {
+            errorCode = ErrorCode.RUN_OK;
+            robot.ProcedureAs = ProcedureControlAssign.PRO_CHARGE;
             StateRobotToCharge = state;
             ProRobotToCharger = new Thread(this.Procedure);
             ProRobotToCharger.Name = content;
@@ -75,11 +79,11 @@ namespace SeldatMRMS
                 switch (StateRobotToCharge)
                 {
                     case RobotGoToCharge.ROBCHAR_IDLE: break;
-                    case RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS:
-                        if(true == chargerCtrl.WaitState(ChargerState.ST_READY,TIME_OUT_WAIT_STATE)){
-                            StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_ALLOW_CUTOFF_POWER_ROBOT;
-                        }
-                        break; //kiểm tra kết nối và trạng thái sạc
+                    // case RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS:
+                    //     if(true == chargerCtrl.WaitState(ChargerState.ST_READY,TIME_OUT_WAIT_STATE)){
+                    //         StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_ALLOW_CUTOFF_POWER_ROBOT;
+                    //     }
+                    //     break; //kiểm tra kết nối và trạng thái sạc
                     case RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER:
                         rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_CHARGEAREA);
                         break;
@@ -89,17 +93,20 @@ namespace SeldatMRMS
                             chargerCtrl.StartCharge();
                             StateRobotToCharge = RobotGoToCharge.ROBCHAR_WAITTING_ROBOT_CONTACT_CHARGER;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;    
+                        }
                         break;
                     case RobotGoToCharge.ROBCHAR_WAITTING_ROBOT_CONTACT_CHARGER: 
-                        if (true == chargerCtrl.WaitState(ChargerState.ST_CONTACT_GOOD,TIME_OUT_WAIT_STATE))
+                        if (true == chargerCtrl.WaitState(ChargerState.ST_CHARGING,TIME_OUT_WAIT_STATE))
                         {
                             StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_ALLOW_CUTOFF_POWER_ROBOT;
                         }
-                        else if (true == chargerCtrl.WaitState(ChargerState.ST_CONTACT_FAIL,TIME_OUT_WAIT_STATE))
+                        else if (true == chargerCtrl.WaitState(ChargerState.ST_ERROR,TIME_OUT_WAIT_STATE))
                         {
-                            while(true){
-                                Thread.Sleep(1000);
-                            }
+                            errorCode = ErrorCode.CONTACT_CHARGER_ERROR;
+                            StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;     
                         }
                         break; //robot tiep xuc tram sac        
                     case RobotGoToCharge.ROBCHAR_ROBOT_ALLOW_CUTOFF_POWER_ROBOT:
@@ -112,7 +119,7 @@ namespace SeldatMRMS
                         }
                         break;
                     case RobotGoToCharge.ROBCHAR_WAITTING_CHARGEBATTERY:
-                         if (true == chargerCtrl.WaitChargeFull(ref batLevel,ref statusCharger))
+                        if (true == chargerCtrl.GetBatteryAndStatus(ref rb,ref batLevel,ref statusCharger))
                         {
                             StateRobotToCharge = RobotGoToCharge.ROBCHAR_FINISHED_CHARGEBATTERY;
                         }
@@ -135,7 +142,13 @@ namespace SeldatMRMS
                         StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;
                         break;
                     case RobotGoToCharge.ROBCHAR_ROBOT_RELEASED:
-                        ReleaseProcedureHandler(this);
+                        rb.PreProcedureAs = ProcedureControlAssign.PRO_CHARGE;
+                        if(errorCode == ErrorCode.RUN_OK){
+                            ReleaseProcedureHandler(this);
+                        }
+                        else{
+                            ErrorProcedureHandler(this);    
+                        }
                         break; // trả robot về robotmanagement để nhận quy trình mới
                 }
                 Thread.Sleep(5);
@@ -177,7 +190,8 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         RobotGoToReady StateRobotGoToReady;
-        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+        public override event Action<Object> ReleaseProcedureHandler;
+        public override event Action<Object> ErrorProcedureHandler;
         public ProcedureRobotToReady(RobotUnity robot,ChargerId id) : base(robot)
         {
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
@@ -213,6 +227,8 @@ namespace SeldatMRMS
         }
         public void Start(RobotGoToReady state = RobotGoToReady.ROBREA_ROBOT_GOTO_FRONTLINE_READYSTATION)
         {
+            errorCode = ErrorCode.RUN_OK;
+            robot.ProcedureAs = ProcedureControlAssign.PRO_READY;
             StateRobotGoToReady = state;
             ProRobotToReady = new Thread(this.Procedure);
             ProRobotToReady.Start(this);
@@ -257,9 +273,19 @@ namespace SeldatMRMS
                         {
                             StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;    
+                        }
                         break;
                     case RobotGoToReady.ROBREA_ROBOT_RELEASED:
-                        ReleaseProcedureHandler(this);
+                        rb.PreProcedureAs = ProcedureControlAssign.PRO_READY;
+                        if(errorCode == ErrorCode.RUN_OK){
+                            ReleaseProcedureHandler(this);
+                        }
+                        else{
+                            ErrorProcedureHandler(this);    
+                        }
                         break;
                 }
                 Thread.Sleep(5);

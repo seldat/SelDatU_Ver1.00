@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using SeldatMRMS.Management.RobotManagent;
 using SelDatUnilever_Ver1._00.Management.ComSocket;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
@@ -22,9 +23,9 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             ST_CHARGING,/* 02 */
             ST_ERROR, /* 03 */
             ST_CHARGE_FULL, /* 04 */
-            ST_PUSH_PISTON, /* 05 */
-            ST_CONTACT_GOOD, /* 06 */
-            ST_CONTACT_FAIL /* 07 */
+            // ST_PUSH_PISTON, /* 05 */
+            // ST_CONTACT_GOOD, /* 06 */
+            // ST_CONTACT_FAIL /* 07 */
         }
 
         private enum CmdCharge
@@ -49,7 +50,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             public Int32 port;
             public ChargerId id;
             public Pose PointFrontLine;
-            public PointDetect PointOfPallet;
+            public String PointOfPallet;
         }
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.ip, cf.port)
         {
@@ -162,19 +163,16 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             sw.Stop();
             return result;
         }
-        public bool WaitChargeFull(ref DataReceive batLevel,ref DataReceive status)
+        public bool GetBatteryAndStatus(ref RobotUnity rb,ref DataReceive batLevel,ref DataReceive status)
         {
-            bool result = true;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            do
+            bool result = false;
+            Thread.Sleep(5000);
+            this.GetState(ref status);
+            this.GetBatteryLevel(ref batLevel);
+            if ((batLevel.data[0] == 100)||(status.data[0] == (byte)ChargerState.ST_CHARGE_FULL))
             {
-                Thread.Sleep(8000);
-                this.GetState(ref status);
-                Thread.Sleep(2000);
-                this.GetBatteryLevel(ref batLevel);
-            } while (batLevel.data[0] == 100);
-            sw.Stop();
+                result = true;   
+            }
             return result;
         }
     }

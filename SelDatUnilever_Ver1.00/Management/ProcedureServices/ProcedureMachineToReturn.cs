@@ -1,7 +1,9 @@
 ﻿using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using System;
+using System.Diagnostics;
 using System.Threading;
+using static SeldatMRMS.Management.RobotManagent.RobotBaseService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
 
@@ -23,7 +25,8 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         TrafficManagementService Traffic;
-        public override event Action<ProcedureControlServices> ReleaseProcedureHandler;
+        public override event Action<Object> ReleaseProcedureHandler;
+        public override event Action<Object> ErrorProcedureHandler;
         public ProcedureMachineToReturn(RobotUnity robot,TrafficManagementService traffiicService) : base(robot)
         {
             StateMachineToReturn = MachineToReturn.MACRET_IDLE;
@@ -34,6 +37,8 @@ namespace SeldatMRMS
 
         public void Start(MachineToReturn state = MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_MACHINE)
         {
+            errorCode = ErrorCode.RUN_OK;
+            robot.ProcedureAs = ProcedureControlAssign.PRO_MACHINE_TO_RETURN;
             StateMachineToReturn = state;
             ProMachineToReturn = new Thread(this.Procedure);
             ProMachineToReturn.Start(this);
@@ -55,8 +60,41 @@ namespace SeldatMRMS
                     case MachineToReturn.MACRET_IDLE:
                         break;
                     case MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_MACHINE: // doi khu vuc buffer san sang de di vao
-                        rb.SendPoseStamped(BfToRe.GetFrontLineMachine());
-                        StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE;
+                        if (rb.PreProcedureAs == ProcedureControlAssign.PRO_READY)
+                        {
+                            rb.SendCmdPosPallet(RequestCommandPosPallet.REQUEST_GOBACK_FRONTLINE);
+                            Stopwatch sw = new Stopwatch();
+                            sw.Start();
+                            do
+                            {
+                                if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                                {
+                                    resCmd = ResponseCommand.RESPONSE_NONE;
+                                    rb.SendPoseStamped(BfToRe.GetCheckInBuffer());
+                                    StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE;
+                                    break;
+                                }
+                                else if (resCmd == ResponseCommand.RESPONSE_ERROR)
+                                {
+                                    errorCode = ErrorCode.DETECT_LINE_ERROR;
+                                    StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;
+                                    break;
+                                }
+                                if (sw.ElapsedMilliseconds > TIME_OUT_WAIT_GOTO_FRONTLINE)
+                                {
+                                    errorCode = ErrorCode.DETECT_LINE_ERROR;
+                                    StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;  
+                                    break; 
+                                }
+                                Thread.Sleep(100);
+                            } while (true);
+                            sw.Stop();
+                        }
+                        else
+                        {
+                            rb.SendPoseStamped(BfToRe.GetFrontLineMachine());
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE;
+                        }
                         break;
                     case MachineToReturn.MACRET_ROBOT_WAITTING_CAME_FRONTLINE_MACHINE:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
@@ -83,6 +121,7 @@ namespace SeldatMRMS
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOBACK_FRONTLINE_MACHINE;
                         }
                         else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
                         }
                         break;
@@ -136,6 +175,7 @@ namespace SeldatMRMS
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_GOTO_FRONTLINE;
                         }
                         else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
                         }
                         break;
@@ -147,7 +187,13 @@ namespace SeldatMRMS
                         }
                         break;
                     case MachineToReturn.MACRET_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
-                        ReleaseProcedureHandler(this);
+                        rb.PreProcedureAs = ProcedureControlAssign.PRO_MACHINE_TO_RETURN;
+                        if(errorCode == ErrorCode.RUN_OK){
+                            ReleaseProcedureHandler(this);
+                        }
+                        else{
+                            ErrorProcedureHandler(this);    
+                        }
                         break;
                     default:
                         break;

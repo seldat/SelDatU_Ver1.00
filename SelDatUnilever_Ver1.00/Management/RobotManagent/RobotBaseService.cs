@@ -19,7 +19,7 @@ namespace SeldatMRMS.Management.RobotManagent
             PRO_READY
         }
         public object ProcedureControl;
-        public ProcedureControlAssign PreProcedureAs;
+        public ProcedureControlAssign  PreProcedureAs;
         public ProcedureControlAssign ProcedureAs;
         public bool SelectedATask { get; set; }
         public struct LoadedConfigureInformation

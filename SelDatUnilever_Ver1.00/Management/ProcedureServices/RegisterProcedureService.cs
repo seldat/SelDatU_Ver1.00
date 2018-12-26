@@ -57,7 +57,7 @@ namespace SeldatMRMS
 
 
         }
-        protected virtual void ReleaseProcedureItemHandler(ProcedureControlServices item)
+        protected virtual void ReleaseProcedureItemHandler(Object  item)
         {
            /* Task.Run(() =>
             {

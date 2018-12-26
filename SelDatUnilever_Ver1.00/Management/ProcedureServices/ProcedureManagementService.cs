@@ -77,7 +77,7 @@ namespace SeldatMRMS
 
             }
         }
-         protected override void ReleaseProcedureItemHandler(ProcedureControlServices item)
+         protected override void ReleaseProcedureItemHandler(Object item)
         {
             /* Task.Run(() =>
              {

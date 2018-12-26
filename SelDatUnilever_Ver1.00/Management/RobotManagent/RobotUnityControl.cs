@@ -60,8 +60,8 @@ namespace SeldatMRMS.Management.RobotManagent
             [CategoryAttribute("Laser"), DescriptionAttribute("Name of the customer")]
             public String LaserOperation;
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
-            public String CurrentLevel;
-            public bool CriticalLevel;
+            public double BatteryLevelRb;
+            public double BatteryLowLevel;
             public ChargerCtrl.ChargerId chargeID;
 
         }

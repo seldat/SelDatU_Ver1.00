@@ -9,16 +9,29 @@ namespace SeldatMRMS
     {
         public String ProcedureID { get; set; }
         public String DeliveryInfo { get; set; }
+        public const long TIME_OUT_WAIT_GOTO_FRONTLINE = 60000;
         public TrafficManagementService TrafficService;
         public struct ContentDatabase { }
-        public virtual event Action<ProcedureControlServices> ReleaseProcedureHandler;
-        public virtual event Action<ProcedureControlServices> ErrorProcedureHandler;
+        public virtual event Action<Object> ReleaseProcedureHandler;
+        public virtual event Action<Object> ErrorProcedureHandler;
         public virtual ContentDatabase RequestDataFromDataBase() { return new ContentDatabase(); }
         public ProcedureControlServices(RobotUnity robot) : base(robot) { }
+        public enum ErrorCode
+        {
+            RUN_OK = 0,
+            DETECT_LINE_ERROR,
+            CONNECT_DOOR_ERROR,
+            OPEN_DOOR_ERROR,
+            CLOSE_DOOR_ERROR,
+            CONNECT_CHARGER_ERROR,
+            CONTACT_CHARGER_ERROR
+        }
+
+        public ErrorCode errorCode;
         public void RegistrationTranfficService(TrafficManagementService TrafficService)
         {
             this.TrafficService = TrafficService;
-         
+
         }
         public enum ForkLiftToBuffer
         {
@@ -63,7 +76,7 @@ namespace SeldatMRMS
             // BUFMAC_ROBOT_GOTO_CHECKIN_MACHINE, //cho
             // BUFMAC_ROBOT_CAME_CHECKIN_MACHINE, // đã đến vị trí
 
-            BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,  
+            BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET,
             // BUFMAC_ROBOT_CAME_FRONTLINE_DROPDOWN_PALLET, 
             // BUFMAC_ROBOT_WAITTING_GOTO_POINT_DROP_PALLET, 
 
@@ -143,7 +156,7 @@ namespace SeldatMRMS
         public enum RobotGoToCharge
         {
             ROBCHAR_IDLE,
-            ROBCHAR_CHARGER_CHECKSTATUS, //kiểm tra kết nối và trạng thái sạc
+            // ROBCHAR_CHARGER_CHECKSTATUS, //kiểm tra kết nối và trạng thái sạc
             ROBCHAR_ROBOT_GOTO_CHARGER, //robot be lai vao tram sac
             ROBCHAR_ROBOT_START_CHARGE, //robot be lai vao tram sac
             ROBCHAR_WAITTING_ROBOT_CONTACT_CHARGER, //robot tiep xuc tram sac           
