@@ -57,7 +57,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             this.deviceItemsList = deviceItemsList;
         }
         public TaskRounterService() {
-            processAssignAnTaskState = ProcessAssignAnTask.PROC_IDLE;
+            //processAssignAnTaskState = ProcessAssignAnTask.PROC_IDLE;
         }
         public void MoveElementToEnd()
         {
