@@ -11,8 +11,15 @@ namespace SeldatMRMS.Management.RobotManagent
 {
     public class RobotManagementService
     {
+        public class ResultRobotReady
+        {
+            public RobotUnity robot;
+            public bool onReristryCharge = false;
+
+        }
         Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
-        Dictionary<String, RobotUnity> RobotUnityTaskedList = new Dictionary<string, RobotUnity>();
+        Dictionary<String, RobotUnity> RobotUnityWaitTaskList = new Dictionary<string, RobotUnity>();
+        Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
         public RobotManagementService() { }
         public void LoadRobotUnityConfigure()
         {
@@ -35,19 +42,13 @@ namespace SeldatMRMS.Management.RobotManagent
             }
             con.Close();
         }
-        public void AddATaskToRobot()
+        public void AddRobotUnityWaitTaskList(RobotUnity robot)
         {
-            foreach (var item in RobotUnityRegistedList.Values)
-            {
-                if(item.SelectedATask)
-                {
-                    RobotUnityTaskedList.Add(item.properties.NameID,item);
-                }
-            }
+           RobotUnityWaitTaskList.Add(robot.properties.NameID,robot);
         }
-        public void ReleaseRobotFromATask(String NameID)
+        public void RemoveRobotUnityWaitTaskList(String NameID)
         {
-            RobotUnityTaskedList.Remove(NameID);
+            RobotUnityWaitTaskList.Remove(NameID);
         }
         public void DestroyAllRobotUnity()
         {
@@ -67,20 +68,42 @@ namespace SeldatMRMS.Management.RobotManagent
             }
    
         }
-        public RobotUnity getRobotUnityTask()
+        public ResultRobotReady GetRobotUnityWaitTaskItem0()
         {
-            RobotUnity robot = null;
-            foreach(RobotUnity r in RobotUnityTaskedList.Values)
+            ResultRobotReady result = null;
+            if (RobotUnityReadyList.Count > 0)
             {
-                if(!r.SelectedATask)
+                RobotUnity robot = RobotUnityWaitTaskList.ElementAt(0).Value;
+                if (robot.getBattery())
                 {
-                    r.SelectedATask = false;
-                    robot = r;
-                    break;
+                    RemoveRobotUnityWaitTaskList(robot.properties.NameID);
                 }
+                result = new ResultRobotReady() { robot = robot, onReristryCharge = robot.getBattery() };
             }
-            return robot;
+            return result;
         }
-
+        public void AddRobotUnityReadyList(RobotUnity robot)
+        {
+            RobotUnityReadyList.Add(robot.properties.NameID,robot);
+        }
+        
+        public ResultRobotReady GetRobotUnityReadyItem0()
+        {
+            ResultRobotReady result = null;
+            if (RobotUnityReadyList.Count > 0)
+            {
+                RobotUnity robot = RobotUnityReadyList.ElementAt(0).Value;
+                if(robot.getBattery())
+                {
+                    RemoveRobotUnityReadyList(robot.properties.NameID);
+                }
+                result = new ResultRobotReady() {robot=robot, onReristryCharge=robot.getBattery()};
+            }
+            return result;
+        }
+        public void RemoveRobotUnityReadyList(String nameID)
+        {
+            RobotUnityReadyList.Remove(nameID);
+        }
     }
 }

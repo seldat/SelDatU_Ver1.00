@@ -43,6 +43,10 @@ namespace SeldatMRMS.Management.RobotManagent
             ROBOT_SPEED_SLOW = 50,
             ROBOT_SPEED_STOP = 0,
         }
+        public bool getBattery()
+        {
+            return false;
+        }
         public struct PropertiesRobotUnity
         {
             [CategoryAttribute("ID Settings"), DescriptionAttribute("Name of the customer")]

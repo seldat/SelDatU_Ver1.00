@@ -1,5 +1,6 @@
 ﻿using SeldatMRMS;
 using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
@@ -12,22 +13,40 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
 {
    public class TaskRounterService
     {
-        public enum ProcessAssignAnTask
+        public enum ProcessAssignAnTaskWait
         {
-            PROC_IDLE,
-            PROC_REQUEST_ROBOT,
-            PROC_REQUEST_TASK,
-            PROC_SORT_TASK
+            PROC_IDLE = 0,
+            PROC_CHECK_HAS_ANTASK,
+            PROC_ASSIGN_ANTASK,
+            PROC_GET_ANROBOT_IN_WAITTASKLIST,
+            PROC_CHECK_ROBOT_BATTERYLEVEL,
+            PROC_SET_TRAFFIC_RISKAREA_ON,
+            PROC_CHECK_ROBOT_OUTSIDEREADY,
         }
+        protected enum ProcessAssignTaskReady
+        {
+            PROC_IDLE = 0,
+            PROC_CHECK_HAS_ANTASK,
+            PROC_ASSIGN_ANTASK,
+            PROC_GET_ANROBOT_INREADYLIST,
+            PROC_CHECK_ROBOT_BATTERYLEVEL,
+            PROC_SET_TRAFFIC_RISKAREA_ON,
+            PROC_CHECK_ROBOT_OUTSIDEREADY,
+        }
+        protected ProcessAssignTaskReady processAssignTaskReady;
         public event Action<bool> FinishTaskCallBack;
-        protected ProcessAssignAnTask processAssignAnTaskState;
+        protected ProcessAssignAnTaskWait processAssignAnTaskWait;
         protected ProcedureManagementService procedureService;
         public RobotManagementService robotManageService;
-        
+        public TrafficManagementService trafficService;
         public List<DeviceItem> deviceItemsList;
         public void RegistryService(RobotManagementService robotManageService)
         {
             this.robotManageService = robotManageService;
+        }
+        public void RegistryService(TrafficManagementService trafficService)
+        {
+            this.trafficService = trafficService;
         }
         public void RegistryService(ProcedureManagementService procedureService)
         {

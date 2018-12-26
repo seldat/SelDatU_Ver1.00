@@ -31,6 +31,7 @@ namespace SeldatMRMS.Management.UnityService
             assigmentTaskService.RegistryService(robotManagementServiceRegistery);
             assigmentTaskService.RegistryService(procedureManagementServiceRegistery);
             assigmentTaskService.RegistryService(deviceRegistrationService.GetDeviceItemList());
+            assigmentTaskService.RegistryService(trafficManagementService);
         }
         public void Dispose()
         {
