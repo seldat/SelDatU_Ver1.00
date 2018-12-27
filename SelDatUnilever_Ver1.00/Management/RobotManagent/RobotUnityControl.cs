@@ -178,11 +178,12 @@ namespace SeldatMRMS.Management.RobotManagent
             properties.IsConnected = false;
             base.OnClosedEvent(sender,e);
         }
-        public void UpdateRiskAraParams(double L1,double L2,double WS)
+        public void UpdateRiskAraParams(double L1,double L2,double WS, double distanceIntersection)
         {
             properties.L1 = L1;
             properties.L2 = L2;
             properties.WS = WS;
+            properties.DistanceIntersection = distanceIntersection;
         }
         public void SendPoseStamped(Pose pose)
         {
