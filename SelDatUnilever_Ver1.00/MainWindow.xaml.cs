@@ -50,9 +50,9 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-            door = new DoorManagementService();
-            ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
-            pr.GetInfoOfPalletBuffer();
+           // door = new DoorManagementService();
+           // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
+          //  pr.GetInfoOfPalletBuffer();
             /*Chau test*/
 
             //ChargerInfoConfig cf;
@@ -88,7 +88,7 @@ namespace SelDatUnilever_Ver1._00
               pr.RegistrationTranfficService(traffiicService);
               pr.Start();*/
             /*end*/
-            /*   RobotUnity robot1 = new RobotUnity(canvas);
+           RobotUnity robot1 = new RobotUnity(canvas);
                robot1.properties.NameID = "robot1";
                RobotUnity robot2 = new RobotUnity(canvas);
                robot2.properties.NameID = "robot2";
@@ -109,14 +109,14 @@ namespace SelDatUnilever_Ver1._00
                robot1.initialPos(0,0);
                robot2.initialPos(300,300);
                robot3.initialPos(400,400);
-               TrafficManagementService traffic = new TrafficManagementService();
+              /* TrafficManagementService traffic = new TrafficManagementService();
                traffic.LoadConfigureZone();*/
 
             //  deviceRegistrationService=new DeviceRegistrationService(9000);
             //  deviceRegistrationService.listen();
             string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
          
-            JArray results = JArray.Parse(text);
+        /*    JArray results = JArray.Parse(text);
             foreach (var result in results)
             {
                 int temp_productDetailID = (int)result["productDetailId"];
@@ -134,7 +134,7 @@ namespace SelDatUnilever_Ver1._00
                     MessageBox.Show(pX.ToString());
                     break;
                 }
-            }
+            }*/
 
             /*  string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
 

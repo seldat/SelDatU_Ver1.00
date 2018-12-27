@@ -153,6 +153,8 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                             processAssignTaskReady = ProcessAssignTaskReady.PROC_ASSIGN_ANTASK;
                             break;
                         case ProcessAssignTaskReady.PROC_CHECK_ROBOT_OUTSIDEREADY:
+
+                            // kiem tra robot tai vung ready
                             if(!trafficService.RobotIsInArea("",robot.properties.pose.Position))
                             {
                                 // xoa khoi list cho
