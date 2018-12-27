@@ -116,7 +116,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletBuffer());
+                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletBuffer(PistonPalletCtrl.PISTON_PALLET_UP));
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_PICKUP_PALLET_BUFFER;
                         }
                         break;
@@ -188,7 +188,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn());
+                            rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_DOWN));
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_DROPDOWN_PALLET;
                         }
                         break;

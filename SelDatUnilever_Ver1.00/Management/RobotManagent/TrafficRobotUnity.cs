@@ -57,7 +57,7 @@ namespace SeldatMRMS.Management
         public enum PistonPalletCtrl
         {
             PISTON_PALLET_UP=0,
-            PISTON_PALLET_DDOWN
+            PISTON_PALLET_DOWN
         }
         public class JInfoPallet{
             public PistonPalletCtrl pallet;

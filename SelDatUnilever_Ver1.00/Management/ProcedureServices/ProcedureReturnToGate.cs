@@ -123,7 +123,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                            rb.SendCmdAreaPallet(ReToGate.GetInfoOfPalletReturn());
+                            rb.SendCmdAreaPallet(ReToGate.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_UP));
                             // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN;
                         }
