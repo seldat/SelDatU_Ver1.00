@@ -58,15 +58,59 @@ namespace SelDatUnilever_Ver1
             }
             return null;
         }
+        
         public Pose GetCheckInBuffer()
         {
             Pose poseTemp = null;
-      
+            String collectionData=RequestDataProcedure(order.dataRequest);
+            if(collectionData.Length>0)
+            {
+                JArray results = JArray.Parse(order.dataRequest);
+                foreach (var result in results)
+                {
+                    int temp_productDetailID = (int)result["productDetailId"];
+                    if (temp_productDetailID == order.productDetailID)
+                    {
+                        var bufferResults = result["buffers"];
+                        String checkinResults =(String) bufferResults[0]["bufferCheckIn"];
+                        JObject stuff = JObject.Parse(checkinResults);
+                        double x = (double)stuff["x"];
+                        double y = (double)stuff["y"];
+                        double angle = (double)stuff["angle"];
+                        poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                        break;
+                     
+                    }
+                }
+            }
             return poseTemp;
         }
         public Pose GetFrontLineBuffer()
         {
             Pose poseTemp = null;
+            String collectionData = RequestDataProcedure(order.dataRequest);
+            if (collectionData.Length > 0)
+            {
+                JArray results = JArray.Parse(order.dataRequest);
+                foreach (var result in results)
+                {
+                    int temp_productDetailID = (int)result["productDetailId"];
+                    if (temp_productDetailID == order.productDetailID)
+                    {
+                        var bufferResults = result["buffers"];
+                        String checkinResults = (String)bufferResults[0]["bufferCheckIn"];
+                        var palletInfo= bufferResults[0]["pallets"];
+                        JObject stuff = JObject.Parse((String)palletInfo[0]);
+                        double x = (double)stuff["line"]["x"];
+                        double y = (double)stuff["line"]["y"];
+                        double angle = (double)stuff["line"]["angle"];
+                        poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
+                        break;
+
+                    }
+                }
+            }
+            return poseTemp;
             return poseTemp;
         }
 
@@ -181,13 +225,32 @@ namespace SelDatUnilever_Ver1
         public String GetInfoOfPalletBuffer(TrafficRobotUnity.PistonPalletCtrl pisCtrl)
         {
             JInfoPallet infoPallet = new JInfoPallet();
+            String collectionData = RequestDataProcedure(order.dataRequest);
+            if (collectionData.Length > 0)
+            {
+                JArray results = JArray.Parse(order.dataRequest);
+                foreach (var result in results)
+                {
+                    int temp_productDetailID = (int)result["productDetailId"];
+                    if (temp_productDetailID == order.productDetailID)
+                    {
+                        var bufferResults = result["buffers"];
+                        String checkinResults = (String)bufferResults[0]["bufferCheckIn"];
+                        var palletInfo = bufferResults[0]["pallets"];
+                        JObject stuff = JObject.Parse((String)palletInfo[0]);
+                        int row = (int)stuff["pallet"]["row"];
+                        int bay = (int)stuff["pallet"]["bay"];
+                        int direct = (int)stuff["pallet"]["direct"];
 
-            infoPallet.pallet = pisCtrl; /* dropdown */
-            infoPallet.bay = 1;
-            infoPallet.hasSubLine = "yes"; /* no */
-            infoPallet.direction = TrafficRobotUnity.BrDirection.FORWARD; /* right */
-            infoPallet.row = 2;
-
+                        infoPallet.pallet = pisCtrl; /* dropdown */
+                        infoPallet.bay = bay;
+                        infoPallet.hasSubLine = "yes"; /* no */
+                        infoPallet.direction = (TrafficRobotUnity.BrDirection)direct; /* right */
+                        infoPallet.row = row;
+                        break;
+                    }
+                }
+            }
             return JsonConvert.SerializeObject(infoPallet);
         }
 
@@ -196,10 +259,10 @@ namespace SelDatUnilever_Ver1
             JInfoPallet infoPallet = new JInfoPallet();
 
             infoPallet.pallet = pisCtrl; /* dropdown */
-            infoPallet.bay = 1;
+            infoPallet.bay = order.palletAtMachine.bay;
             infoPallet.hasSubLine = "yes"; /* no */
-            infoPallet.direction = TrafficRobotUnity.BrDirection.FORWARD; /* right */
-            infoPallet.row = 2;
+            infoPallet.direction = (TrafficRobotUnity.BrDirection)order.palletAtMachine.direct; /* right */
+            infoPallet.row = order.palletAtMachine.row;
 
             return JsonConvert.SerializeObject(infoPallet);
         }
