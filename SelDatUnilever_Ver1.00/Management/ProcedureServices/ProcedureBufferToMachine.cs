@@ -35,6 +35,7 @@ namespace SeldatMRMS
             this.robot = robot;
             // this.points = new DataBufferToMachine();
             this.Traffic = traffiicService;
+            procedureCode = ProcedureCode.PROC_CODE_BUFFER_TO_MACHINE;
         }
 
         public void Start(BufferToMachine state = BufferToMachine.BUFMAC_ROBOT_GOTO_CHECKIN_BUFFER)

@@ -20,14 +20,23 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             var item = deviceItemsList.Find(e => e.userName == userName);
             item.RemoveFirstOrder();
         }
-        public async Task Process()
+        public void Start()
         {
-           
-            await Task.Run(() =>
+            Alive = true;
+            AssignTask();
+            AssignTaskAtReady();
+        }
+        public void Dispose()
+        {
+            Alive = false;
+        }
+        public void AssignTask()
+        {
+           Task.Run(() =>
             {
                 OrderItem orderItem = null;
                 RobotUnity robot = null;
-                while (true)
+                while (Alive)
                 {
                     switch (processAssignAnTaskWait)
                     {
@@ -95,13 +104,13 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             }
             // procedure;
         }
-        public async Task ProcessTaskAtReady()
+        public void AssignTaskAtReady()
         {
             OrderItem orderItem=null;
             RobotUnity robot = null;
-            await Task.Run(() =>
+            Task.Run(() =>
             {
-                while (true)
+                while (Alive)
                 {
                     switch (processAssignTaskReady)
                     {
@@ -144,6 +153,8 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                             processAssignTaskReady = ProcessAssignTaskReady.PROC_ASSIGN_ANTASK;
                             break;
                         case ProcessAssignTaskReady.PROC_CHECK_ROBOT_OUTSIDEREADY:
+
+                            // kiem tra robot tai vung ready
                             if(!trafficService.RobotIsInArea("",robot.properties.pose.Position))
                             {
                                 // xoa khoi list cho

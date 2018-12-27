@@ -35,6 +35,7 @@ namespace SeldatMRMS
             this.robot = robot;
             // this.points = new DataForkBufferToReturn();
             this.Traffic = traffiicService;
+            procedureCode = ProcedureCode.PROC_CODE_BUFFER_TO_RETURN;
         }
 
         public void Start(BufferToReturn state = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_BUFFER)

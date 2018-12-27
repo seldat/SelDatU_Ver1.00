@@ -13,25 +13,28 @@ namespace SeldatMRMS.Management.UnityService
 {
     public class UnityManagementService
     {
-        RobotManagementService robotManagementServiceRegistery { get; set; }
-        DoorManagementService doorManagementServiceRegistery { get; set; }
-        ProcedureManagementService procedureManagementServiceRegistery { get; set; }
-        TrafficManagementService trafficManagementService { get; set; }
+        RobotManagementService robotManagementService { get; set; }
+        DoorManagementService doorManagementService { get; set; }
+        ProcedureManagementService procedureManagementService { get; set; }
+        TrafficManagementService trafficService { get; set; }
         AssigmentTaskService assigmentTaskService { get; set; }
         DeviceRegistrationService deviceRegistrationService { get; set; }
         public UnityManagementService() { }
         public void Initialize()
         {
-            robotManagementServiceRegistery = new RobotManagementService();
-            doorManagementServiceRegistery = new DoorManagementService();
-            procedureManagementServiceRegistery = new ProcedureManagementService();
+            robotManagementService = new RobotManagementService();
+            doorManagementService = new DoorManagementService();
+            procedureManagementService = new ProcedureManagementService();
+            trafficService = new TrafficManagementService();
             deviceRegistrationService = new DeviceRegistrationService(11000);
             assigmentTaskService = new AssigmentTaskService();
-            trafficManagementService = new TrafficManagementService();
-            assigmentTaskService.RegistryService(robotManagementServiceRegistery);
-            assigmentTaskService.RegistryService(procedureManagementServiceRegistery);
+            trafficService = new TrafficManagementService();
+            assigmentTaskService.RegistryService(robotManagementService);
+            assigmentTaskService.RegistryService(procedureManagementService);
             assigmentTaskService.RegistryService(deviceRegistrationService.GetDeviceItemList());
-            assigmentTaskService.RegistryService(trafficManagementService);
+            assigmentTaskService.RegistryService(trafficService);
+            procedureManagementService.RegistryService(trafficService);
+            procedureManagementService.RegistryService(robotManagementService);
         }
         public void Dispose()
         {

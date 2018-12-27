@@ -14,8 +14,19 @@ namespace SeldatMRMS
         public struct ContentDatabase { }
         public virtual event Action<Object> ReleaseProcedureHandler;
         public virtual event Action<Object> ErrorProcedureHandler;
+        public ProcedureCode procedureCode;
         public virtual ContentDatabase RequestDataFromDataBase() { return new ContentDatabase(); }
-        public ProcedureControlServices(RobotUnity robot) : base(robot) { }
+        protected RobotUnity robot;
+        public enum ProcedureCode
+        {
+            PROC_CODE_BUFFER_TO_MACHINE=0,
+            PROC_CODE_FORKLIFT_TO_BUFFER,
+            PROC_CODE_BUFFER_TO_RETURN,
+            PROC_CODE_MACHINE_TO_RETURN,
+            PROC_CODE_RETURN_TO_GATE,
+            PROC_CODE_ROBOT_TO_READY,
+            PROC_CODE_ROBOT_TO_CHARGE,
+        }
         public enum ErrorCode
         {
             RUN_OK = 0,
@@ -177,6 +188,14 @@ namespace SeldatMRMS
             // ROBREA_ROBOT_WAIITNG_DETECTLINE_TO_READYSTATION, // đang đợi dò line để đến vị trí line trong buffer
             ROBREA_ROBOT_WAITTING_CAME_POSITION_READYSTATION, // đến vị 
             ROBREA_ROBOT_RELEASED
+        }
+        public ProcedureControlServices(RobotUnity robot) : base(robot)
+        {
+            this.robot = robot;
+        }
+        public RobotUnity GetRobotUnity()
+        {
+            return this.robot;
         }
     }
 }

@@ -56,6 +56,7 @@ namespace SeldatMRMS
                     break;
                 default: break;
             }
+            procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_CHARGE;
         }
         public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER)
         {
@@ -197,6 +198,7 @@ namespace SeldatMRMS
             this.robot = robot;
             LoadChargerConfigure();
             points = DataRobotToReadyList[(int)id];
+            procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_READY;
         }
         public void LoadChargerConfigure()
         {
