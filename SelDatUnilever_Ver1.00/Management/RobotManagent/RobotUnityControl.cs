@@ -17,6 +17,8 @@ namespace SeldatMRMS.Management.RobotManagent
     {
         public event Action<int> FinishStatesCallBack;
         public event Action<Pose, Object> PoseHandler;
+
+        private const float delBatterry = 5;
         public class Pose
         {
             public Pose(Point p, double AngleW) // Angle gốc
@@ -46,8 +48,9 @@ namespace SeldatMRMS.Management.RobotManagent
         }
         public bool getBattery()
         {
-            return false;
+            return properties.BatteryReadyWork;
         }
+
         public struct PropertiesRobotUnity
         {
             [CategoryAttribute("ID Settings"), DescriptionAttribute("Name of the customer")]
@@ -65,8 +68,9 @@ namespace SeldatMRMS.Management.RobotManagent
             [CategoryAttribute("Laser"), DescriptionAttribute("Name of the customer")]
             public String LaserOperation;
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
-            public String CurrentLevel;
-            public bool criticalLevelBattery;
+            public float BatteryLevelRb;
+            public float BatteryLowLevel;
+            public bool BatteryReadyWork;
             public ChargerCtrl.ChargerId chargeID;
 
         }
@@ -125,6 +129,7 @@ namespace SeldatMRMS.Management.RobotManagent
             public int publication_postPallet;
             public int publication_cmdAreaPallet;
             public int publication_finishedStates;
+            public int publication_batteryvol;
         }
         ParamsRosSocket paramsRosSocket;
         public PropertiesRobotUnity properties;
@@ -133,6 +138,8 @@ namespace SeldatMRMS.Management.RobotManagent
         {
             properties.pose = new Pose();
             properties.DistanceIntersection = 40;
+            properties.BatteryLowLevel = 25;
+            properties.BatteryReadyWork = true;
         }
         public void createRosTerms()
         {
@@ -146,7 +153,25 @@ namespace SeldatMRMS.Management.RobotManagent
             paramsRosSocket.publication_linedetectionctrl = this.Advertise("/linedetectionctrl", "std_msgs/Int32");
             paramsRosSocket.publication_postPallet = this.Advertise("/pospallet", "std_msgs/Int32");
             paramsRosSocket.publication_cmdAreaPallet = this.Advertise("/cmdAreaPallet", "std_msgs/String");
+            paramsRosSocket.publication_batteryvol = this.Subscribe("/battery_vol", "std_msgs/Float32", BatteryVolHandler);
         }
+
+        private void BatteryVolHandler(Communication.Message message)
+        {
+            StandardFloat32 batVal = (StandardFloat32)message;
+            properties.BatteryLevelRb = batVal.data;
+            if(properties.BatteryReadyWork == true){
+                if(properties.BatteryLevelRb < properties.BatteryLowLevel){
+                    properties.BatteryReadyWork = false;
+                }
+            }
+            else{
+                if(properties.BatteryLevelRb > (properties.BatteryLowLevel + delBatterry)){
+                    properties.BatteryReadyWork = true;
+                }
+            }
+        }
+
         private void AmclPoseHandler(Communication.Message message)
         {
             GeometryPoseWithCovarianceStamped standardString = (GeometryPoseWithCovarianceStamped)message;
@@ -174,6 +199,7 @@ namespace SeldatMRMS.Management.RobotManagent
             this.Publish(paramsRosSocket.publication_finishedStates, msg);
 
         }
+
         protected override void OnClosedEvent(object sender, CloseEventArgs e) {
             properties.IsConnected = false;
             base.OnClosedEvent(sender,e);

@@ -122,6 +122,7 @@ namespace SeldatMRMS
                         {
                             StateRobotToCharge = RobotGoToCharge.ROBCHAR_FINISHED_CHARGEBATTERY;
                         }
+                        rb.properties.BatteryLevelRb = (float)batLevel.data[0];
                         break; //dợi charge battery và thông tin giao tiếp server và trạm sạc
                     case RobotGoToCharge.ROBCHAR_FINISHED_CHARGEBATTERY:
                         StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_WAITING_RECONNECTING;    
