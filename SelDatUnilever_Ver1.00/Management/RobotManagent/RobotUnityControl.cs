@@ -29,6 +29,7 @@ namespace SeldatMRMS.Management.RobotManagent
                 this.Position = new Point(X,Y);
                 this.AngleW = AngleW;
            }
+            public Pose() { }
            public void Destroy() // hủy vị trí robot để robot khác có thể làm việc trong quá trình detect
             {
                 this.Position = new Point(-1000, -1000);
@@ -128,7 +129,8 @@ namespace SeldatMRMS.Management.RobotManagent
         protected virtual void SupervisorTraffic() { }
         public RobotUnityControl()
         {
-
+            properties.pose = new Pose();
+            properties.DistanceIntersection = 40;
         }
         public void createRosTerms()
         {

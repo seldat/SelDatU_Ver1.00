@@ -5,6 +5,7 @@ using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-    public class RobotUnity:RobotBaseService
+    public class RobotUnity : RobotBaseService
     {
         public LoadedConfigureInformation loadConfigureInformation;
         public RobotUnity()
@@ -23,12 +24,12 @@ namespace SeldatMRMS.Management.RobotManagent
         {
             try
             {
-                properties.NameID =row.Field<string>("Name ID");
+                properties.NameID = row.Field<string>("Name ID");
                 properties.URL = row.Field<string>("URL");
                 properties.Width = double.Parse(row.Field<string>("Width"));
                 properties.Height = double.Parse(row.Field<string>("Height"));
                 properties.Length = double.Parse(row.Field<string>("Length"));
-                properties.L1= double.Parse(row.Field<string>("L1"));
+                properties.L1 = double.Parse(row.Field<string>("L1"));
                 properties.L2 = double.Parse(row.Field<string>("L2"));
                 properties.WS = double.Parse(row.Field<string>("WS"));
                 properties.DistanceIntersection = double.Parse(row.Field<string>("Distance Intersection"));
@@ -52,14 +53,22 @@ namespace SeldatMRMS.Management.RobotManagent
         TextBlock textblock;
         double x = 0, y = 0;
         double angle = 0;
+        System.Windows.Threading.DispatcherTimer dispatcherTimer;
         public RobotUnity(Canvas canvas)
         {
+            #region Timer1
+            //dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            //dispatcherTimer.Tick += dispatcherTimer_Tick;
+            //dispatcherTimer.Interval = new TimeSpan(5000000);
+            #endregion
+
+
             this.canvas = canvas;
             properties.L1 = 30;
             properties.L2 = 30;
-            properties.WS = 40;
+            properties.WS = 40;//40/2
             textblock = new TextBlock();
-           
+
             ep = new Ellipse();
             ep.Width = 5;
             ep.Height = 5;
@@ -98,10 +107,56 @@ namespace SeldatMRMS.Management.RobotManagent
             canvas.Children.Add(ep3);
             canvas.Children.Add(ep4);
             canvas.Children.Add(ep5);
-           // canvas.Children.Add(ep6);
+            // canvas.Children.Add(ep6);
             canvas.Children.Add(textblock);
+            //  dispatcherTimer.Start();
+
         }
 
+        int state = 1;
+        int count = 0;
+        Random rnd = new Random();
+        //private void dispatcherTimer_Tick(object sender, EventArgs e)
+        //{
+
+        //   // try
+        //    {
+        //        state = rnd.Next(1, 6);
+        //        count = 0;
+        //       // if (count++ > 20) count = 0;
+        //        //if(test == 0)
+        //        { switch (state)
+        //            {
+        //                case 1:
+        //                   while(count++ <5)
+        //                    this.LeftRobot();
+        //                    break;
+        //                case 2:
+        //                    while (count++ < 5)
+        //                        this.RightRobot();
+        //                    break;
+        //                case 3:
+        //                    while (count++ < 5)
+        //                        this.UpRobot();
+        //                    break;
+        //                case 4:
+        //                    while (count++ < 5)
+        //                        this.DownRobot();
+        //                    break;
+        //                case 5:
+        //                    while (count++ < 5)
+        //                        this.RotationLeft();
+        //                    break;
+        //                case 6:
+        //                    while (count++ < 5)
+        //                       this.RotationRight();
+        //                    break;
+        //            }       
+        //        }
+        //       // count = 0;
+        //    }
+        //   // catch { }
+        //}
         public void initialPos(double xx, double yy)
         {
             x = xx;
@@ -110,10 +165,12 @@ namespace SeldatMRMS.Management.RobotManagent
             setConner(new Point(xx, yy), angle);
             textblock.Text = this.properties.NameID;
             textblock.FontSize = 8;
-            textblock.RenderTransform = new TranslateTransform(xx+5,yy);
+            textblock.RenderTransform = new TranslateTransform(xx + 5, yy);
         }
         public void setConner(Point p, double angle)
         {
+
+
             textblock.RenderTransform = new TranslateTransform(p.X + 5, p.Y);
             properties.pose.Position = p;
             properties.pose.AngleW = angle;
@@ -123,9 +180,9 @@ namespace SeldatMRMS.Management.RobotManagent
             ep4.RenderTransform = new TranslateTransform(BottomTail().X, BottomTail().Y);
             ep5.RenderTransform = new TranslateTransform(MiddleHeader().X, MiddleHeader().Y);
             ep6.RenderTransform = new TranslateTransform(MiddleTail().X, MiddleTail().Y);
-            // Canvas.SetLeft(ep1, TopHeader().X);
+            //Canvas.SetLeft(ep1, TopHeader().X);
             // Canvas.SetTop(ep1, TopHeader().Y);
-            // Canvas.SetLeft(ep2, BottomHeader().X);
+            //Canvas.SetLeft(ep2, BottomHeader().X);
             // Canvas.SetTop(ep2, BottomHeader().Y);
             // Canvas.SetLeft(ep3, TopTail().X);
             // Canvas.SetTop(ep3, TopTail().Y);

@@ -33,14 +33,20 @@ plot([0 X3],[0 Y3],'.g-')*/
 namespace SeldatMRMS.Management
 {
 
-    public class RobotUnityService:RobotUnityControl
+    public class RobotUnityService : RobotUnityControl
     {
-        
-      
+
+
         public RobotUnityService()
         {
         }
         public virtual Point TopHeader()
+        {
+            double x = properties.pose.Position.X + Math.Sqrt((Math.Abs(properties.L1) * Math.Abs(properties.L1)) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Cos(properties.pose.AngleW + Math.Atan2(-properties.WS / 2, properties.L1));
+            double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L1) * Math.Abs(properties.L1) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(-properties.WS / 2, properties.L1));
+            return new Point(x, y);
+        }
+        public virtual Point BottomHeader()
         {
             double x = properties.pose.Position.X + Math.Sqrt(Math.Abs(properties.L1) * Math.Abs(properties.L1) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Cos(properties.pose.AngleW + Math.Atan2(properties.WS / 2, properties.L1));
             double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L1) * Math.Abs(properties.L1) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(properties.WS / 2, properties.L1));
@@ -48,17 +54,7 @@ namespace SeldatMRMS.Management
         }
         public virtual Point MiddleHeader()
         {
-            return new Point((TopHeader().X+BottomHeader().X)/2, (TopHeader().Y + BottomHeader().Y) / 2);
-        }
-        public virtual Point BottomHeader()
-        {
-            double x = properties.pose.Position.X + Math.Sqrt(Math.Abs(properties.L1) * Math.Abs(properties.L1) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Cos(properties.pose.AngleW + Math.Atan2(-properties.WS / 2, properties.L1));
-            double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L1) * Math.Abs(properties.L1) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(-properties.WS / 2, properties.L1));
-            return new Point(x, y);
-        }
-        public virtual Point LeftSide()
-        {
-            return new Point((TopHeader().X+TopTail().X)/2, (TopHeader().Y + TopTail().Y) / 2);
+            return new Point((TopHeader().X + BottomHeader().X) / 2, (TopHeader().Y + BottomHeader().Y) / 2);
         }
         public virtual Point TopTail()
         {
@@ -66,37 +62,66 @@ namespace SeldatMRMS.Management
             double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L2) * Math.Abs(properties.L2) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(-properties.WS / 2, -properties.L2));
             return new Point(x, y);
         }
+
+
         public virtual Point MiddleTail()
         {
-            return new Point((TopTail().X+BottomTail().X)/2, (TopTail().Y + BottomTail().Y) / 2);
+            return new Point((TopTail().X + BottomTail().X) / 2, (TopTail().Y + BottomTail().Y) / 2);
         }
         public virtual Point BottomTail()
         {
             double x = properties.pose.Position.X + Math.Sqrt(Math.Abs(properties.L2) * Math.Abs(properties.L2) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Cos(properties.pose.AngleW + Math.Atan2(properties.WS / 2, -properties.L2));
-            double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L2) * Math.Abs(properties.L2) + Math.Abs(properties.WS/ 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(properties.WS / 2, -properties.L2));
+            double y = properties.pose.Position.Y + Math.Sqrt(Math.Abs(properties.L2) * Math.Abs(properties.L2) + Math.Abs(properties.WS / 2) * Math.Abs(properties.WS / 2)) * Math.Sin(properties.pose.AngleW + Math.Atan2(properties.WS / 2, -properties.L2));
             return new Point(x, y);
         }
+
+
+
+
+        public virtual Point LeftSide()
+        {
+            //return new Point((BottomHeader().X + BottomTail().X) / 2, (BottomHeader().Y + BottomTail().Y) / 2);
+            return new Point((TopHeader().X + TopTail().X) / 2, (TopHeader().Y + TopTail().Y) / 2);
+
+            //Console.WriteLine("rISK left " + LeftSide());
+
+        }// ko dung nha ^^
         public virtual Point RightSide()
         {
-            return new Point((BottomHeader().X+BottomTail().X)/2, (BottomHeader().Y + BottomTail().Y) / 2);
+            //  return new Point((TopHeader().X + TopTail().X) / 2, (TopHeader().Y + TopTail().Y) / 2);
+
+            return new Point((BottomHeader().X + BottomTail().X) / 2, (BottomHeader().Y + BottomTail().Y) / 2);
+        }// ko dung 
+
+        public virtual Point MiddleAll()
+        {
+            return new Point((TopHeader().X + TopTail().X) / 2, (TopHeader().Y + BottomHeader().Y) / 2);
         }
+
+
 
         public Point[] RiskAreaHeader()  // From Point : TopHeader / BottomHeader / RigtSide // LeftSide
         {
-            return new Point[4] { TopHeader(), BottomHeader(), RightSide(), LeftSide() };
+            //  Console.WriteLine("rISK Header " + TopHeader1() + " " + BottomHeader1() + " " + TopHeader2() + " " + BottomHeader2());
+            return new Point[3] { TopHeader(), BottomHeader(), MiddleAll() };
         }
         public Point[] RiskAreaTail()  // From Point : TopTail / BottomTail / RigtSide // LeftSide
         {
-            return new Point[4] { TopTail(), BottomTail(), RightSide(), LeftSide() };
+            // Console.WriteLine("rISK tAIL " + TopTail1() + " " + BottomTail1() + " " + TopTail2() + " " + BottomTail2());
+
+            return new Point[3] { TopTail(), BottomTail(), MiddleAll() };
         }
 
         public Point[] RiskAreaRightSide()  // From Point : TopHeader / TopTail / Middle TAil //Middle HEader
         {
-            return new Point[4] { TopHeader(), TopTail(), MiddleTail(), MiddleHeader() };
+            //  Console.WriteLine("Right Side " + BottomHeader2() + " " + BottomTail2() + " " + RightHeader() + " " + RightTail());
+            return new Point[3] { BottomTail(), BottomHeader(), MiddleAll() };
+
         }
         public Point[] RiskAreaLeftSide()  // From Point : BOttom Header / Bottom Tail / Middle TAil //Middle HEader
         {
-            return new Point[4] { BottomHeader(), BottomTail(), MiddleTail(), MiddleHeader() };
+            // Console.WriteLine("Left Side "+TopHeader() +" "+ TopTail() +" "+ LeftHeader()+" "+ LeftTail());
+            return new Point[3] { TopHeader(), TopTail(), MiddleAll() };
         }
         public Point[] FullRiskArea()
         {
@@ -104,12 +129,17 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIsCloseRiskArea(Point p)
         {
-            return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
-           
+            // return ExtensionService.CalDistance(TopHeader(),p)<properties.DistanceIntersection || ExtensionService.CalDistance(BottomHeader(), p) < properties.DistanceIntersection || ExtensionService.CalDistance(MiddleHeader(), p) < properties.DistanceIntersection ? true:false;
+            //Console.WriteLine("Vi tri robot "+ this.properties.NameID+" = " + properties.pose.Position);
+            // Console.WriteLine("Vi tien gan " + p.ToString());
+            // Console.WriteLine("kHOAN CACH " + ExtensionService.CalDistance(properties.pose.Position, p));
+
+            return ExtensionService.CalDistance(properties.pose.Position, p) < properties.DistanceIntersection ? true : false;
+
         }
         public bool FindHeaderIntersectsFullRiskArea(Point p)
         {
-            return ExtensionService.IsInPolygon(FullRiskArea(),p);
+            return ExtensionService.IsInPolygon(FullRiskArea(), p);
         }
         public bool FindHeaderIntersectsRiskAreaHeader(Point p)
         {
@@ -121,6 +151,7 @@ namespace SeldatMRMS.Management
         }
         public bool FindHeaderIntersectsRiskAreaLeftSide(Point p)
         {
+
             return ExtensionService.IsInPolygon(RiskAreaLeftSide(), p);
         }
         public bool FindHeaderIntersectsRiskAreaRightSide(Point p)

@@ -48,8 +48,8 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-             deviceRegistrationService=new DeviceRegistrationService(9000);
-             deviceRegistrationService.listen();
+            //deviceRegistrationService=new DeviceRegistrationService(9000);
+            // deviceRegistrationService.listen();
             /*Chau test*/
             //ChargerInfoConfig cf;
             //cf.id = ChargerId.CHARGER_ID_1;
@@ -84,29 +84,29 @@ namespace SelDatUnilever_Ver1._00
               pr.RegistrationTranfficService(traffiicService);
               pr.Start();*/
             /*end*/
-            /*   RobotUnity robot1 = new RobotUnity(canvas);
-               robot1.properties.NameID = "robot1";
-               RobotUnity robot2 = new RobotUnity(canvas);
-               robot2.properties.NameID = "robot2";
-               RobotUnity robot3 = new RobotUnity(canvas);
-               robot3.properties.NameID = "robot3";
-               robottrafficlist.Add(robot1);
-               robottrafficlist.Add(robot2);
-               robottrafficlist.Add(robot3);
+            RobotUnity robot1 = new RobotUnity(canvas);
+            robot1.properties.NameID = "robot1";
+            RobotUnity robot2 = new RobotUnity(canvas);
+            robot2.properties.NameID = "robot2";
+            RobotUnity robot3 = new RobotUnity(canvas);
+            robot3.properties.NameID = "robot3";
+            robottrafficlist.Add(robot1);
+            robottrafficlist.Add(robot2);
+            robottrafficlist.Add(robot3);
 
-               robot1.RegisteRobotInAvailable(robottrafficlist);
-               robot2.RegisteRobotInAvailable(robottrafficlist);
-               robot3.RegisteRobotInAvailable(robottrafficlist);
+            robot1.RegisteRobotInAvailable(robottrafficlist);
+            robot2.RegisteRobotInAvailable(robottrafficlist);
+            robot3.RegisteRobotInAvailable(robottrafficlist);
 
-               robotlist.Add("robot1", robot1);
-               robotlist.Add("robot2", robot2);
-               robotlist.Add("robot3", robot3);
+            robotlist.Add("robot1", robot1);
+            robotlist.Add("robot2", robot2);
+            robotlist.Add("robot3", robot3);
 
-               robot1.initialPos(0,0);
-               robot2.initialPos(300,300);
-               robot3.initialPos(400,400);
-               TrafficManagementService traffic = new TrafficManagementService();
-               traffic.LoadConfigureZone();*/
+            robot1.initialPos(300, 200);
+            robot2.initialPos(300, 300);
+            robot3.initialPos(300, 400);
+            //TrafficManagementService traffic = new TrafficManagementService();
+            //traffic.LoadConfigureZone();
 
             //  deviceRegistrationService=new DeviceRegistrationService(9000);
             //  deviceRegistrationService.listen();
