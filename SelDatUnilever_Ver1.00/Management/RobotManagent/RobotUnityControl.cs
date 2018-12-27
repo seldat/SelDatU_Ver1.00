@@ -12,21 +12,21 @@ using WebSocketSharp;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
-	
-	public class RobotUnityControl:RosSocket
+
+    public class RobotUnityControl : RosSocket
     {
-		public event Action<int> FinishStatesCallBack;
-		public event Action<Pose, Object> PoseHandler;
+        public event Action<int> FinishStatesCallBack;
+        public event Action<Pose, Object> PoseHandler;
         public class Pose
         {
-           public Pose(Point p,double AngleW) // Angle gốc
+            public Pose(Point p, double AngleW) // Angle gốc
             {
                 this.Position = p;
                 this.AngleW = AngleW;
-           }
-           public Pose(double X,double Y, double AngleW) // Angle gốc
-           {
-                this.Position = new Point(X,Y);
+            }
+            public Pose(double X, double Y, double AngleW) // Angle gốc
+            {
+                this.Position = new Point(X, Y);
                 this.AngleW = AngleW;
            }
             public Pose() { }
@@ -102,7 +102,8 @@ namespace SeldatMRMS.Management.RobotManagent
             RESPONSE_FINISH_RETURN_LINE_CHARGEAREA = 3207,
             RESPONSE_FINISH_TURN_LEFT = 3210,
             RESPONSE_FINISH_TURN_RIGHT = 3211,
-            RESPONSE_FINISH_GOBACK_FRONTLINE = 3213
+            RESPONSE_FINISH_GOBACK_FRONTLINE = 3213,
+            RESPONSE_ERROR = 3215
         }
 
         public virtual void updateparams(){}

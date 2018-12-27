@@ -50,13 +50,16 @@ namespace SeldatMRMS.Management
         //     }
         // }
 
-        public class PointFrontLine{
-            public Pose p;
-            public bool hasBranch;
-        }
-        public class PointDetectBranching{
-            public PointDetect xy;
-            public BrDirection brDir;
+        // public class PointDetectBranching{
+        //     public PointDetect xy;
+        //     public BrDirection brDir;
+        // }
+        public class JInfoPallet{
+            public String pallet;
+            public Int32 bay;
+            public String hasSubLine;
+            public String direction;
+            public Int32 row;
         }
         private List<RobotUnity> RobotUnitylist;
         private Dictionary<String,RobotUnity> RobotUnityRiskList=new Dictionary<string, RobotUnity>();

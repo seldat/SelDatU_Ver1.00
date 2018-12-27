@@ -57,7 +57,7 @@ namespace SeldatMRMS
                 default: break;
             }
         }
-        public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_CHARGER_CHECKSTATUS)
+        public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER)
         {
             errorCode = ErrorCode.RUN_OK;
             robot.ProcedureAs = ProcedureControlAssign.PRO_CHARGE;
