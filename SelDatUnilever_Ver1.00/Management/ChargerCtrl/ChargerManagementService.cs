@@ -19,15 +19,13 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
         public ChargerCtrl ChargerStation_1;
         public ChargerCtrl ChargerStation_2;
         public ChargerCtrl ChargerStation_3;
-        public ChargerCtrl ChargerStation_4;
-
+        
         public ChargerManagementService()
         {
             LoadChargerConfigure();
             ChargerStation_1 = new ChargerCtrl(CfChargerStationList[0]);
             ChargerStation_2 = new ChargerCtrl(CfChargerStationList[1]);
             ChargerStation_3 = new ChargerCtrl(CfChargerStationList[2]);
-          //  ChargerStation_4 = new ChargerCtrl(CfChargerStationList[3]);
         }
         public void LoadChargerConfigure()
         {
@@ -47,7 +45,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             foreach (DataRow row in data.Rows)
             {
                 ChargerInfoConfig ptemp = new ChargerInfoConfig();
-                ptemp.id = (ChargerId)int.Parse(row.Field<String>("ID").ToString());
+                ptemp.id = (ChargerId)int.Parse(row.Field<String>("ID"));
                 ptemp.ip = row.Field<String>("IP");
                 ptemp.port = int.Parse(row.Field<String>("Port"));
                 ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),

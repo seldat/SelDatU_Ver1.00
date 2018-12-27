@@ -51,12 +51,15 @@ namespace DoorControllerService
         public DoorInfoConfig config;
         public DoorService(DoorInfoConfig cf):base(cf.ip,cf.port)
         {
-            this.config = cf;
-            this.SetId(cf.id);
+            config = cf;
+            SetId(cf.id);
         }
 
         public bool GetId(ref DataReceive data)
         {
+#if true
+            bool ret = true;
+#else
             bool ret = false;
             byte[] dataSend = new byte[6];
 
@@ -67,10 +70,14 @@ namespace DoorControllerService
             dataSend[4] = 0x00;
             dataSend[5] = CalChecksum(dataSend,3);
             ret = this.Tranfer(dataSend,ref data);
+#endif
             return ret;
         }
         public bool SetId(DoorId id)
         {
+#if true
+            bool ret = true;
+#else
             bool ret = false;
             byte[] dataSend = new byte[7];
 
@@ -82,10 +89,14 @@ namespace DoorControllerService
             dataSend[5] = (byte)id;
             dataSend[6] = CalChecksum(dataSend,4);
             ret = this.Tranfer(dataSend);
+#endif
             return ret;
         }
         public bool GetStatus(ref DataReceive data,DoorId id)
         {
+#if true
+            bool ret = true;
+#else
             bool ret = false;
             byte[] dataSend = new byte[7];
 
@@ -97,10 +108,14 @@ namespace DoorControllerService
             dataSend[5] = (byte)id;
             dataSend[6] = CalChecksum(dataSend,4);
             ret = this.Tranfer(dataSend,ref data);
+#endif
             return ret;
         }
         public bool Open(DoorId id)
         {
+#if true
+            bool ret = true;
+#else
             bool ret = false;
             byte[] dataSend = new byte[7];
 
@@ -112,10 +127,14 @@ namespace DoorControllerService
             dataSend[5] = (byte)id;
             dataSend[6] = CalChecksum(dataSend,4);
             ret = this.Tranfer(dataSend);
+#endif
             return ret;
         }
         public bool Close(DoorId id)
         {
+#if true
+            bool ret = true;
+#else
             bool ret = false;
             byte[] dataSend = new byte[7];
 
@@ -127,12 +146,14 @@ namespace DoorControllerService
             dataSend[5] = (byte)id;
             dataSend[6] = CalChecksum(dataSend,4);
             ret = this.Tranfer(dataSend);
+#endif
             return ret;
         }
 
         public bool WaitOpen(DoorId id, UInt32 timeOut)
         {
             bool result = true;
+#if false
             Stopwatch sw = new Stopwatch();
             DataReceive status = new DataReceive();
             this.Open(id);
@@ -148,12 +169,14 @@ namespace DoorControllerService
                 this.GetStatus(ref status,id);
             } while (status.data[0] != (byte)DoorStatus.DOOR_OPEN);
             sw.Stop();
+#endif
             return result;
         }
 
         public bool WaitClose(DoorId id, UInt32 timeOut)
         {
             bool result = true;
+#if false
             Stopwatch sw = new Stopwatch();
             DataReceive status = new DataReceive();
             this.Close(id);
@@ -169,6 +192,7 @@ namespace DoorControllerService
                 this.GetStatus(ref status,id);
             } while (status.data[0] != (byte)DoorStatus.DOOR_CLOSE);
             sw.Stop();
+#endif
             return result;
         }
     }

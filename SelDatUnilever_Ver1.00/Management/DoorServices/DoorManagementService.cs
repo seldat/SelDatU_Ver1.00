@@ -46,7 +46,7 @@ namespace SeldatMRMS.Management.DoorServices
             foreach (DataRow row in data.Rows)
             {
                 DoorInfoConfig ptemp = new DoorInfoConfig();
-                ptemp.id = (DoorId)double.Parse(row.Field<String>("ID").ToString());
+                ptemp.id = (DoorId)double.Parse(row.Field<String>("ID"));
                 ptemp.ip = row.Field<String>("IP");
                 ptemp.port = int.Parse(row.Field<String>("Port"));
                 ptemp.PointCheckInGate = new Pose(double.Parse(row.Field<String>("PointCheckInGate").Split(',')[0]),
