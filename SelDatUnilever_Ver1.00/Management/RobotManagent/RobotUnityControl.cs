@@ -139,7 +139,7 @@ namespace SeldatMRMS.Management.RobotManagent
             properties.pose = new Pose();
             properties.DistanceIntersection = 40;
             properties.BatteryLowLevel = 25;
-            properties.BatteryReadyWork = true;
+            properties.BatteryReadyWork = false;
         }
         public void createRosTerms()
         {

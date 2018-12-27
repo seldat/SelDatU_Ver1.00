@@ -62,9 +62,12 @@ namespace SeldatMRMS.Management
             public Int32 row;
         }
         private List<RobotUnity> RobotUnitylist;
+        private bool flagSupervisorTraffic;
         private Dictionary<String,RobotUnity> RobotUnityRiskList=new Dictionary<string, RobotUnity>();
         private TrafficBehaviorState TrafficBehaviorStateTracking;
-        public TrafficRobotUnity() : base() { }
+        public TrafficRobotUnity() : base() {
+            TurnOnSupervisorTraffic(false);
+        }
         public PriorityLevel PrioritLevelRegister;
         public void RegisteRobotInAvailable(List<RobotUnity> RobotUnitylist)
         {
@@ -165,24 +168,31 @@ namespace SeldatMRMS.Management
 
             }
         }
+        public void TurnOnSupervisorTraffic(bool flagtraffic)
+        {
+            flagSupervisorTraffic = flagtraffic;
+        }
         protected override void SupervisorTraffic() {
-            if(CheckSafeDistance())
+            if (flagSupervisorTraffic)
             {
-                RobotUnity robot = CheckIntersection();
-                if (robot != null)
+                if (CheckSafeDistance())
                 {
-                    DetectTouchedPosition(robot);
+                    RobotUnity robot = CheckIntersection();
+                    if (robot != null)
+                    {
+                        DetectTouchedPosition(robot);
+                        TrafficBehavior();
+                    }
+                }
+                else
+                {
+                    if (RobotUnityRiskList.Count > 0)
+                    {
+                        RobotUnityRiskList.Clear();
+                    }
+                    TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
                     TrafficBehavior();
                 }
-            }
-            else
-            {
-                if(RobotUnityRiskList.Count>0)
-                {
-                    RobotUnityRiskList.Clear();
-                }
-                TrafficBehaviorStateTracking = TrafficBehaviorState.HEADER_TOUCH_NOTOUCH;
-                TrafficBehavior();
             }
         }
 

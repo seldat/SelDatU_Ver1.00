@@ -49,8 +49,8 @@ namespace SelDatUnilever_Ver1
         }
         public String RequestDataProcedure(String dataReq)
         {
-            //String url = "http://localhost:8081/robot/rest/plan/getListPlanPallet";
-            String url = "http://localhost:8080";
+            String url = "http://192.168.1.16:8081/robot/rest/plan/getListPlanPallet";
+           // String url = "http://localhost:8080";
             var data =clientRequest.PostCallAPI(url, dataReq);
             if(data.Result!=null)
             {
@@ -61,43 +61,12 @@ namespace SelDatUnilever_Ver1
         public Pose GetCheckInBuffer()
         {
             Pose poseTemp = null;
-            JArray results = JArray.Parse(order.dataRequest);
-            foreach (var result in results)
-            {
-                int temp_productDetailID = (int)result["productDetailId"];
-                if (temp_productDetailID == order.productDetailID)
-                {
-                    var bufferResults = result["buffers"];
-                    var checkinResults = bufferResults[0]["bufferCheckIn"];
-                    var bCIn = checkinResults[0];
-                    double x = (double)bCIn["X"];
-                    double y = (double)bCIn["Y"];
-                    double angle = (double)bCIn["A"];
-                    poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
-                    break;
-                }
-            }
+      
             return poseTemp;
         }
         public Pose GetFrontLineBuffer()
         {
             Pose poseTemp = null;
-            JArray results = JArray.Parse(order.dataRequest);
-            foreach (var result in results)
-            {
-                int temp_productDetailID = (int)result["productDetailId"];
-                if (temp_productDetailID == order.productDetailID)
-                {
-                    var bufferResults = result["buffers"];
-                    var checkinResults = bufferResults[0]["bufferCheckIn"];
-                    var bCIn = checkinResults[1];
-                    double x = (double)bCIn["X"];
-                    double y = (double)bCIn["Y"];
-                    double angle = (double)bCIn["A"];
-                    poseTemp = new Pose(x, y, angle * Math.PI / 180.0);
-                    break;
-                }
-            }
             return poseTemp;
         }
 

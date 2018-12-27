@@ -17,7 +17,6 @@ namespace SeldatMRMS
         protected RobotManagementService robotManagementService;
         public ProcedureManagementService()
         {
-            doorService = new DoorManagementService();
         }
         public void RegistryService(TrafficManagementService trafficService)
         {
@@ -26,6 +25,14 @@ namespace SeldatMRMS
         public void RegistryService(RobotManagementService robotManagementService)
         {
             this.robotManagementService = robotManagementService;
+        }
+        public void RegistryService(DoorManagementService doorService)
+        {
+            this.doorService = doorService;
+        }
+        public void RegistryService(ChargerManagementService chargerService)
+        {
+            this.chargerService = chargerService;
         }
         public void Register(ProcedureItemSelected ProcedureItem, RobotUnity robot, OrderItem orderItem)
         {
@@ -39,6 +46,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocfb = new RegisterProcedureItem() { item = procfb, robot = robot, procedureDataItems = profbDataItems };
                         procfb.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocfb);
+                        procfb.AssignAnOrder(orderItem);
                         procfb.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_MACHINE:
@@ -48,6 +56,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbm = new RegisterProcedureItem() { item = procbm, robot = robot, procedureDataItems = prcobmDataItems };
                         procbm.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbm);
+                    procbm.AssignAnOrder(orderItem);
                         procbm.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_RETURN: 
@@ -57,6 +66,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbr = new RegisterProcedureItem() { item = procbr, robot = robot, procedureDataItems = prcobrDataItems };
                         procbr.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbr);
+                        procbr.AssignAnOrder(orderItem);
                         procbr.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_MACHINE_TO_RETURN:
@@ -66,6 +76,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocmr = new RegisterProcedureItem() { item = procmr, robot = robot, procedureDataItems = prcomrDataItems };
                         procmr.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocmr);
+                        procmr.AssignAnOrder(orderItem);
                         procmr.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE:

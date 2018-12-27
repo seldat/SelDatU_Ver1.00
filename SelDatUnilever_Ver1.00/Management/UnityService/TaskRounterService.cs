@@ -15,23 +15,23 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
     {
         public enum ProcessAssignAnTaskWait
         {
-            PROC_IDLE = 0,
-            PROC_CHECK_HAS_ANTASK,
-            PROC_ASSIGN_ANTASK,
-            PROC_GET_ANROBOT_IN_WAITTASKLIST,
-            PROC_CHECK_ROBOT_BATTERYLEVEL,
-            PROC_SET_TRAFFIC_RISKAREA_ON,
-            PROC_CHECK_ROBOT_OUTSIDEREADY,
+            PROC_ANY_IDLE = 0,
+            PROC_ANY_CHECK_HAS_ANTASK,
+            PROC_ANY_ASSIGN_ANTASK,
+            PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST,
+            PROC_ANY_CHECK_ROBOT_BATTERYLEVEL,
+            PROC_ANY_SET_TRAFFIC_RISKAREA_ON,
+            PROC_ANY_CHECK_ROBOT_OUTSIDEREADY,
         }
         protected enum ProcessAssignTaskReady
         {
-            PROC_IDLE = 0,
-            PROC_CHECK_HAS_ANTASK,
-            PROC_ASSIGN_ANTASK,
-            PROC_GET_ANROBOT_INREADYLIST,
-            PROC_CHECK_ROBOT_BATTERYLEVEL,
-            PROC_SET_TRAFFIC_RISKAREA_ON,
-            PROC_CHECK_ROBOT_OUTSIDEREADY,
+            PROC_READY_IDLE = 0,
+            PROC_READY_CHECK_HAS_ANTASK,
+            PROC_READY_ASSIGN_ANTASK,
+            PROC_READY_GET_ANROBOT_INREADYLIST,
+            PROC_READY_CHECK_ROBOT_BATTERYLEVEL,
+            PROC_READY_SET_TRAFFIC_RISKAREA_ON,
+            PROC_READY_CHECK_ROBOT_OUTSIDEREADY,
         }
         protected ProcessAssignTaskReady processAssignTaskReady;
         public event Action<bool> FinishTaskCallBack;
@@ -68,7 +68,11 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
         }
         public OrderItem Gettask()
         {
-            OrderItem item = deviceItemsList[0].GetOrder();
+            OrderItem item = null;
+            if (deviceItemsList.Count > 0)
+            {
+                item = deviceItemsList[0].GetOrder();
+            }
             return item;
         }
 

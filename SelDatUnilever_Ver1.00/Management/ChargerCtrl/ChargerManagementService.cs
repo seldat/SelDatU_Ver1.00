@@ -27,7 +27,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             ChargerStation_1 = new ChargerCtrl(CfChargerStationList[0]);
             ChargerStation_2 = new ChargerCtrl(CfChargerStationList[1]);
             ChargerStation_3 = new ChargerCtrl(CfChargerStationList[2]);
-            ChargerStation_4 = new ChargerCtrl(CfChargerStationList[3]);
+          //  ChargerStation_4 = new ChargerCtrl(CfChargerStationList[3]);
         }
         public void LoadChargerConfigure()
         {

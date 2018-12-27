@@ -31,6 +31,7 @@ namespace SeldatMRMS.Management.DoorServices
         {
             string name = "Door";
             String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Configure.xlsx");
+            
             string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
                             path +
                             ";Extended Properties='Excel 12.0 XML;HDR=YES;';";
