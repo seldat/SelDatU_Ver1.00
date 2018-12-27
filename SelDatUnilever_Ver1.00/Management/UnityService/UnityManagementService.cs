@@ -25,6 +25,7 @@ namespace SeldatMRMS.Management.UnityService
             robotManagementServiceRegistery = new RobotManagementService();
             doorManagementServiceRegistery = new DoorManagementService();
             procedureManagementServiceRegistery = new ProcedureManagementService();
+            trafficManagementService = new TrafficManagementService();
             deviceRegistrationService = new DeviceRegistrationService(11000);
             assigmentTaskService = new AssigmentTaskService();
             trafficManagementService = new TrafficManagementService();
@@ -32,6 +33,8 @@ namespace SeldatMRMS.Management.UnityService
             assigmentTaskService.RegistryService(procedureManagementServiceRegistery);
             assigmentTaskService.RegistryService(deviceRegistrationService.GetDeviceItemList());
             assigmentTaskService.RegistryService(trafficManagementService);
+            procedureManagementServiceRegistery.RegistryService(trafficManagementService);
+            procedureManagementServiceRegistery.RegistryService(robotManagementServiceRegistery);
         }
         public void Dispose()
         {

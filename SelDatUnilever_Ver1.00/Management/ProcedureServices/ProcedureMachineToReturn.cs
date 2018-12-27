@@ -33,6 +33,7 @@ namespace SeldatMRMS
             this.robot = robot;
             this.points = new DataMachineToReturn();
             this.Traffic = traffiicService;
+            procedureCode = ProcedureCode.PROC_CODE_MACHINE_TO_RETURN;
         }
 
         public void Start(MachineToReturn state = MachineToReturn.MACRET_ROBOT_GOTO_FRONTLINE_MACHINE)

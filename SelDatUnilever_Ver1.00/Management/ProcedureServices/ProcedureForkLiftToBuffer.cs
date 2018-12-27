@@ -51,6 +51,7 @@ namespace SeldatMRMS
             // this.points.PointFrontLineGate = this.door.config.PointFrontLine;
             // this.points.PointPickPalletIn = this.door.config.PointOfPallet;
             this.Traffic = traffiicService;
+            procedureCode = ProcedureCode.PROC_CODE_FORKLIFT_TO_BUFFER;
 
         }
         public void Start(ForkLiftToBuffer state = ForkLiftToBuffer.FORBUF_ROBOT_GOTO_CHECKIN_GATE)

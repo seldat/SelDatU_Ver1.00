@@ -151,9 +151,9 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst=(string)results["datapallet"][i];
                     JObject stuffPallet =JObject.Parse(jsonDPst);
-                    double xx = (double)stuffPallet["line"]["X"];
-                    double yy = (double)stuffPallet["line"]["Y"];
-                    double angle = (double)stuffPallet["line"]["Angle"];
+                    double xx = (double)stuffPallet["line"]["x"];
+                    double yy = (double)stuffPallet["line"]["y"];
+                    double angle = (double)stuffPallet["line"]["angle"];
                     int row = (int)stuffPallet["pallet"]["row"];
                     int bay = (int)stuffPallet["pallet"]["bay"];
                     int direct = (int)stuffPallet["pallet"]["direct"];
@@ -179,9 +179,9 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     String jsonDPst = (string)results["datapallet"][i];
 
                     JObject stuffPallet = JObject.Parse(jsonDPst);
-                    double xx = (double)stuffPallet["line"]["X"];
-                    double yy = (double)stuffPallet["line"]["Y"];
-                    double angle = (double)stuffPallet["line"]["Angle"];
+                    double xx = (double)stuffPallet["line"]["x"];
+                    double yy = (double)stuffPallet["line"]["y"];
+                    double angle = (double)stuffPallet["line"]["angle"];
                     int row = (int)stuffPallet["pallet"]["row"];
                     int bay = (int)stuffPallet["pallet"]["bay"];
                     int direct = (int)stuffPallet["pallet"]["direct"];

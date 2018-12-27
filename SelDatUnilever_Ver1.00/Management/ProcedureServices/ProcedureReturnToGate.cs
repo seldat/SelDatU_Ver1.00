@@ -45,6 +45,7 @@ namespace SeldatMRMS
             this.door = doorservice;
             this.Traffic = traffiicService;
             errorCode = ErrorCode.RUN_OK;
+            procedureCode = ProcedureCode.PROC_CODE_RETURN_TO_GATE;
         }
         public void Start(ReturnToGate state = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_RETURN)
         {

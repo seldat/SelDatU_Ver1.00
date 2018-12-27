@@ -40,6 +40,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
         public RobotManagementService robotManageService;
         public TrafficManagementService trafficService;
         public List<DeviceItem> deviceItemsList;
+        public bool Alive = false;
         public void RegistryService(RobotManagementService robotManageService)
         {
             this.robotManageService = robotManageService;
