@@ -178,40 +178,40 @@ namespace SelDatUnilever_Ver1
 
         /*
          */
-        public String GetInfoOfPalletBuffer()
+        public String GetInfoOfPalletBuffer(TrafficRobotUnity.PistonPalletCtrl pisCtrl)
         {
             JInfoPallet infoPallet = new JInfoPallet();
 
-            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.pallet = pisCtrl; /* dropdown */
             infoPallet.bay = 1;
             infoPallet.hasSubLine = "yes"; /* no */
-            infoPallet.direction = "left"; /* right */
+            infoPallet.direction = TrafficRobotUnity.BrDirection.FORWARD; /* right */
             infoPallet.row = 2;
 
             return JsonConvert.SerializeObject(infoPallet);
         }
 
-        public String GetInfoOfPalletMachine()
+        public String GetInfoOfPalletMachine(TrafficRobotUnity.PistonPalletCtrl pisCtrl)
         {
             JInfoPallet infoPallet = new JInfoPallet();
 
-            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.pallet = pisCtrl; /* dropdown */
             infoPallet.bay = 1;
             infoPallet.hasSubLine = "yes"; /* no */
-            infoPallet.direction = "left"; /* right */
+            infoPallet.direction = TrafficRobotUnity.BrDirection.FORWARD; /* right */
             infoPallet.row = 2;
 
             return JsonConvert.SerializeObject(infoPallet);
         }
 
-        public String GetInfoOfPalletReturn()
+        public String GetInfoOfPalletReturn(TrafficRobotUnity.PistonPalletCtrl pisCtrl)
         {
             JInfoPallet infoPallet = new JInfoPallet();
 
-            infoPallet.pallet = "pickup"; /* dropdown */
+            infoPallet.pallet = pisCtrl; /* dropdown */
             infoPallet.bay = 1;
             infoPallet.hasSubLine = "yes"; /* no */
-            infoPallet.direction = "left"; /* right */
+            infoPallet.direction = TrafficRobotUnity.BrDirection.FORWARD; /* right */
             infoPallet.row = 2;
 
             return JsonConvert.SerializeObject(infoPallet);

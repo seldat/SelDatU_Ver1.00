@@ -35,11 +35,11 @@ namespace SeldatMRMS.Management
 		// 	DECREASE_X,
 		// 	DECREASE_Y
 		// // }
-        // public enum BrDirection{
-        //     FORWARD = 0,
-        //     DIR_LEFT,
-        //     DIR_RIGHT
-		// }
+         public enum BrDirection{
+            FORWARD = 0,
+             DIR_LEFT,
+             DIR_RIGHT
+		 }
         // public class PointDetect {
         //     public Point p;
         //     public MvDirection mvDir;
@@ -54,11 +54,16 @@ namespace SeldatMRMS.Management
         //     public PointDetect xy;
         //     public BrDirection brDir;
         // }
+        public enum PistonPalletCtrl
+        {
+            PISTON_PALLET_UP=0,
+            PISTON_PALLET_DDOWN
+        }
         public class JInfoPallet{
-            public String pallet;
+            public PistonPalletCtrl pallet;
             public Int32 bay;
             public String hasSubLine;
-            public String direction;
+            public BrDirection direction;
             public Int32 row;
         }
         private List<RobotUnity> RobotUnitylist;
