@@ -40,12 +40,12 @@ namespace DoorControllerService
         }
 
         public struct DoorInfoConfig{
-           public String ip;
+            public String ip;
             public Int32 port;
             public DoorId id;   
             public Pose PointCheckInGate;
             public Pose PointFrontLine;
-            public PointDetect PointOfPallet;
+            public String infoPallet;
         }
 
         public DoorInfoConfig config;
@@ -54,7 +54,8 @@ namespace DoorControllerService
             this.config = cf;
             this.SetId(cf.id);
         }
-         public bool GetId(ref DataReceive data)
+
+        public bool GetId(ref DataReceive data)
         {
             bool ret = false;
             byte[] dataSend = new byte[6];

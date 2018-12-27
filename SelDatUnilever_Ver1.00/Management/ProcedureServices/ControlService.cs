@@ -11,7 +11,7 @@ namespace SeldatMRMS
 {
     public class ControlService:DBProcedureService
     {
-       public ControlService(RobotUnity robot,DoorService doorService)
+       public ControlService(RobotUnity robot)
        {
             if (robot != null)
             {
@@ -21,10 +21,10 @@ namespace SeldatMRMS
                 //if(doorService!=null)
                 //    doorService.ReceiveRounterEvent += ReceiveRounterEvent;
             }
-            if(doorService!=null)
-            {
+            //if(doorService!=null)
+            //{
 
-            }
+            //}
        }
        // robot control
        public virtual void ZoneHandler(Communication.Message message) { }

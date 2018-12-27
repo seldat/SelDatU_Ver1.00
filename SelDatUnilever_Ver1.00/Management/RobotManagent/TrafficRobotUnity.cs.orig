@@ -29,6 +29,33 @@ namespace SeldatMRMS.Management
             HEADER_TOUCH_SIDE,
             HEADER_TOUCH_NOTOUCH
         }
+<<<<<<< HEAD
+        public enum MvDirection{
+            INCREASE_X = 0,
+			INCREASE_Y,
+			DECREASE_X,
+			DECREASE_Y
+		}
+        public enum BrDirection{
+            FORWARD = 0,
+            DIR_LEFT,
+            DIR_RIGHT
+		}
+        public class PointFrontLine
+        {
+            public Pose p;
+            public bool hasBranch;
+        }
+        public class PointDetect{
+            public Point p;
+            public MvDirection mvDir;
+        }
+
+     
+        public class PointDetectBranching{
+            public PointDetect xy;
+            public BrDirection brDir;
+=======
         // public enum MvDirection{
         //     INCREASE_X = 0,
 		// 	INCREASE_Y,
@@ -50,13 +77,17 @@ namespace SeldatMRMS.Management
         //     }
         // }
 
-        public class PointFrontLine{
-            public Pose p;
-            public bool hasBranch;
-        }
-        public class PointDetectBranching{
-            public PointDetect xy;
-            public BrDirection brDir;
+        // public class PointDetectBranching{
+        //     public PointDetect xy;
+        //     public BrDirection brDir;
+        // }
+        public class JInfoPallet{
+            public String pallet;
+            public Int32 bay;
+            public String hasSubLine;
+            public String direction;
+            public Int32 row;
+>>>>>>> chau
         }
         private List<RobotUnity> RobotUnitylist;
         private Dictionary<String,RobotUnity> RobotUnityRiskList=new Dictionary<string, RobotUnity>();

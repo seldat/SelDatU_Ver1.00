@@ -53,9 +53,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
                 ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
-                ptemp.PointOfPallet.p.X = double.Parse(row.Field<String>("PointOfPallet").Split(',')[0]);
-                ptemp.PointOfPallet.p.Y = double.Parse(row.Field<String>("PointOfPallet").Split(',')[1]);
-                ptemp.PointOfPallet.mvDir = (MvDirection)int.Parse(row.Field<String>("PointOfPallet").Split(',')[2]);
+                ptemp.PointOfPallet = row.Field<String>("PointOfCharger");
                 CfChargerStationList.Add(ptemp);
             }
             con.Close();
