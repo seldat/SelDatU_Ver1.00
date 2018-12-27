@@ -38,6 +38,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                 RobotUnity robot = null;
                 while (Alive)
                 {
+                    Console.WriteLine(processAssignAnTaskWait);
                     switch (processAssignAnTaskWait)
                     {
                         case ProcessAssignAnTaskWait.PROC_IDLE:

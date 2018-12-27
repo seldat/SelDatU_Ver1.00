@@ -35,6 +35,7 @@ namespace SeldatMRMS.Management.UnityService
             assigmentTaskService.RegistryService(trafficService);
             procedureManagementService.RegistryService(trafficService);
             procedureManagementService.RegistryService(robotManagementService);
+            assigmentTaskService.Start();
         }
         public void Dispose()
         {

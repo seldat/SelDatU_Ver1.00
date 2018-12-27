@@ -4,6 +4,7 @@ using SeldatMRMS.Management;
 using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
+using SeldatMRMS.Management.UnityService;
 using SelDatUnilever_Ver1._00.Communication.HttpBridge;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using SelDatUnilever_Ver1._00.Management.DeviceManagement;
@@ -50,6 +51,8 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
+            UnityManagementService unityService = new UnityManagementService();
+            unityService.Initialize();
            // door = new DoorManagementService();
            // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
           //  pr.GetInfoOfPalletBuffer();
