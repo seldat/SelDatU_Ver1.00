@@ -112,7 +112,7 @@ namespace SelDatUnilever_Ver1
                 }
             }
             return poseTemp;
-            return poseTemp;
+          
         }
 
         /*public void GetCheckInBuffer()

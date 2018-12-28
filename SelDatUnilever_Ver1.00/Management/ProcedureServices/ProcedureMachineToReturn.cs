@@ -43,6 +43,7 @@ namespace SeldatMRMS
             StateMachineToReturn = state;
             ProMachineToReturn = new Thread(this.Procedure);
             ProMachineToReturn.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -54,7 +55,7 @@ namespace SeldatMRMS
             RobotUnity rb = BfToRe.robot;
             DataMachineToReturn p = BfToRe.points;
             TrafficManagementService Traffic = BfToRe.Traffic;
-            while (StateMachineToReturn != MachineToReturn.MACRET_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateMachineToReturn)
                 {
@@ -68,7 +69,7 @@ namespace SeldatMRMS
                             sw.Start();
                             do
                             {
-                                if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                                if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                                 {
                                     resCmd = ResponseCommand.RESPONSE_NONE;
                                     rb.SendPoseStamped(BfToRe.GetCheckInBuffer());
@@ -105,6 +106,10 @@ namespace SeldatMRMS
                             // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_PICKUP_PALLET_MACHINE;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
+                        }
                         break;
                     // case MachineToReturn.MACRET_ROBOT_GOTO_PICKUP_PALLET_MACHINE:
                     //     if (true == rb.CheckPointDetectLine(BfToRe.GetPointPallet(), rb))
@@ -133,6 +138,10 @@ namespace SeldatMRMS
                             rb.SendPoseStamped(BfToRe.GetCheckInReturn());
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_GOTO_CHECKIN_RETURN;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
+                        }
                         break;
                     case MachineToReturn.MACRET_ROBOT_GOTO_CHECKIN_RETURN: // dang di
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
@@ -140,6 +149,10 @@ namespace SeldatMRMS
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_DOWN));
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_WAITTING_DROPDOWN_PALLET;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
                         }
                         break;
                     // case MachineToReturn.MACRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
@@ -186,6 +199,10 @@ namespace SeldatMRMS
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateMachineToReturn = MachineToReturn.MACRET_ROBOT_RELEASED;    
+                        }
                         break;
                     case MachineToReturn.MACRET_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
                         rb.PreProcedureAs = ProcedureControlAssign.PRO_MACHINE_TO_RETURN;
@@ -195,6 +212,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false; 
                         break;
                     default:
                         break;

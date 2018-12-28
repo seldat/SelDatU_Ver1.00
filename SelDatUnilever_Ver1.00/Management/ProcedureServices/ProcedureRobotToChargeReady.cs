@@ -65,6 +65,7 @@ namespace SeldatMRMS
             StateRobotToCharge = state;
             ProRobotToCharger = new Thread(this.Procedure);
             ProRobotToCharger.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -74,7 +75,7 @@ namespace SeldatMRMS
         {
             ProcedureRobotToCharger RbToChar = (ProcedureRobotToCharger)ojb;
             RobotUnity rb = RbToChar.robot;
-            while (StateRobotToCharge != RobotGoToCharge.ROBCHAR_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateRobotToCharge)
                 {
@@ -150,7 +151,10 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break; // trả robot về robotmanagement để nhận quy trình mới
+                    default:
+                        break;
                 }
                 Thread.Sleep(5);
             }
@@ -234,6 +238,7 @@ namespace SeldatMRMS
             StateRobotGoToReady = state;
             ProRobotToReady = new Thread(this.Procedure);
             ProRobotToReady.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -245,7 +250,7 @@ namespace SeldatMRMS
             ProcedureRobotToReady RbToRd = (ProcedureRobotToReady)ojb;
             RobotUnity rb = RbToRd.robot;
             DataRobotToReady p = RbToRd.points;
-            while (StateRobotGoToReady != RobotGoToReady.ROBREA_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateRobotGoToReady)
                 {
@@ -288,6 +293,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break;
                 }
                 Thread.Sleep(5);

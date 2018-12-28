@@ -18,9 +18,9 @@ namespace SeldatMRMS.Management.RobotManagent
             public bool onReristryCharge = false;
 
         }
-        Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
+        public Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
         Dictionary<String, RobotUnity> RobotUnityWaitTaskList = new Dictionary<string, RobotUnity>();
-        Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
+        public Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
         public RobotManagementService() {
             LoadRobotUnityConfigure();
         }
@@ -38,10 +38,11 @@ namespace SeldatMRMS.Management.RobotManagent
             OleDbDataAdapter sda = new OleDbDataAdapter(oconn);
             DataTable data = new DataTable();
             sda.Fill(data);
-            foreach (DataRow row in data.Rows)
+            //foreach (DataRow row in data.Rows)
             {
                 RobotUnity robot = new RobotUnity();
                 //robot.Initialize(row);
+                robot.Start("ws://192.168.80.131:9090");
                 robot.properties.NameID = "Robot1";
                 RobotUnityRegistedList.Add(robot.properties.NameID, robot);
                 AddRobotUnityReadyList(robot);

@@ -54,6 +54,7 @@ namespace SeldatMRMS
             StateReturnToGate = state;
             ProReturnToGate = new Thread(this.Procedure);
             ProReturnToGate.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -66,7 +67,7 @@ namespace SeldatMRMS
             // DataReturnToGate p = ReToGate.points;
             DoorService ds = ReToGate.door.DoorMezzamineReturnBack;
             TrafficManagementService Traffic = ReToGate.Traffic;
-            while (StateReturnToGate != ReturnToGate.RETGATE_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateReturnToGate)
                 {
@@ -80,7 +81,7 @@ namespace SeldatMRMS
                             sw.Start();
                             do
                             {
-                                if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                                if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                                 {
                                     resCmd = ResponseCommand.RESPONSE_NONE;
                                     rb.SendPoseStamped(ReToGate.GetCheckInBuffer());
@@ -105,11 +106,8 @@ namespace SeldatMRMS
                         }
                         else
                         {
-                            if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
-                            {
-                                resCmd = ResponseCommand.RESPONSE_NONE;
-                                StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_ZONE_RETURN_READY;
-                            }
+                            rb.SendPoseStamped(ReToGate.GetCheckInBuffer());
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_ZONE_RETURN_READY;
                         }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_ZONE_RETURN_READY: // doi khu vuc buffer san sang de di vao
@@ -126,6 +124,10 @@ namespace SeldatMRMS
                             rb.SendCmdAreaPallet(ReToGate.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_UP));
                             // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_PALLETUP);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_PICKUP_PALLET_RETURN;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;    
                         }
                         break;
                     // case ReturnToGate.RETGATE_ROBOT_GOTO_PICKUP_PALLET_RETURN:
@@ -154,6 +156,10 @@ namespace SeldatMRMS
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             rb.SendPoseStamped(ds.config.PointCheckInGate);
                             StateReturnToGate = ReturnToGate.RETGATE_ROBOT_WAITTING_GOTO_CHECKIN_GATE;
+                        }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;    
                         }
                         break;
                     // case ReturnToGate.RETGATE_ROBOT_GOTO_CHECKIN_GATE: //gui toa do di den khu vuc checkin cong
@@ -242,6 +248,10 @@ namespace SeldatMRMS
                                 StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;      
                             }
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateReturnToGate = ReturnToGate.RETGATE_ROBOT_RELEASED;    
+                        }
                         break;
                     case ReturnToGate.RETGATE_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
                         if (true == ds.WaitClose(DoorService.DoorId.DOOR_MEZZAMINE_RETURN_BACK,TIME_OUT_CLOSE_DOOR))
@@ -263,6 +273,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break;
                     default: break;
                 }

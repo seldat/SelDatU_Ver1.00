@@ -61,6 +61,7 @@ namespace SeldatMRMS
             StateForkLiftToBuffer = state;
             ProForkLiftToBuffer = new Thread(this.Procedure);
             ProForkLiftToBuffer.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -73,7 +74,7 @@ namespace SeldatMRMS
             // DataForkLiftToBuffer p = FlToBuf.points;
             DoorService ds = FlToBuf.door;
             TrafficManagementService Traffic = FlToBuf.Traffic;
-            while (StateForkLiftToBuffer != ForkLiftToBuffer.FORBUF_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateForkLiftToBuffer)
                 {
@@ -87,7 +88,7 @@ namespace SeldatMRMS
                             sw.Start();
                             do
                             {
-                                if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                                if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                                 {
                                     resCmd = ResponseCommand.RESPONSE_NONE;
                                     if (Traffic.RobotIsInArea("OPA4", rb.properties.pose.Position))
@@ -214,6 +215,10 @@ namespace SeldatMRMS
                                 StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;   
                             }
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;    
+                        }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_WAITTING_CLOSE_GATE: // doi dong cong.
                         if (true == ds.WaitClose(DoorService.DoorId.DOOR_MEZZAMINE_UP_BACK, TIME_OUT_CLOSE_DOOR))
@@ -298,6 +303,10 @@ namespace SeldatMRMS
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateForkLiftToBuffer = ForkLiftToBuffer.FORBUF_ROBOT_RELEASED;    
+                        }
                         break;
                     case ForkLiftToBuffer.FORBUF_ROBOT_RELEASED: // trả robot về robotmanagement để nhận quy trình mới
                         rb.PreProcedureAs = ProcedureControlAssign.PRO_FORKLIFT_TO_BUFFER;
@@ -307,6 +316,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break;
                     default: break;
                 }

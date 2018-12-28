@@ -128,8 +128,9 @@ namespace SeldatMRMS.Management.RobotManagent
             public int publication_checkAliveTimeOut;
             public int publication_postPallet;
             public int publication_cmdAreaPallet;
-            public int publication_finishedStates;
             public int publication_batteryvol;
+            /*of chau test*/
+            public int publication_finishedStates;
         }
         ParamsRosSocket paramsRosSocket;
         public PropertiesRobotUnity properties;
@@ -146,14 +147,14 @@ namespace SeldatMRMS.Management.RobotManagent
             int subscription_robotInfo = this.Subscribe("/amcl_pose", "geometry_msgs/PoseWithCovarianceStamped", AmclPoseHandler);
             paramsRosSocket.publication_ctrlrobotdriving = this.Advertise("/ctrlRobotDriving", "std_msgs/Int32");
             int subscription_finishedStates = this.Subscribe("/finishedStates", "std_msgs/Int32", FinishedStatesHandler);
-            paramsRosSocket.publication_finishedStates = this.Advertise("/finishedStates", "std_msgs/Int32");
-
             paramsRosSocket.publication_robotnavigation = this.Advertise("/robot_navigation", "geometry_msgs/PoseStamped");
             paramsRosSocket.publication_checkAliveTimeOut = this.Advertise("/checkAliveTimeOut", "std_msgs/String");
             paramsRosSocket.publication_linedetectionctrl = this.Advertise("/linedetectionctrl", "std_msgs/Int32");
             paramsRosSocket.publication_postPallet = this.Advertise("/pospallet", "std_msgs/Int32");
             paramsRosSocket.publication_cmdAreaPallet = this.Advertise("/cmdAreaPallet", "std_msgs/String");
-            paramsRosSocket.publication_batteryvol = this.Subscribe("/battery_vol", "std_msgs/Float32", BatteryVolHandler);
+            float subscription_publication_batteryvol = this.Subscribe("/battery_vol", "std_msgs/Float32", BatteryVolHandler);
+            /*of chau test*/
+            paramsRosSocket.publication_finishedStates = this.Advertise("/finishedStates", "std_msgs/Int32");
         }
 
         private void BatteryVolHandler(Communication.Message message)
@@ -239,7 +240,7 @@ namespace SeldatMRMS.Management.RobotManagent
         public void SendCmdPosPallet(RequestCommandPosPallet cmd){
             StandardInt32 msg = new StandardInt32();
             msg.data = Convert.ToInt32(cmd);
-            this.Publish(paramsRosSocket.publication_linedetectionctrl, msg);
+            this.Publish(paramsRosSocket.publication_postPallet, msg);
         }
         public void SendCmdAreaPallet(String cmd)
         {

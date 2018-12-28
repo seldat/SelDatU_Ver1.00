@@ -45,6 +45,7 @@ namespace SeldatMRMS
             StateBufferToMachine = state;
             ProBuferToMachine = new Thread(this.Procedure);
             ProBuferToMachine.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
@@ -56,7 +57,7 @@ namespace SeldatMRMS
             RobotUnity rb = BfToMa.robot;
             // DataBufferToMachine p = BfToMa.points;
             TrafficManagementService Traffic = BfToMa.Traffic;
-            while (StateBufferToMachine != BufferToMachine.BUFMAC_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateBufferToMachine)
                 {
@@ -70,7 +71,7 @@ namespace SeldatMRMS
                             sw.Start();
                             do
                             {
-                                if (resCmd == ResponseCommand.RESPONSE_LINEDETECT_PALLETDOWN)
+                                if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                                 {
                                     resCmd = ResponseCommand.RESPONSE_NONE;
                                     rb.SendPoseStamped(BfToMa.GetCheckInBuffer());
@@ -170,6 +171,10 @@ namespace SeldatMRMS
                             rb.SendPoseStamped(BfToMa.GetFrontLineMachine());
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;    
+                        }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
@@ -209,6 +214,10 @@ namespace SeldatMRMS
                             resCmd = ResponseCommand.RESPONSE_NONE;
                             StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;
                         }
+                        else if(resCmd == ResponseCommand.RESPONSE_ERROR){
+                            errorCode = ErrorCode.DETECT_LINE_ERROR;
+                            StateBufferToMachine = BufferToMachine.BUFMAC_ROBOT_RELEASED;    
+                        }
                         break;
                     case BufferToMachine.BUFMAC_ROBOT_RELEASED:  // trả robot về robotmanagement để nhận quy trình mới
                         rb.PreProcedureAs = ProcedureControlAssign.PRO_BUFFER_TO_MACHINE;
@@ -218,6 +227,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break;
                     default:
                         break;

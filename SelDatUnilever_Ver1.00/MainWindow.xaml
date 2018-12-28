@@ -11,10 +11,15 @@
         <Border Margin="242,104,0,0" >
             <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="612" VerticalAlignment="Top" Width="1048" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
         </Border>
-        <RadioButton Name="selRobot1" IsChecked="True" Content="Robot1" HorizontalAlignment="Left" Margin="78,104,0,0" VerticalAlignment="Top" Checked="selRobot1_Checked"/>
-        <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="78,124,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>
-        <RadioButton Name="selRobot3" Content="Robot3" HorizontalAlignment="Left" Margin="78,144,0,0" VerticalAlignment="Top" Checked="selRobot3_Checked"/>
-        <RadioButton Content="Robot4" HorizontalAlignment="Left" Margin="78,164,0,0" VerticalAlignment="Top"/>
-        <Button Content="CamePoint" HorizontalAlignment="Left" Margin="394,31,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click"/>
+        <RadioButton Name="selRobot1" IsChecked="True" Content="Robot1" HorizontalAlignment="Left" Margin="79,168,0,0" VerticalAlignment="Top" Checked="selRobot1_Checked"/>
+        <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="79,188,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>
+        <RadioButton Name="selRobot3" Content="Robot3" HorizontalAlignment="Left" Margin="79,208,0,0" VerticalAlignment="Top" Checked="selRobot3_Checked"/>
+        <RadioButton Content="Robot4" HorizontalAlignment="Left" Margin="79,228,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="cmdCamePoint" Content="CamePoint" HorizontalAlignment="Left" Margin="40,6,0,0" VerticalAlignment="Top" Width="96" Click="Button_Click"/>
+        <Button x:Name="cmdPalletUp" Content="PalletUp" HorizontalAlignment="Left" Margin="40,31,0,0" VerticalAlignment="Top" Width="96" Click="CmdPalletUp_Click"/>
+        <Button x:Name="cmdPalletDown" Content="PallerDown" HorizontalAlignment="Left" Margin="40,56,0,0" VerticalAlignment="Top" Width="96" Click="CmdPalletDown_Click"/>
+        <Button x:Name="cmdBatLevel" Content="BatLevel" HorizontalAlignment="Left" Margin="40,132,0,0" VerticalAlignment="Top" Width="96" Click="CmdBatLevel_Click"/>
+        <Button x:Name="cmdBackFrontLine" Content="BackFrontLine" HorizontalAlignment="Left" Margin="40,81,0,0" VerticalAlignment="Top" Width="96" Click="CmdBackFrontLine_Click"/>
+        <Button x:Name="cmdError" Content="Error" HorizontalAlignment="Left" Margin="40,107,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="-2.2,2.35" Click="CmdError_Click"/>
     </Grid>
 </Window>
