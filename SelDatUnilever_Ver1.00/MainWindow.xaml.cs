@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,33 +52,45 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
+#if true
             UnityManagementService unityService = new UnityManagementService();
             unityService.Initialize();
-           // door = new DoorManagementService();
-           // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
-          //  pr.GetInfoOfPalletBuffer();
+#else
+            // door = new DoorManagementService();
+            // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
+            //  pr.GetInfoOfPalletBuffer();
             /*Chau test*/
 
-            //ChargerInfoConfig cf;
-            //cf.id = ChargerId.CHARGER_ID_1;
-            //cf.ip = "127.0.0.1";
-            //cf.port = 10001;
-            //ChargerCtrl chargerCtrl = new ChargerCtrl(cf);
-            //DataReceive id = new DataReceive();
-            //chargerCtrl.GetId(ref id);
-            //Console.WriteLine("id :{0}", id.data);
+            ChargerInfoConfig cf = new ChargerInfoConfig();
+            cf.id = ChargerId.CHARGER_ID_1;
+            cf.ip = "192.168.0.200";
+            cf.port = 8081;
+            ChargerCtrl chargerCtrl = new ChargerCtrl(cf);
+            DataReceive id = new DataReceive();
+            while (true) {
+                chargerCtrl.StartCharge();
+                //chargerCtrl.StopCharge();
+                //chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
+                //chargerCtrl.GetId(ref id);
+                DataReceive state = new DataReceive();
+                chargerCtrl.GetState(ref state);
+                Thread.Sleep(1000);
+            }
 
-            //chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
+            Console.WriteLine("id :{0}", id.data);
 
-            //chargerCtrl.StartCharge();
+            chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
+
+            chargerCtrl.StartCharge();
 
             //DataReceive state = new DataReceive();
             //chargerCtrl.GetState(ref state);
 
-            //DataReceive batLevel = new DataReceive();
-            //chargerCtrl.GetBatteryLevel(ref batLevel);
+            DataReceive batLevel = new DataReceive();
+            chargerCtrl.GetBatteryLevel(ref batLevel);
 
-            //chargerCtrl.StopCharge();
+            chargerCtrl.StopCharge();
+#endif
 
             /*  robot = new RobotUnity();
               robot.Start("ws://192.168.109.128:9090");
@@ -91,7 +104,7 @@ namespace SelDatUnilever_Ver1._00
               pr.RegistrationTranfficService(traffiicService);
               pr.Start();*/
             /*end*/
-           RobotUnity robot1 = new RobotUnity(canvas);
+            RobotUnity robot1 = new RobotUnity(canvas);
                robot1.properties.NameID = "robot1";
                RobotUnity robot2 = new RobotUnity(canvas);
                robot2.properties.NameID = "robot2";

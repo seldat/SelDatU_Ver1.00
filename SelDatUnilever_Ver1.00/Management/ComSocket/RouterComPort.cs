@@ -279,6 +279,7 @@ namespace SelDatUnilever_Ver1._00.Management.ComSocket
         protected DataReceive GetDataRec()
         {
             DataReceive data = state.buffer;
+            flagReadyReadData = false;
             return data;
         }
         public virtual void CheckAlive() { }

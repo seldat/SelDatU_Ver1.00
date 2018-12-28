@@ -23,7 +23,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             ST_CHARGING,/* 02 */
             ST_ERROR, /* 03 */
             ST_CHARGE_FULL, /* 04 */
-            // ST_PUSH_PISTON, /* 05 */
+            ST_PUSH_PISTON, /* 05 */
             // ST_CONTACT_GOOD, /* 06 */
             // ST_CONTACT_FAIL /* 07 */
         }
