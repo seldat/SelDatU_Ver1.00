@@ -51,7 +51,8 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-     
+
+            
            // door = new DoorManagementService();
            // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
           //  pr.GetInfoOfPalletBuffer();
@@ -90,7 +91,7 @@ namespace SelDatUnilever_Ver1._00
               pr.RegistrationTranfficService(traffiicService);
               pr.Start();*/
             /*end*/
-           RobotUnity robot1 = new RobotUnity(canvas);
+        /*   RobotUnity robot1 = new RobotUnity(canvas);
                robot1.properties.NameID = "robot1";
                RobotUnity robot2 = new RobotUnity(canvas);
                robot2.properties.NameID = "robot2";
@@ -110,7 +111,7 @@ namespace SelDatUnilever_Ver1._00
 
                robot1.initialPos(0,0);
                robot2.initialPos(300,300);
-               robot3.initialPos(400,400);
+               robot3.initialPos(400,400);*/
               /* TrafficManagementService traffic = new TrafficManagementService();
                traffic.LoadConfigureZone();*/
 
@@ -242,6 +243,7 @@ namespace SelDatUnilever_Ver1._00
         {
             UnityManagementService unityService = new UnityManagementService();
             unityService.Initialize();
+            RobotUnity robotshape = new RobotUnity(this.canvas);
         }
 
         private void selRobot1_Checked(object sender, RoutedEventArgs e)
