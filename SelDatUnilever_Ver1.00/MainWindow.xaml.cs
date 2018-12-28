@@ -51,8 +51,7 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-            UnityManagementService unityService = new UnityManagementService();
-            unityService.Initialize();
+     
            // door = new DoorManagementService();
            // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
           //  pr.GetInfoOfPalletBuffer();
@@ -241,6 +240,8 @@ namespace SelDatUnilever_Ver1._00
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            UnityManagementService unityService = new UnityManagementService();
+            unityService.Initialize();
         }
 
         private void selRobot1_Checked(object sender, RoutedEventArgs e)

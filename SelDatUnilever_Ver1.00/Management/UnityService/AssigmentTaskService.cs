@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static SeldatMRMS.Management.RobotManagent.RobotManagementService;
 using static SeldatMRMS.RegisterProcedureService;
@@ -13,7 +14,8 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
 {
     public class AssigmentTaskService:TaskRounterService
     {
-        
+        public Thread threadprocessAssignAnTaskWait;
+        public Thread threadprocessAssignTaskReady;
         public AssigmentTaskService() { }
         public void FinishTask(String userName)
         {
@@ -25,17 +27,19 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             Alive = true;
             processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST;
             processAssignTaskReady = ProcessAssignTaskReady.PROC_READY_GET_ANROBOT_INREADYLIST;
-            AssignTask();
-            AssignTaskAtReady();
+            threadprocessAssignAnTaskWait=new Thread(AssignTask);
+            threadprocessAssignTaskReady=new Thread(AssignTaskAtReady);
+            threadprocessAssignAnTaskWait.Start();
+            threadprocessAssignTaskReady.Start();
         }
         public void Dispose()
         {
             Alive = false;
+            threadprocessAssignAnTaskWait.Abort();
+            threadprocessAssignTaskReady.Abort();
         }
         public void AssignTask()
         {
-           Task.Run(() =>
-            {
                 OrderItem orderItem = null;
                 RobotUnity robot = null;
                 while (Alive)
@@ -83,9 +87,9 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                             break;
 
                     }
-                    Task.Delay(100).Wait();
+                Thread.Sleep(1000);
                 }
-             });
+     
         }
         public void SelectProcedureItem(RobotUnity robot,OrderItem orderItem)
         {
@@ -111,8 +115,6 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
         {
             OrderItem orderItem=null;
             RobotUnity robot = null;
-            Task.Run(() =>
-            {
                 while (Alive)
                 {
                     //Console.WriteLine(processAssignTaskReady);
@@ -171,9 +173,9 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
 
                             break;
                     }
-                    Task.Delay(100).Wait();
+                    Thread.Sleep(1000);
                 }
-            });
+         
         }
 
     }

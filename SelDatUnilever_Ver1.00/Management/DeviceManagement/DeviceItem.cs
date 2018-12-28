@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,14 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 {
     public class DeviceItem
     {
+        public enum PalletStatus
+        {
+            [field: Description("Pallet is exported to buffer area")]
+            W =1,
+            [field: Description("Pallet is imported to buffer area")]
+            P=0
+
+        }
         public enum PalletCtrl
         {
             Pallet_CTRL_DOWN =0,
@@ -51,11 +60,11 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             public OrderItem() { }
             public String OrderId;
             public int planId { get; set; }
-            public int productID { get; set; }
+            public int productId { get; set; }
             public int productDetailID { get; set; }
             public TyeRequest typeReq; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
             public String activeDate;
-            public int timeWorkID;
+            public int timeWorkId;
             public String palletStatus;
             public int palletId;
             public int updUsrId;
@@ -127,11 +136,16 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.typeReq = (TyeRequest)typeReq;
                 order.userName = (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
-                order.productID = (int)results["productId"];
-                order.timeWorkID = (int)results["timeWorkId"];
+                order.productId = (int)results["productId"];
+                order.timeWorkId = (int)results["timeWorkId"];
                 order.activeDate = (string)results["activeDate"];
                 order.palletStatus = (String)results["palletStatus"];
-                order.dataRequest = dataReq;
+                dynamic product = new JObject();
+                product.timeWorkId = order.timeWorkId;
+                product.activeDate = order.activeDate;
+                product.productId = order.productId;
+                product.palletStatus= PalletStatus.P.ToString();
+                order.dataRequest = product.ToString();
                 oneOrderList.Add(order);
             }
             else if (typeReq == (int)TyeRequest.TYPEREQUEST_BUFFER_TO_MACHINE)
@@ -144,9 +158,9 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.typeReq = (TyeRequest)typeReq;
                     order.userName = (String)results["userName"];
                     order.productDetailID = (int)results["productDetailId"];
-                    order.productID = (int)results["productId"];
+                    order.productId = (int)results["productId"];
                     order.planId=(int)results["planId"];
-                    order.timeWorkID = (int)results["timeWorkId"];
+                    order.timeWorkId = (int)results["timeWorkId"];
                     order.activeDate = (string)results["activeDate"];
                     order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst=(string)results["datapallet"][i];
@@ -158,7 +172,12 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     int bay = (int)stuffPallet["pallet"]["bay"];
                     int direct = (int)stuffPallet["pallet"]["direct"];
                     order.palletAtMachine = new DataPallet() {linePos=new Pose(xx,yy,angle), row=row, bay=bay,direct=direct};
-                    order.dataRequest = dataReq;
+                    dynamic product = new JObject();
+                    product.timeWorkId = order.timeWorkId;
+                    product.activeDate = order.activeDate;
+                    product.productId = order.productId;
+                    product.palletStatus = PalletStatus.P.ToString(); // W
+                    order.dataRequest = product.ToString();
                     oneOrderList.Add(order);
                 }
             }
@@ -172,8 +191,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.typeReq = (TyeRequest)typeReq;
                     order.userName = (String)results["userName"];
                     order.productDetailID = (int)results["productDetailId"];
-                    order.productID = (int)results["productId"];
-                    order.timeWorkID = (int)results["timeWorkId"];
+                    order.productId = (int)results["productId"];
+                    order.timeWorkId = (int)results["timeWorkId"];
                     order.activeDate = (string)results["activeDate"];
                     order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst = (string)results["datapallet"][i];
@@ -186,7 +205,12 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     int bay = (int)stuffPallet["pallet"]["bay"];
                     int direct = (int)stuffPallet["pallet"]["direct"];
                     order.palletAtMachine = new DataPallet() { linePos = new Pose(xx, yy, angle), row = row, bay = bay, direct = direct };
-                    order.dataRequest = dataReq;
+                    dynamic product = new JObject();
+                    product.timeWorkId = order.timeWorkId;
+                    product.activeDate = order.activeDate;
+                    product.productId = order.productId;
+                    product.palletStatus = PalletStatus.P.ToString();
+                    order.dataRequest = product.ToString();
                     oneOrderList.Add(order);
                 }
             }
@@ -196,11 +220,16 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.typeReq = (TyeRequest)typeReq;
                 order.userName = (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
-                order.productID = (int)results["productId"];
-                order.timeWorkID = (int)results["timeWorkId"];
+                order.productId = (int)results["productId"];
+                order.timeWorkId = (int)results["timeWorkId"];
                 order.activeDate = (string)results["activeDate"];
                 order.palletStatus = (String)results["palletStatus"];
-                order.dataRequest = dataReq;
+                dynamic product = new JObject();
+                product.timeWorkId = order.timeWorkId;
+                product.activeDate = order.activeDate;
+                product.productId = order.productId;
+                product.palletStatus = PalletStatus.W.ToString();
+                order.dataRequest = product.ToString();
                 oneOrderList.Add(order);
             }
         }

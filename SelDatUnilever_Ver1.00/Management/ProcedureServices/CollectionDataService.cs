@@ -22,7 +22,9 @@ namespace SelDatUnilever_Ver1
         public enum PalletStatus
         {
             F=200, // Free pallet
-            W=201 // Have Pallet
+            W=201, // Have Pallet
+            P=202
+
         }
         //public int planID { get; set; }
         // public int productID { get; set; }
@@ -65,14 +67,14 @@ namespace SelDatUnilever_Ver1
             String collectionData=RequestDataProcedure(order.dataRequest);
             if(collectionData.Length>0)
             {
-                JArray results = JArray.Parse(order.dataRequest);
+                JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
                     int temp_productDetailID = (int)result["productDetailId"];
                     if (temp_productDetailID == order.productDetailID)
                     {
-                        var bufferResults = result["buffers"];
-                        String checkinResults =(String) bufferResults[0]["bufferCheckIn"];
+                        var bufferResults = result["buffers"][0];
+                        String checkinResults =(String) bufferResults["bufferCheckIn"];
                         JObject stuff = JObject.Parse(checkinResults);
                         double x = (double)stuff["x"];
                         double y = (double)stuff["y"];
@@ -91,16 +93,15 @@ namespace SelDatUnilever_Ver1
             String collectionData = RequestDataProcedure(order.dataRequest);
             if (collectionData.Length > 0)
             {
-                JArray results = JArray.Parse(order.dataRequest);
+                JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
                     int temp_productDetailID = (int)result["productDetailId"];
                     if (temp_productDetailID == order.productDetailID)
                     {
-                        var bufferResults = result["buffers"];
-                        String checkinResults = (String)bufferResults[0]["bufferCheckIn"];
-                        var palletInfo= bufferResults[0]["pallets"];
-                        JObject stuff = JObject.Parse((String)palletInfo[0]);
+                        var bufferResults = result["buffers"][0];
+                        var palletInfo= bufferResults["pallets"][0];
+                        JObject stuff = JObject.Parse((String)palletInfo["dataPallet"]);
                         double x = (double)stuff["line"]["x"];
                         double y = (double)stuff["line"]["y"];
                         double angle = (double)stuff["line"]["angle"];
@@ -228,16 +229,17 @@ namespace SelDatUnilever_Ver1
             String collectionData = RequestDataProcedure(order.dataRequest);
             if (collectionData.Length > 0)
             {
-                JArray results = JArray.Parse(order.dataRequest);
+                JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
                     int temp_productDetailID = (int)result["productDetailId"];
                     if (temp_productDetailID == order.productDetailID)
                     {
-                        var bufferResults = result["buffers"];
-                        String checkinResults = (String)bufferResults[0]["bufferCheckIn"];
-                        var palletInfo = bufferResults[0]["pallets"];
-                        JObject stuff = JObject.Parse((String)palletInfo[0]);
+                        
+
+                        var bufferResults = result["buffers"][0];
+                        var palletInfo = bufferResults["pallets"][0];
+                        JObject stuff = JObject.Parse((String)palletInfo["dataPallet"]);
                         int row = (int)stuff["pallet"]["row"];
                         int bay = (int)stuff["pallet"]["bay"];
                         int direct = (int)stuff["pallet"]["direct"];
@@ -282,7 +284,7 @@ namespace SelDatUnilever_Ver1
 
         public void UpdatePalletState(PalletStatus palletStatus)
         {
-            String url = "http://192.168.1.17:8081/robot/rest/plan/updatePalletStatus";
+            String url = "http://192.168.1.17:8081/robot/rest/pallet/updatePalletStatus";
             dynamic product = new JObject();
             product.palletId = order.palletId;
             product.palletStatus = palletStatus.ToString();
