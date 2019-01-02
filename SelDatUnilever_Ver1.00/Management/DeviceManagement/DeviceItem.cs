@@ -41,7 +41,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             TYPEREQUEST_BUFFER_TO_MACHINE=2,
             TYPEREQUEST_BUFFER_TO_RETURN=3,
             TYPEREQUEST_MACHINE_TO_RETURN=4,
-            TYPEREQUEST_RETURN_TO_GATE = 4,
+            TYPEREQUEST_RETURN_TO_GATE = 5,
         }
         public enum TabletConTrol
         {

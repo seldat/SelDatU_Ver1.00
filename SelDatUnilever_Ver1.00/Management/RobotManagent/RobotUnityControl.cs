@@ -16,6 +16,7 @@ namespace SeldatMRMS.Management.RobotManagent
     public class RobotUnityControl : RosSocket
     {
         public event Action<int> FinishStatesCallBack;
+        public event Action<int> AGVStatusCallBack;
         public event Action<Pose, Object> PoseHandler;
 
         private const float delBatterry = 5;
@@ -129,6 +130,7 @@ namespace SeldatMRMS.Management.RobotManagent
             public int publication_postPallet;
             public int publication_cmdAreaPallet;
             public int publication_batteryvol;
+
             /*of chau test*/
             public int publication_finishedStates;
         }
@@ -153,6 +155,7 @@ namespace SeldatMRMS.Management.RobotManagent
             paramsRosSocket.publication_postPallet = this.Advertise("/pospallet", "std_msgs/Int32");
             paramsRosSocket.publication_cmdAreaPallet = this.Advertise("/cmdAreaPallet", "std_msgs/String");
             float subscription_publication_batteryvol = this.Subscribe("/battery_vol", "std_msgs/Float32", BatteryVolHandler);
+            int subscription_AGV_Status = this.Subscribe("/AGV_Status", "std_msgs/Int32", AGVStatusHandler);
             /*of chau test*/
             paramsRosSocket.publication_finishedStates = this.Advertise("/finishedStates", "std_msgs/Int32");
         }
@@ -188,9 +191,13 @@ namespace SeldatMRMS.Management.RobotManagent
         private void FinishedStatesHandler(Communication.Message message)
         {
             StandardInt32 standard = (StandardInt32)message;
-            ///MessageBox.Show(standard.data+"");
 			FinishStatesCallBack(standard.data);
 
+        }
+        private void AGVStatusHandler(Communication.Message message)
+        {
+            StandardInt32 standard = (StandardInt32)message;
+			FinishStatesCallBack(standard.data);
         }
 
         public void FinishedStatesPublish(int message)

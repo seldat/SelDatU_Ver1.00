@@ -56,7 +56,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbm = new RegisterProcedureItem() { item = procbm, robot = robot, procedureDataItems = prcobmDataItems };
                         procbm.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbm);
-                    procbm.AssignAnOrder(orderItem);
+                        procbm.AssignAnOrder(orderItem);
                         procbm.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_RETURN: 
@@ -78,6 +78,16 @@ namespace SeldatMRMS
                         RegisterProcedureItemList.Add(itemprocmr);
                         procmr.AssignAnOrder(orderItem);
                         procmr.Start();
+                    break;
+                case ProcedureItemSelected.PROCEDURE_RETURN_TO_GATE:
+                        ProcedureReturnToGate procrg = new ProcedureReturnToGate(robot, doorService, trafficService);
+                        ProcedureDataItems prorgDataItems = new ProcedureDataItems();
+                        prorgDataItems.StartTaskTime = DateTime.Now;
+                        RegisterProcedureItem itemprocrg = new RegisterProcedureItem() { item = procrg, robot = robot, procedureDataItems = prorgDataItems };
+                        procrg.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
+                        RegisterProcedureItemList.Add(itemprocrg);
+                        procrg.AssignAnOrder(orderItem);
+                        procrg.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE:
                         ProcedureRobotToCharger procrc = new ProcedureRobotToCharger(robot, chargerService,robot.properties.chargeID);

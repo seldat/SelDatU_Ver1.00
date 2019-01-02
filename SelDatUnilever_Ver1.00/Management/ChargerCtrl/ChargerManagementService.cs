@@ -15,17 +15,11 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
     public class ChargerManagementService
     {
 
-        private List<ChargerInfoConfig> CfChargerStationList;
-        public ChargerCtrl ChargerStation_1;
-        public ChargerCtrl ChargerStation_2;
-        public ChargerCtrl ChargerStation_3;
+        public Dictionary<ChargerId, ChargerCtrl> ChargerStationList;
         
         public ChargerManagementService()
         {
             LoadChargerConfigure();
-            ChargerStation_1 = new ChargerCtrl(CfChargerStationList[0]);
-            ChargerStation_2 = new ChargerCtrl(CfChargerStationList[1]);
-            ChargerStation_3 = new ChargerCtrl(CfChargerStationList[2]);
         }
         public void LoadChargerConfigure()
         {
@@ -41,7 +35,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             OleDbDataAdapter sda = new OleDbDataAdapter(oconn);
             DataTable data = new DataTable();
             sda.Fill(data);
-            CfChargerStationList = new List<ChargerInfoConfig>();
+            ChargerStationList = new Dictionary<ChargerId, ChargerCtrl>();
             foreach (DataRow row in data.Rows)
             {
                 ChargerInfoConfig ptemp = new ChargerInfoConfig();
@@ -52,7 +46,8 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
                 ptemp.PointOfPallet = row.Field<String>("PointOfCharger");
-                CfChargerStationList.Add(ptemp);
+                ChargerCtrl chargerStation = new ChargerCtrl(ptemp);
+                ChargerStationList.Add(chargerStation.cf.id,chargerStation);
             }
             con.Close();
         }

@@ -40,56 +40,56 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
         }
         public void AssignTask()
         {
-                OrderItem orderItem = null;
-                RobotUnity robot = null;
-                while (Alive)
+            OrderItem orderItem = null;
+            RobotUnity robot = null;
+            while (Alive)
+            {
+                //Console.WriteLine(processAssignAnTaskWait);
+                switch (processAssignAnTaskWait)
                 {
-                    //Console.WriteLine(processAssignAnTaskWait);
-                    switch (processAssignAnTaskWait)
-                    {
-                        case ProcessAssignAnTaskWait.PROC_ANY_IDLE:
-                            break;
-                        case ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST:
+                    case ProcessAssignAnTaskWait.PROC_ANY_IDLE:
+                        break;
+                    case ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST:
 
-                            ResultRobotReady result = robotManageService.GetRobotUnityWaitTaskItem0();
-                            if (result != null)
+                        ResultRobotReady result = robotManageService.GetRobotUnityWaitTaskItem0();
+                        if (result != null)
+                        {
+                            robot = result.robot;
+                            if (result.onReristryCharge)
                             {
-                                robot = result.robot;
-                                if (result.onReristryCharge)
-                                {
-                                    // registry charge procedure
-                                    procedureService.Register(ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE, robot, null);
-                                }
-                                else
-                                {
-                                    processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_CHECK_HAS_ANTASK;
-                                    
-                                }
-                            }
-                            break;
-                        case ProcessAssignAnTaskWait.PROC_ANY_CHECK_HAS_ANTASK:
-                            orderItem = Gettask();
-                            if (orderItem != null)
-                            {
-                                processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_ASSIGN_ANTASK;
+                                // registry charge procedure
+                                procedureService.Register(ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE, robot, null);
                             }
                             else
                             {
-                                processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST;
-                            }
-                            break;
-                        case ProcessAssignAnTaskWait.PROC_ANY_ASSIGN_ANTASK:
-                            SelectProcedureItem(robot, orderItem);
-                            MoveElementToEnd(); // sort Task List
-                            // xoa khoi list cho
-                            robotManageService.RemoveRobotUnityWaitTaskList(robot.properties.NameID);
-                            processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST;
-                            break;
+                                processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_CHECK_HAS_ANTASK;
 
-                    }
-                Thread.Sleep(1000);
+                            }
+                        }
+                        break;
+                    case ProcessAssignAnTaskWait.PROC_ANY_CHECK_HAS_ANTASK:
+                        orderItem = Gettask();
+                        if (orderItem != null)
+                        {
+                            processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_ASSIGN_ANTASK;
+                        }
+                        else
+                        {
+                            processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST;
+                        }
+                        break;
+                    case ProcessAssignAnTaskWait.PROC_ANY_ASSIGN_ANTASK:
+                        SelectProcedureItem(robot, orderItem);
+                        MoveElementToEnd(); // sort Task List
+                                            // xoa khoi list cho
+                        robotManageService.RemoveRobotUnityWaitTaskList(robot.properties.NameID);
+                        processAssignAnTaskWait = ProcessAssignAnTaskWait.PROC_ANY_GET_ANROBOT_IN_WAITTASKLIST;
+                        break;
+
                 }
-     
+                Thread.Sleep(1000);
+            }
+
         }
         public void SelectProcedureItem(RobotUnity robot,OrderItem orderItem)
         {

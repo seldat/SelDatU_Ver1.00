@@ -42,20 +42,22 @@ namespace SeldatMRMS
             batLevel = new DataReceive();
             statusCharger = new DataReceive();
             this.robot = robot;
-            ChargerId id_t = id;
-            switch (id_t)
-            {
-                case ChargerId.CHARGER_ID_1:
-                    chargerCtrl = charger.ChargerStation_1;
-                    break;
-                case ChargerId.CHARGER_ID_2:
-                    chargerCtrl = charger.ChargerStation_2;
-                    break;
-                case ChargerId.CHARGER_ID_3:
-                    chargerCtrl = charger.ChargerStation_3;
-                    break;
-                default: break;
-            }
+            chargerCtrl = charger.ChargerStationList[id];
+
+            //ChargerId id_t = id;
+            //switch (id_t)
+            //{
+            //    case ChargerId.CHARGER_ID_1:
+            //        chargerCtrl = charger.ChargerStation_1;
+            //        break;
+            //    case ChargerId.CHARGER_ID_2:
+            //        chargerCtrl = charger.ChargerStation_2;
+            //        break;
+            //    case ChargerId.CHARGER_ID_3:
+            //        chargerCtrl = charger.ChargerStation_3;
+            //        break;
+            //    default: break;
+            //}
             procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_CHARGE;
         }
         public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER)
@@ -69,7 +71,8 @@ namespace SeldatMRMS
         }
         public void Destroy()
         {
-            StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;
+            // StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;
+            ProRun = false;
         }
         public void Procedure(object ojb)
         {
@@ -242,7 +245,8 @@ namespace SeldatMRMS
         }
         public void Destroy()
         {
-            StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;
+            // StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;
+            ProRun = false;
         }
 
         public void Procedure(object ojb)

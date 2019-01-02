@@ -36,7 +36,8 @@ namespace SeldatMRMS
             CLOSE_DOOR_ERROR,
             CONNECT_CHARGER_ERROR,
             CONTACT_CHARGER_ERROR,
-            LASER_CONTROL_ERROR
+            LASER_CONTROL_ERROR,
+            CAN_NOT_GET_DATA,
         }
 
         public ErrorCode errorCode;

@@ -52,9 +52,10 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             public Pose PointFrontLine;
             public String PointOfPallet;
         }
+        public ChargerInfoConfig cf;
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.ip, cf.port)
         {
-            this.SetId(cf.id);
+            this.cf = cf;
         }
         public bool GetId(ref DataReceive data)
         {

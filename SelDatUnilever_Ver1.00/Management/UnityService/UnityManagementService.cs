@@ -20,7 +20,8 @@ namespace SeldatMRMS.Management.UnityService
         TrafficManagementService trafficService { get; set; }
         AssigmentTaskService assigmentTaskService { get; set; }
         DeviceRegistrationService deviceRegistrationService { get; set; }
-        protected ChargerManagementService chargerService;
+        // ChargerManagementService chargerService;
+        public ChargerManagementService chargerService; /* chau test */
         public UnityManagementService() { }
         public void Initialize()
         {
@@ -29,7 +30,7 @@ namespace SeldatMRMS.Management.UnityService
             procedureManagementService = new ProcedureManagementService();
             chargerService = new ChargerManagementService();
             trafficService = new TrafficManagementService();
-            deviceRegistrationService = new DeviceRegistrationService(8080);
+            deviceRegistrationService = new DeviceRegistrationService(11000);
 
             assigmentTaskService = new AssigmentTaskService();
             trafficService = new TrafficManagementService();

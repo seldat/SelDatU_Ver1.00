@@ -52,7 +52,7 @@ namespace DoorControllerService
         public DoorService(DoorInfoConfig cf):base(cf.ip,cf.port)
         {
             config = cf;
-            SetId(cf.id);
+            //SetId(cf.id);
         }
 
         public bool GetId(ref DataReceive data)

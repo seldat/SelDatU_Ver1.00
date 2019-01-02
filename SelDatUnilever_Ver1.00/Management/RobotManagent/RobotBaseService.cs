@@ -10,7 +10,8 @@ namespace SeldatMRMS.Management.RobotManagent
     {
         public enum ProcedureControlAssign 
         {
-            PRO_BUFFER_TO_MACHINE = 0,
+            PRO_NONE = 0,
+            PRO_BUFFER_TO_MACHINE ,
             PRO_BUFFER_TO_RETURN,
             PRO_FORKLIFT_TO_BUFFER,
             PRO_MACHINE_TO_RETURN,

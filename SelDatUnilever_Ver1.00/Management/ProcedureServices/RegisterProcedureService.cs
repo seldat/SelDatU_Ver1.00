@@ -41,12 +41,13 @@ namespace SeldatMRMS
         public RegisterProcedureService() { }
         public enum ProcedureItemSelected
         {
-            PROCEDURE_FORLIFT_TO_BUFFER,
+            PROCEDURE_FORLIFT_TO_BUFFER = 0,
             PROCEDURE_BUFFER_TO_MACHINE,
             PROCEDURE_BUFFER_TO_RETURN,
             PROCEDURE_MACHINE_TO_RETURN,
             PROCEDURE_ROBOT_TO_READY,
             PROCEDURE_ROBOT_TO_CHARGE,
+            PROCEDURE_RETURN_TO_GATE,
         }
         public void StoreProceduresInDataBase()
         {

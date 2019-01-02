@@ -51,33 +51,10 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-     
-           // door = new DoorManagementService();
-           // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
-          //  pr.GetInfoOfPalletBuffer();
-            /*Chau test*/
 
-            //ChargerInfoConfig cf;
-            //cf.id = ChargerId.CHARGER_ID_1;
-            //cf.ip = "127.0.0.1";
-            //cf.port = 10001;
-            //ChargerCtrl chargerCtrl = new ChargerCtrl(cf);
-            //DataReceive id = new DataReceive();
-            //chargerCtrl.GetId(ref id);
-            //Console.WriteLine("id :{0}", id.data);
-
-            //chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
-
-            //chargerCtrl.StartCharge();
-
-            //DataReceive state = new DataReceive();
-            //chargerCtrl.GetState(ref state);
-
-            //DataReceive batLevel = new DataReceive();
-            //chargerCtrl.GetBatteryLevel(ref batLevel);
-
-            //chargerCtrl.StopCharge();
-
+            //door = new DoorManagementService();
+            //ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
+            //pr.GetInfoOfPalletBuffer();
             /*  robot = new RobotUnity();
               robot.Start("ws://192.168.109.128:9090");
               robot.properties.pose = new Pose(new System.Windows.Point(30, 8), 0);
@@ -90,53 +67,53 @@ namespace SelDatUnilever_Ver1._00
               pr.RegistrationTranfficService(traffiicService);
               pr.Start();*/
             /*end*/
-           /*RobotUnity robot1 = new RobotUnity(canvas);
-               robot1.properties.NameID = "robot1";
-               RobotUnity robot2 = new RobotUnity(canvas);
-               robot2.properties.NameID = "robot2";
-               RobotUnity robot3 = new RobotUnity(canvas);
-               robot3.properties.NameID = "robot3";
-               robottrafficlist.Add(robot1);
-               robottrafficlist.Add(robot2);
-               robottrafficlist.Add(robot3);
+            /*RobotUnity robot1 = new RobotUnity(canvas);
+                robot1.properties.NameID = "robot1";
+                RobotUnity robot2 = new RobotUnity(canvas);
+                robot2.properties.NameID = "robot2";
+                RobotUnity robot3 = new RobotUnity(canvas);
+                robot3.properties.NameID = "robot3";
+                robottrafficlist.Add(robot1);
+                robottrafficlist.Add(robot2);
+                robottrafficlist.Add(robot3);
 
-               robot1.RegisteRobotInAvailable(robottrafficlist);
-               robot2.RegisteRobotInAvailable(robottrafficlist);
-               robot3.RegisteRobotInAvailable(robottrafficlist);
+                robot1.RegisteRobotInAvailable(robottrafficlist);
+                robot2.RegisteRobotInAvailable(robottrafficlist);
+                robot3.RegisteRobotInAvailable(robottrafficlist);
 
-               robotlist.Add("robot1", robot1);
-               robotlist.Add("robot2", robot2);
-               robotlist.Add("robot3", robot3);
+                robotlist.Add("robot1", robot1);
+                robotlist.Add("robot2", robot2);
+                robotlist.Add("robot3", robot3);
 
-               robot1.initialPos(0,0);
-               robot2.initialPos(300,300);
-               robot3.initialPos(400,400);*/
-              /* TrafficManagementService traffic = new TrafficManagementService();
-               traffic.LoadConfigureZone();*/
+                robot1.initialPos(0,0);
+                robot2.initialPos(300,300);
+                robot3.initialPos(400,400);*/
+            /* TrafficManagementService traffic = new TrafficManagementService();
+             traffic.LoadConfigureZone();*/
 
             //  deviceRegistrationService=new DeviceRegistrationService(9000);
             //  deviceRegistrationService.listen();
-         //   string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
-         
-        /*    JArray results = JArray.Parse(text);
-            foreach (var result in results)
-            {
-                int temp_productDetailID = (int)result["productDetailId"];
-                if (temp_productDetailID ==1)
+            //   string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+
+            /*    JArray results = JArray.Parse(text);
+                foreach (var result in results)
                 {
-                    var bufferResults = result["buffers"];
-                    var palletResults = bufferResults[0]["pallets"];
-                    var dataPalletItemResults = palletResults[0]["dataPallet"];
-                   // bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
-                    var ppalets = dataPalletItemResults["pallet"];
-                    var pppoints = ppalets["point"];
-                    double pX = (double)pppoints["X"];
-                    double pY = (double)pppoints["Y"];
-                    int pDBmvDir = (int)ppalets["mvDir"];
-                    MessageBox.Show(pX.ToString());
-                    break;
-                }
-            }*/
+                    int temp_productDetailID = (int)result["productDetailId"];
+                    if (temp_productDetailID ==1)
+                    {
+                        var bufferResults = result["buffers"];
+                        var palletResults = bufferResults[0]["pallets"];
+                        var dataPalletItemResults = palletResults[0]["dataPallet"];
+                       // bool dataPalletItem_hasBranch = (bool)dataPalletItemResults["hasBranch"];
+                        var ppalets = dataPalletItemResults["pallet"];
+                        var pppoints = ppalets["point"];
+                        double pX = (double)pppoints["X"];
+                        double pY = (double)pppoints["Y"];
+                        int pDBmvDir = (int)ppalets["mvDir"];
+                        MessageBox.Show(pX.ToString());
+                        break;
+                    }
+                }*/
 
             /*  string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
 
@@ -242,6 +219,26 @@ namespace SelDatUnilever_Ver1._00
         {
             unityService = new UnityManagementService();
             unityService.Initialize();
+            /*chau test */
+            ChargerCtrl chargerCtrl = unityService.chargerService.ChargerStationList[ChargerId.CHARGER_ID_1];
+            DataReceive id = new DataReceive();
+            //chargerCtrl.SetId(ChargerId.CHARGER_ID_3);
+            chargerCtrl.GetId(ref id);
+            Console.WriteLine("id :{0}", id.data);
+
+            chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
+
+            chargerCtrl.StartCharge();
+            chargerCtrl.StopCharge();
+
+            DataReceive state = new DataReceive();
+            chargerCtrl.GetState(ref state);
+
+            DataReceive batLevel = new DataReceive();
+            chargerCtrl.GetBatteryLevel(ref batLevel);
+
+            chargerCtrl.StopCharge();
+            /*end */
         }
 
         private void selRobot1_Checked(object sender, RoutedEventArgs e)
