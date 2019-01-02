@@ -8,13 +8,48 @@
         Title="MainWindow" Height="757.059" Width="1308.235" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Grid Name="main" KeyDown="main_KeyDown">
         <Button Content="Button" HorizontalAlignment="Left" Margin="266,31,0,0" VerticalAlignment="Top" Width="75" Name="sendPose" Click="sendPose_Click"/>
-        <Border Margin="242,104,0,0" >
-            <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="612" VerticalAlignment="Top" Width="1048" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
+        <Border Margin="994,404,0,0" >
+            <Canvas Name="canvas" Background="LightBlue" HorizontalAlignment="Left" Height="612" VerticalAlignment="Top" Width="48" KeyUp="canvas_KeyUp" KeyDown="canvas_KeyDown"/>
         </Border>
         <RadioButton Name="selRobot1" IsChecked="True" Content="Robot1" HorizontalAlignment="Left" Margin="78,104,0,0" VerticalAlignment="Top" Checked="selRobot1_Checked"/>
         <RadioButton Name="selRobot2" Content="Robot2" HorizontalAlignment="Left" Margin="78,124,0,0" VerticalAlignment="Top" Checked="selRobot2_Checked"/>
         <RadioButton Name="selRobot3" Content="Robot3" HorizontalAlignment="Left" Margin="78,144,0,0" VerticalAlignment="Top" Checked="selRobot3_Checked"/>
         <RadioButton Content="Robot4" HorizontalAlignment="Left" Margin="78,164,0,0" VerticalAlignment="Top"/>
         <Button Content="CamePoint" HorizontalAlignment="Left" Margin="394,31,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click"/>
+        <!-- <DataGrid Name="datagrid" HorizontalAlignment="Left" Height="428" Margin="10,233,0,0" VerticalAlignment="Top" Width="936" ItemsSource="{Binding Grouped_PropertiesRobotUnity}"
+                      CanUserAddRows="False"
+                          AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Header="L1"  
+                                        Binding="{Binding Path=L1, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="L2" 
+                                        Binding="{Binding Path=L2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="WS" 
+                                        Binding="{Binding Path=WS, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="Width" 
+                                        Binding="{Binding Path=Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="Length" 
+                                        Binding="{Binding Path=Length, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="Height" 
+                                        Binding="{Binding Path=Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        -->
+        <DataGrid Name="datagrid" HorizontalAlignment="Left" Height="428" Margin="10,233,0,0" VerticalAlignment="Top" Width="936" ItemsSource="{Binding Grouped_PropertiesCharge}"
+                      CanUserAddRows="False"
+                          AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Header="ID"  
+                                        Binding="{Binding Path=IdStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="IP" 
+                                        Binding="{Binding Path=Ip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="Port" 
+                                        Binding="{Binding Path=Port, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="PointFrontLineStr" 
+                                        Binding="{Binding Path=PointFrontLineStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <DataGridTextColumn Width="*" Header="PointOfPallet" 
+                                        Binding="{Binding Path=PointOfPallet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

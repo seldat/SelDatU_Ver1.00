@@ -35,6 +35,7 @@ namespace SelDatUnilever_Ver1._00
     /// </summary>
     public partial class MainWindow : Window
     {
+        public List<PropertiesRobotUnity> collectionDataList = new List<PropertiesRobotUnity>();
         Dictionary<String, RobotUnity> robotlist = new Dictionary<string, RobotUnity>();
         List<RobotUnity> robottrafficlist = new List<RobotUnity>();
         String namerobot = "robot1";
@@ -191,8 +192,7 @@ namespace SelDatUnilever_Ver1._00
 
         private void sendPose_Click(object sender, RoutedEventArgs e)
         {
-            BridgeClientRequest pp = new BridgeClientRequest();
-            pp.PostCallAPI("",null);
+            unityService.chargerService.AddConfig();
         }
 
         private void canvas_KeyUp(object sender, KeyEventArgs e)
@@ -238,11 +238,12 @@ namespace SelDatUnilever_Ver1._00
                 robotlist[namerobot].RotationRight();
             }
         }
-
+        UnityManagementService unityService;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            UnityManagementService unityService = new UnityManagementService();
+           unityService = new UnityManagementService();
             unityService.Initialize();
+            DataContext = unityService.chargerService;
             RobotUnity robotshape = new RobotUnity(this.canvas);
         }
 
@@ -263,7 +264,9 @@ namespace SelDatUnilever_Ver1._00
         /*Chau test*/
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            robot.FinishedStatesPublish(2000);
+            //robot.FinishedStatesPublish(2000);
+            unityService.chargerService.SaveConfig(datagrid);
+
         }
         /*End*/
     }

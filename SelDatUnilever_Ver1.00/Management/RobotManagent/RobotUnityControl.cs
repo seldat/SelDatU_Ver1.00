@@ -1,4 +1,5 @@
 ﻿using SeldatMRMS.Communication;
+using SelDatUnilever_Ver1._00.Management;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using System;
 using System.Collections.Generic;
@@ -51,30 +52,43 @@ namespace SeldatMRMS.Management.RobotManagent
             return properties.BatteryReadyWork;
         }
 
-        public struct PropertiesRobotUnity
+        public class PropertiesRobotUnity:NotifyUIBase
         {
             [CategoryAttribute("ID Settings"), DescriptionAttribute("Name of the customer")]
-            public String NameID;
-            public double DistanceIntersection { get; set; }
+            private String _NameID;
+            public String NameID { get => _NameID; set { _NameID = value; RaisePropertyChanged("NameID"); } }
+            private String _Label;
+            public String Label { get => _Label; set { _Label = value; RaisePropertyChanged("Label"); } }
+            private String _Url{ get; set; }
+            public String Url { get => _Url; set { _Url = value; RaisePropertyChanged("Url"); } }
             public Pose pose{ get; set; }
             public String URL;
             public bool IsConnected { get; set; }
-            public double L1 { get; set;}
-            public double L2 { get; set;}
-            public double WS { get; set; }
-            public double Width {get; set;}
-            public double Length {get; set;}
-            public double Height { get; set; }
+            private double _L1 { get; set;}
+            private double _L2 { get; set;}
+            private double _WS { get; set; }
+            private double _Width {get; set;}
+            private double _Length {get; set;}
+            private double _Height { get; set; }
             [CategoryAttribute("Laser"), DescriptionAttribute("Name of the customer")]
             public String LaserOperation;
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
-            public float BatteryLevelRb;
-            public float BatteryLowLevel;
-            public bool BatteryReadyWork;
+            public float _BatteryLevelRb;
+            public float BatteryLevelRb { get => _BatteryLevelRb; set { _BatteryLevelRb = value; RaisePropertyChanged("BatteryLevelRb"); } }
+            public float _BatteryLowLevel;
+            public float BatteryLowLevel { get => _BatteryLowLevel; set { _BatteryLowLevel = value; RaisePropertyChanged("BatteryLowLevel"); } }
+            public bool  BatteryReadyWork;
             public ChargerCtrl.ChargerId chargeID;
-
+            private double _DistanceIntersection;
+            public double DistanceIntersection { get => _DistanceIntersection; set { _DistanceIntersection = value; RaisePropertyChanged("Distance Intersection"); } }
+            public double L1 { get => _L1; set { _L1 = value; RaisePropertyChanged("L1"); } }
+            public double L2 { get => _L2; set { _L2 = value; RaisePropertyChanged("L2"); } }
+            public double WS { get => _WS; set { _WS = value; RaisePropertyChanged("WS"); } }
+            public double Width { get => _Width; set { _Width = value; RaisePropertyChanged("Width"); } }
+            public double Length { get => _Length; set { _Length = value; RaisePropertyChanged("Length"); } }
+            public double Height { get => _Height; set { _Height = value; RaisePropertyChanged("Height"); } }
         }
-
+        
         public enum RequestCommandLineDetect
         {
             REQUEST_CHARGECTRL_CANCEL = 1201,
@@ -136,6 +150,8 @@ namespace SeldatMRMS.Management.RobotManagent
         protected virtual void SupervisorTraffic() { }
         public RobotUnityControl()
         {
+            properties = new PropertiesRobotUnity();
+
             properties.pose = new Pose();
             properties.DistanceIntersection = 40;
             properties.BatteryLowLevel = 25;

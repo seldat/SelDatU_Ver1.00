@@ -44,17 +44,39 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             RES_STOP_CHARGE, /*0x0C */
         }
 
-        public struct ChargerInfoConfig
+        public class ChargerInfoConfig:NotifyUIBase
         {
-            public String ip;
-            public Int32 port;
-            public ChargerId id;
+            private String _Ip;
+            public String Ip { get => _Ip; set { _Ip = value; RaisePropertyChanged("Ip"); } }
+            private Int32 _Port;
+            public Int32 Port { get => _Port; set { _Port = value; RaisePropertyChanged("Port"); } }
+            public ChargerId Id;
+            public Int32 _IdStr;
+            public Int32 IdStr { get => _IdStr; set { _IdStr = value; RaisePropertyChanged("IdStr"); } }
             public Pose PointFrontLine;
-            public String PointOfPallet;
+            private String _PointFrontLineStr;
+            public String PointFrontLineStr { get => _PointFrontLineStr; set { _PointFrontLineStr = value; RaisePropertyChanged("PointFrontLine"); } }
+            private String _PointOfPallet;
+            public String PointOfPallet { get => _PointOfPallet; set { _PointOfPallet = value; RaisePropertyChanged("PointOfPallet"); } }
+            public void ParsePointFrontLineValue(String value)
+            {
+                try
+                {
+                    double xx = double.Parse(value.Split(',')[0]);
+                    double yy = double.Parse(value.Split(',')[1]);
+                    double angle = double.Parse(value.Split(',')[2]);
+                    PointFrontLine = new Pose(xx,yy,angle);
+                }
+                catch { }
+            }
+            public String ParsePointFrontLineValue(Pose p)
+            {
+                return p.Position.X + "" + p.Position.Y + "" + p.AngleW;
+            }
         }
-        public ChargerCtrl(ChargerInfoConfig cf) : base(cf.ip, cf.port)
+        public ChargerCtrl(ChargerInfoConfig cf) : base(cf.Ip, cf.Port)
         {
-            this.SetId(cf.id);
+            this.SetId(cf.Id);
         }
         public bool GetId(ref DataReceive data)
         {

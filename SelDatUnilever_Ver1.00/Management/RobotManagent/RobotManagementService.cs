@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -7,22 +8,77 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SeldatMRMS.Management.RobotManagent
 {
     public class RobotManagementService
     {
+        public Int32 AmountofRobotUnity = 3;
         public class ResultRobotReady
         {
             public RobotUnity robot;
             public bool onReristryCharge = false;
 
         }
+        public ListCollectionView Grouped_PropertiesRobotUnity { get; private set; }
+        public List<PropertiesRobotUnity> PropertiesRobotUnity_List;
         Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
         Dictionary<String, RobotUnity> RobotUnityWaitTaskList = new Dictionary<string, RobotUnity>();
         Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
         public RobotManagementService() {
-            LoadRobotUnityConfigure();
+            //LoadRobotUnityConfigure();
+          
+            PropertiesRobotUnity_List = new List<PropertiesRobotUnity>();
+            Grouped_PropertiesRobotUnity = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesRobotUnity_List);
+         //   LoadConfigure();
+        }
+        public void Add_PropertiesRobotUnity()
+        {
+            if (PropertiesRobotUnity_List.Count < AmountofRobotUnity)
+            {
+                PropertiesRobotUnity newItem = new PropertiesRobotUnity();
+                newItem.NameID = Guid.NewGuid().ToString();
+                PropertiesRobotUnity_List.Add(newItem);
+                Grouped_PropertiesRobotUnity.Refresh();
+            }
+            else
+            {
+                MessageBox.Show(SelDatUnilever_Ver1._00.Properties.Resources.Error_Add_RobotUnity);
+            }
+        }
+        public void SaveConfig(DataGrid datagrid)
+        {
+                String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigRobot.json");
+                System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(datagrid.ItemsSource, Formatting.Indented));   
+        }
+        public bool LoadConfigure()
+        {
+            String path= Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigRobot.json");
+            if(!File.Exists(path))
+            {
+                File.Create(path);
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    String data = File.ReadAllText(path);
+                    if (data.Length > 0)
+                    {
+                        List<PropertiesRobotUnity> tempPropertiestRobotList = JsonConvert.DeserializeObject<List<PropertiesRobotUnity>>(data);
+                        tempPropertiestRobotList.ForEach(e => PropertiesRobotUnity_List.Add(e));
+                        Grouped_PropertiesRobotUnity.Refresh();
+                        return true;
+                    }                   
+                }
+                catch { }
+            }
+            return false;
         }
         public void LoadRobotUnityConfigure()
         {

@@ -14,13 +14,13 @@ namespace SeldatMRMS.Management.UnityService
 {
     public class UnityManagementService
     {
-        RobotManagementService robotManagementService { get; set; }
+        public RobotManagementService robotManagementService { get; set; }
         DoorManagementService doorManagementService { get; set; }
         ProcedureManagementService procedureManagementService { get; set; }
         TrafficManagementService trafficService { get; set; }
         AssigmentTaskService assigmentTaskService { get; set; }
         DeviceRegistrationService deviceRegistrationService { get; set; }
-        protected ChargerManagementService chargerService;
+        public ChargerManagementService chargerService;
         public UnityManagementService() { }
         public void Initialize()
         {
