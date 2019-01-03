@@ -190,13 +190,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     OrderItem order = new OrderItem();
                     order.typeReq = (TyeRequest)typeReq;
                     order.userName = (String)results["userName"];
-                    order.productDetailID = (int)results["productDetailId"];
-                    order.productId = (int)results["productId"];
-                    order.timeWorkId = (int)results["timeWorkId"];
                     order.activeDate = (string)results["activeDate"];
-                    order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst = (string)results["datapallet"][i];
-
                     JObject stuffPallet = JObject.Parse(jsonDPst);
                     double xx = (double)stuffPallet["line"]["x"];
                     double yy = (double)stuffPallet["line"]["y"];

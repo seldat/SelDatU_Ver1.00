@@ -34,7 +34,7 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
             PROC_READY_CHECK_ROBOT_OUTSIDEREADY,
         }
         protected ProcessAssignTaskReady processAssignTaskReady;
-        public event Action<bool> FinishTaskCallBack;
+        
         protected ProcessAssignAnTaskWait processAssignAnTaskWait;
         protected ProcedureManagementService procedureService;
         public RobotManagementService robotManageService;

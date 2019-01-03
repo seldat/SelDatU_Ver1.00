@@ -17,6 +17,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
 {
     public class ChargerManagementService
     {
+        public const Int32 AmountofCharger = 3;
         public ListCollectionView Grouped_PropertiesCharge { get; private set; }
         public List<ChargerInfoConfig> PropertiesCharge_List;
         private List<ChargerInfoConfig> CfChargerStationList;
@@ -35,15 +36,33 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             Grouped_PropertiesCharge = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesCharge_List);
             LoadConfigure();
         }
-        public void AddConfig()
+        public void Initialize()
+        { 
+            PropertiesCharge_List.Add(new ChargerInfoConfig() {
+            IdStr = (PropertiesCharge_List.Count + 1),
+            Ip = "192.168.1.2",
+            Port = 10001,
+            PointOfPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+            });
+            PropertiesCharge_List.Add(new ChargerInfoConfig()
+            {
+                IdStr = (PropertiesCharge_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                PointOfPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+            });
+            PropertiesCharge_List.Add(new ChargerInfoConfig()
+            {
+                IdStr = (PropertiesCharge_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                PointOfPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+            });
+            Grouped_PropertiesCharge.Refresh();
+        }
+        public void AddCharger()
         {
-            ChargerInfoConfig ptemp = new ChargerInfoConfig();
-            ptemp.IdStr =( PropertiesCharge_List.Count+1);
-            ptemp.Ip = "192.168.1.2";
-            ptemp.Port = 10001;
-            ptemp.PointOfPallet="{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}";
-            ptemp.PointFrontLineStr = "1,2,3";
-            PropertiesCharge_List.Add(ptemp);
+            PropertiesCharge_List.Add(new ChargerInfoConfig());
             Grouped_PropertiesCharge.Refresh();
         }
         public void SaveConfig(DataGrid datagrid)

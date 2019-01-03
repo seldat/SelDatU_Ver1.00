@@ -16,8 +16,10 @@ namespace SeldatMRMS.Management.RobotManagent
 
     public class RobotUnityControl : RosSocket
     {
+        
         public event Action<int> FinishStatesCallBack;
         public event Action<Pose, Object> PoseHandler;
+        public event Action<Object, ConnectionStatus> ConnectionStatusHandler;
 
         private const float delBatterry = 5;
         public class Pose
@@ -61,7 +63,7 @@ namespace SeldatMRMS.Management.RobotManagent
             public String Label { get => _Label; set { _Label = value; RaisePropertyChanged("Label"); } }
             private String _Url{ get; set; }
             public String Url { get => _Url; set { _Url = value; RaisePropertyChanged("Url"); } }
-            public Pose pose{ get; set; }
+            public Pose pose;
             public String URL;
             public bool IsConnected { get; set; }
             private double _L1 { get; set;}
@@ -73,9 +75,9 @@ namespace SeldatMRMS.Management.RobotManagent
             [CategoryAttribute("Laser"), DescriptionAttribute("Name of the customer")]
             public String LaserOperation;
             [CategoryAttribute("Battery"), DescriptionAttribute("Name of the customer")]
-            public float _BatteryLevelRb;
+            private float _BatteryLevelRb;
             public float BatteryLevelRb { get => _BatteryLevelRb; set { _BatteryLevelRb = value; RaisePropertyChanged("BatteryLevelRb"); } }
-            public float _BatteryLowLevel;
+            private float _BatteryLowLevel;
             public float BatteryLowLevel { get => _BatteryLowLevel; set { _BatteryLowLevel = value; RaisePropertyChanged("BatteryLowLevel"); } }
             public bool  BatteryReadyWork;
             public ChargerCtrl.ChargerId chargeID;
@@ -151,11 +153,21 @@ namespace SeldatMRMS.Management.RobotManagent
         public RobotUnityControl()
         {
             properties = new PropertiesRobotUnity();
-
             properties.pose = new Pose();
+            properties.NameID = Guid.NewGuid().ToString();
+            properties.L1 = 40;
+            properties.L2 = 40;
+            properties.WS = 60;
+            properties.Label = "Robot";
+            properties.BatteryLowLevel = 23;
+            properties.BatteryLevelRb = 40;
+            properties.Url = "ws://192.168.1.200:9090";
             properties.DistanceIntersection = 40;
             properties.BatteryLowLevel = 25;
             properties.BatteryReadyWork = false;
+            properties.Width = 1.8;
+            properties.Height = 2.5;
+            properties.Length = 2.2;
         }
         public void createRosTerms()
         {
@@ -216,10 +228,7 @@ namespace SeldatMRMS.Management.RobotManagent
 
         }
 
-        protected override void OnClosedEvent(object sender, CloseEventArgs e) {
-            properties.IsConnected = false;
-            base.OnClosedEvent(sender,e);
-        }
+    
         public void UpdateRiskAraParams(double L1,double L2,double WS, double distanceIntersection)
         {
             properties.L1 = L1;
@@ -269,11 +278,23 @@ namespace SeldatMRMS.Management.RobotManagent
             properties.IsConnected = true;
             Console.WriteLine("connected");
             createRosTerms();
+            ConnectionStatusHandler(this, ConnectionStatus.CON_OK);
+        }
+        protected override void OnClosedEvent(object sender, CloseEventArgs e)
+        {
+            ConnectionStatusHandler(this, ConnectionStatus.CON_FAILED);
+            properties.IsConnected = false;
+            this.url = properties.URL;
+            base.OnClosedEvent(sender, e);
+            
+           
         }
         public override void Dispose()
         {
             properties.pose.Destroy();
             base.Dispose();
+            ConnectionStatusHandler(this, ConnectionStatus.CON_CLOSED);
+            
         }
     }
 }

@@ -30,14 +30,23 @@ namespace SeldatMRMS.Management.RobotManagent
 {
     public class RosSocket
     {
+        public enum ConnectionStatus
+        {
+            CON_OK = 0,
+            CON_FAILED,
+            CON_CLOSED
+        }
         #region Public
         private bool IsDisposed = false;
-        protected virtual void OnClosedEvent(object sender,CloseEventArgs e)
+
+        protected virtual void OnClosedEvent(object sender, CloseEventArgs e)
         {
             if (!IsDisposed)
             {
-                Close();
-                webSocket.Connect();
+                Dispose();
+                Start();
+                //Close();
+                // webSocket.Connect();
             }
         }
         protected virtual void OnOpenedEvent() { }
@@ -56,6 +65,17 @@ namespace SeldatMRMS.Management.RobotManagent
             webSocket.OnOpen += (sender, e) => OnOpenedEvent();
             webSocket.Connect();
            
+        }
+        public void Start()
+        {
+          
+            IsDisposed = false;
+            webSocket = new WebSocket(url);
+            webSocket.OnMessage += (sender, e) => recievedOperation((WebSocket)sender, e);
+            webSocket.OnClose += (sender, e) => OnClosedEvent((WebSocket)sender, e);
+            webSocket.OnOpen += (sender, e) => OnOpenedEvent();
+            webSocket.Connect();
+
         }
         public virtual void Dispose()
         {
@@ -184,7 +204,7 @@ namespace SeldatMRMS.Management.RobotManagent
             }
         }
 
-        private WebSocket webSocket;
+        public WebSocket webSocket;
         private Dictionary<int, Publisher> publishers = new Dictionary<int, Publisher>();
         private Dictionary<int, Subscriber> subscribers = new Dictionary<int, Subscriber>();
         private Dictionary<int, ServiceCaller> serviceCallers = new Dictionary<int, ServiceCaller>();

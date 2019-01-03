@@ -2,6 +2,7 @@
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
+using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Threading.Tasks;
 using static SeldatMRMS.DBProcedureService;
@@ -11,29 +12,11 @@ namespace SeldatMRMS
 {
     public class ProcedureManagementService:RegisterProcedureService
     {
-        protected DoorManagementService doorService;
-        protected ChargerManagementService chargerService;
-        protected TrafficManagementService trafficService;
-        protected RobotManagementService robotManagementService;
+
         public ProcedureManagementService()
         {
         }
-        public void RegistryService(TrafficManagementService trafficService)
-        {
-            this.trafficService = trafficService;
-        }
-        public void RegistryService(RobotManagementService robotManagementService)
-        {
-            this.robotManagementService = robotManagementService;
-        }
-        public void RegistryService(DoorManagementService doorService)
-        {
-            this.doorService = doorService;
-        }
-        public void RegistryService(ChargerManagementService chargerService)
-        {
-            this.chargerService = chargerService;
-        }
+
         public void Register(ProcedureItemSelected ProcedureItem, RobotUnity robot, OrderItem orderItem)
         {
 
@@ -109,16 +92,19 @@ namespace SeldatMRMS
                  {
                      RobotUnity robot = procItem.GetRobotUnity();
                      robotManagementService.AddRobotUnityReadyList(robot);
+
                  }
                  else if(procItem.procedureCode == ProcedureControlServices.ProcedureCode.PROC_CODE_ROBOT_TO_CHARGE)
                  {
                      RobotUnity robot = procItem.GetRobotUnity();
                      robotManagementService.AddRobotUnityReadyList(robot);
+
                  }
                  else
                  {
                      RobotUnity robot = procItem.GetRobotUnity();
                      robotManagementService.AddRobotUnityWaitTaskList(robot);
+
                  }
 
                  var element = RegisterProcedureItemList.Find(e => e.item.procedureCode == procItem.procedureCode);

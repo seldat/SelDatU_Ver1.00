@@ -80,6 +80,8 @@ namespace SelDatUnilever_Ver1._00.Management.UnityService
                             break;
                         case ProcessAssignAnTaskWait.PROC_ANY_ASSIGN_ANTASK:
                             SelectProcedureItem(robot, orderItem);
+                            // xoa order đầu tiên trong danh sach devicelist[0] sau khi gán task
+                            deviceItemsList[0].RemoveFirstOrder();
                             MoveElementToEnd(); // sort Task List
                             // xoa khoi list cho
                             robotManageService.RemoveRobotUnityWaitTaskList(robot.properties.NameID);

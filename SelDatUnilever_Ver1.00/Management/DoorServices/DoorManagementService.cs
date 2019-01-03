@@ -16,6 +16,7 @@ namespace SeldatMRMS.Management.DoorServices
 {
     public class DoorManagementService
     {
+        public const Int32 AmountofDoor = 4;
         public ListCollectionView Grouped_PropertiesDoor { get; private set; }
         public List<DoorInfoConfig> PropertiesDoor_List;
         private List<DoorInfoConfig> DoorInfoConfigList;
@@ -34,26 +35,62 @@ namespace SeldatMRMS.Management.DoorServices
             PropertiesDoor_List = new List<DoorInfoConfig>();
             Grouped_PropertiesDoor = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesDoor_List);
         }
-
-        public void AddConfig()
+        public void AddDoor()
         {
-            DoorInfoConfig ptemp = new DoorInfoConfig();
-            ptemp.IdStr = (PropertiesDoor_List.Count + 1);
-            ptemp.Ip = "192.168.1.2";
-            ptemp.Port = 10001;
-            ptemp.infoPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}";
-            ptemp.PointFrontLineStr = "1,2,3";
-            PropertiesDoor_List.Add(ptemp);
+                PropertiesDoor_List.Add(new DoorInfoConfig());
+                Grouped_PropertiesDoor.Refresh();
+        }
+        public void Initialize()
+        {
+            PropertiesDoor_List.Add(new DoorInfoConfig() {
+                IdStr = (PropertiesDoor_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                infoPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+                PointFrontLineStr = "1,2,3",
+                PointCheckInGateStr ="0.0,0.0,0.0"
+            }
+            );
+            PropertiesDoor_List.Add(new DoorInfoConfig()
+            {
+                IdStr = (PropertiesDoor_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                infoPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+                PointFrontLineStr = "1,2,3",
+                PointCheckInGateStr = "0.0,0.0,0.0"
+            }
+            );
+            PropertiesDoor_List.Add(new DoorInfoConfig()
+            {
+                IdStr = (PropertiesDoor_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                infoPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+                PointFrontLineStr = "1,2,3",
+                PointCheckInGateStr = "0.0,0.0,0.0"
+            }
+            );
+            PropertiesDoor_List.Add(new DoorInfoConfig()
+            {
+                IdStr = (PropertiesDoor_List.Count + 1),
+                Ip = "192.168.1.2",
+                Port = 10001,
+                infoPallet = "{ \"pallet\":\"null\",\"bay\":1,\"hasSubLine\":\"no\",\"direction\":\"null\",\"row\":0}",
+                PointFrontLineStr = "1,2,3",
+                PointCheckInGateStr = "0.0,0.0,0.0"
+            }
+);
             Grouped_PropertiesDoor.Refresh();
         }
         public void SaveConfig(DataGrid datagrid)
         {
-            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigCharge.json");
+            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigDoor.json");
             System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(datagrid.ItemsSource, Formatting.Indented));
         }
         public bool LoadConfigure()
         {
-            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigCharge.json");
+            String path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ConfigDoor.json");
             if (!File.Exists(path))
             {
                 File.Create(path);

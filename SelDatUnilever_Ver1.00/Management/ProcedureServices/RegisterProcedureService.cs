@@ -1,6 +1,10 @@
 ﻿using DoorControllerService;
 using SeldatMRMS.Management;
+using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
+using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
+using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +17,13 @@ namespace SeldatMRMS
 {
     public class RegisterProcedureService
     {
+        protected DoorManagementService doorService;
+        protected ChargerManagementService chargerService;
+        protected TrafficManagementService trafficService;
+        protected DeviceRegistrationService deviceService;
+        protected RobotManagementService robotManagementService;
         protected virtual bool Cancel() { return false; }
+
         public class RegisterProcedureItem
         {
             public OrderItem orderItem;
@@ -37,6 +47,7 @@ namespace SeldatMRMS
                 //itemProcService.
             }
         }
+
         protected List<RegisterProcedureItem> RegisterProcedureItemList = new List<RegisterProcedureItem>();
         public RegisterProcedureService() { }
         public enum ProcedureItemSelected
@@ -47,6 +58,26 @@ namespace SeldatMRMS
             PROCEDURE_MACHINE_TO_RETURN,
             PROCEDURE_ROBOT_TO_READY,
             PROCEDURE_ROBOT_TO_CHARGE,
+        }
+        public void RegistryService(TrafficManagementService trafficService)
+        {
+            this.trafficService = trafficService;
+        }
+        public void RegistryService(RobotManagementService robotManagementService)
+        {
+            this.robotManagementService = robotManagementService;
+        }
+        public void RegistryService(DoorManagementService doorService)
+        {
+            this.doorService = doorService;
+        }
+        public void RegistryService(ChargerManagementService chargerService)
+        {
+            this.chargerService = chargerService;
+        }
+        public void RegistryService(DeviceRegistrationService deviceService)
+        {
+            this.deviceService = deviceService;
         }
         public void StoreProceduresInDataBase()
         {
@@ -69,8 +100,15 @@ namespace SeldatMRMS
         }
         protected virtual void ErrorApprearInProcedureItem(ProcedureControlServices item)
         {
+
             // chờ xử lý // error staus is true;
-            // báo sự cố cho lớp robotmanagement // đợi cho chờ xử lý// hủy bỏ quy trình
+            // báo sự cố cho lớp robotmanagement // đợi cho chờ xử lý// hủy bỏ quy trình 
+            // add order lại list device
+            RestoreOrderItem(item.order);
+        }
+        public void RestoreOrderItem(OrderItem item)
+        {
+            deviceService.FindDeviceItem(item.userName).AddOrder(item);
         }
         protected virtual void AskPriority() { }
     }

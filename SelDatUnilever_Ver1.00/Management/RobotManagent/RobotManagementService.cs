@@ -17,7 +17,7 @@ namespace SeldatMRMS.Management.RobotManagent
 {
     public class RobotManagementService
     {
-        public Int32 AmountofRobotUnity = 3;
+        public const Int32 AmountofRobotUnity = 3;
         public class ResultRobotReady
         {
             public RobotUnity robot;
@@ -36,19 +36,34 @@ namespace SeldatMRMS.Management.RobotManagent
             Grouped_PropertiesRobotUnity = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesRobotUnity_List);
          //   LoadConfigure();
         }
-        public void Add_PropertiesRobotUnity()
+        public void Initialize()
         {
-            if (PropertiesRobotUnity_List.Count < AmountofRobotUnity)
+            RobotUnity r1 = new RobotUnity();
+            r1.ConnectionStatusHandler += ConnectionStatusHandler;
+            PropertiesRobotUnity_List.Add(r1.properties);
+            RobotUnityRegistedList.Add(r1.properties.NameID, r1);
+            RobotUnity r2 = new RobotUnity();
+            r2.ConnectionStatusHandler += ConnectionStatusHandler;
+            PropertiesRobotUnity_List.Add(r2.properties);
+            RobotUnityRegistedList.Add(r2.properties.NameID, r2);
+            RobotUnity r3 = new RobotUnity();
+            r3.ConnectionStatusHandler += ConnectionStatusHandler;
+            PropertiesRobotUnity_List.Add(new RobotUnity().properties);
+            RobotUnityRegistedList.Add(r1.properties.NameID, r1);
+            Grouped_PropertiesRobotUnity.Refresh();
+        }
+        public void ConnectionStatusHandler(Object obj, RosSocket.ConnectionStatus status)
+        {
+            RobotUnity robot = obj as RobotUnity;
+            if (status==RosSocket.ConnectionStatus.CON_OK)
             {
-                PropertiesRobotUnity newItem = new PropertiesRobotUnity();
-                newItem.NameID = Guid.NewGuid().ToString();
-                PropertiesRobotUnity_List.Add(newItem);
+              //  RobotUnityReadyList.Add(robot.properties.NameID,robot);
+            }
+        }
+        public void AddRobotUnity()
+        {
+                 PropertiesRobotUnity_List.Add(new RobotUnity().properties);
                 Grouped_PropertiesRobotUnity.Refresh();
-            }
-            else
-            {
-                MessageBox.Show(SelDatUnilever_Ver1._00.Properties.Resources.Error_Add_RobotUnity);
-            }
         }
         public void SaveConfig(DataGrid datagrid)
         {
