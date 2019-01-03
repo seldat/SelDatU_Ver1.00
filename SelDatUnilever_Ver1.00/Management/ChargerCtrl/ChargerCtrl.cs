@@ -51,7 +51,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             private Int32 _Port;
             public Int32 Port { get => _Port; set { _Port = value; RaisePropertyChanged("Port"); } }
             public ChargerId Id;
-            public Int32 _IdStr;
+            private Int32 _IdStr;
             public Int32 IdStr { get => _IdStr; set { _IdStr = value; RaisePropertyChanged("IdStr"); } }
             public Pose PointFrontLine;
             private String _PointFrontLineStr;
@@ -68,10 +68,6 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
                     PointFrontLine = new Pose(xx,yy,angle);
                 }
                 catch { }
-            }
-            public String ParsePointFrontLineValue(Pose p)
-            {
-                return p.Position.X + "" + p.Position.Y + "" + p.AngleW;
             }
         }
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.Ip, cf.Port)

@@ -15,9 +15,9 @@ namespace SeldatMRMS.Management.UnityService
     public class UnityManagementService
     {
         public RobotManagementService robotManagementService { get; set; }
-        DoorManagementService doorManagementService { get; set; }
+        public DoorManagementService doorManagementService { get; set; }
         ProcedureManagementService procedureManagementService { get; set; }
-        TrafficManagementService trafficService { get; set; }
+        public TrafficManagementService trafficService { get; set; }
         AssigmentTaskService assigmentTaskService { get; set; }
         DeviceRegistrationService deviceRegistrationService { get; set; }
         public ChargerManagementService chargerService;

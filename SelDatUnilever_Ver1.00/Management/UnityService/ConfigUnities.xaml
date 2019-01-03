@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="ConfigUnities" Height="450" Width="800">
     <Grid>
-        
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -15,43 +15,115 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <TabControl>
-                    <TabItem Header="01">
+                    <TabItem Header="Traffic Zone">
                         <Grid Grid.Column="0">
-                            <DataGrid Name="DataGrid1"
-                      ItemsSource="{Binding Grouped_PropertiesRobotUnity}"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="98*"/>
+                                <ColumnDefinition Width="11*"/>
+                                <ColumnDefinition Width="677*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="DataGridTrafficZone"
+                      ItemsSource="{Binding Grouped_PropertiesTrafficZoneList}"
                       CanUserAddRows="False"
-                          AutoGenerateColumns="False">
-
+                          AutoGenerateColumns="False" Grid.ColumnSpan="3" >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="*" Header="NameID" 
+                                        Binding="{Binding Path=NameID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Index" 
+                                        Binding="{Binding Path=Index, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Point1" 
+                                        Binding="{Binding Path=Point1, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Point2" 
+                                        Binding="{Binding Path=Point2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Point3" 
+                                        Binding="{Binding Path=Point3, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Point4" 
+                                        Binding="{Binding Path=Point4, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Detail" 
+                                        Binding="{Binding Path=Detail, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="02">
+                    <TabItem Header="Robot">
                         <Grid Grid.Column="0">
-                            <DataGrid Name="DataGrid2"
+                            <DataGrid Name="DataGridRobot"
                       ItemsSource="{Binding Grouped_PropertiesRobotUnity}"
                       CanUserAddRows="False"
                           AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="*" Header="NameID" 
+                                        Binding="{Binding Path=NameID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Label" 
+                                        Binding="{Binding Path=Label, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Url" 
+                                        Binding="{Binding Path=Url, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="WS" 
+                                        Binding="{Binding Path=WS, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Width" 
+                                        Binding="{Binding Path=Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Length" 
+                                        Binding="{Binding Path=Length, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="BatteryLowLevel" 
+                                        Binding="{Binding Path=BatteryLowLevel, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="BatteryLevelRb" 
+                                        Binding="{Binding Path=BatteryLevelRb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="DistanceIntersection" 
+                                        Binding="{Binding Path=DistanceIntersection, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
+                                </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="03">
+                    <TabItem Header="Charger">
                         <Grid Grid.Column="0">
-                            <DataGrid Name="DataGrid3"
-                      ItemsSource="{Binding Grouped_PropertiesRobotUnity}"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="15*"/>
+                                <ColumnDefinition Width="247*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="DataGridCharger"
+                      ItemsSource="{Binding Grouped_PropertiesCharge}"
                       CanUserAddRows="False"
-                          AutoGenerateColumns="False">
-
+                          AutoGenerateColumns="False" Grid.ColumnSpan="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="*" Header="ID"  
+                                        Binding="{Binding Path=IdStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="IP" 
+                                        Binding="{Binding Path=Ip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Port" 
+                                        Binding="{Binding Path=Port, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="PointFrontLineStr" 
+                                        Binding="{Binding Path=PointFrontLineStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="PointOfPallet" 
+                                        Binding="{Binding Path=PointOfPallet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="04">
+                    <TabItem Header="Door">
                         <Grid Grid.Column="0">
-                            <DataGrid Name="DataGrid4"
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="22*"/>
+                                <ColumnDefinition Width="109*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="DataGridDoor"
                       ItemsSource="{Binding Grouped_PropertiesRobotUnity}"
                       CanUserAddRows="False"
-                          AutoGenerateColumns="False">
-
+                          AutoGenerateColumns="False" Grid.ColumnSpan="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="*" Header="ID"  
+                                        Binding="{Binding Path=IdStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="IP" 
+                                        Binding="{Binding Path=Ip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Port" 
+                                        Binding="{Binding Path=Port, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="PointFrontLineStr" 
+                                        Binding="{Binding Path=PointFrontLineStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="PointCheckInGate" 
+                                        Binding="{Binding Path=PointCheckInGateStr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    <DataGridTextColumn Width="*" Header="Pallet Info" 
+                                        Binding="{Binding Path=infoPallet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
@@ -66,6 +138,6 @@
                 </StackPanel>
             </Grid>
         </Grid>
-     
+
     </Grid>
 </Window>

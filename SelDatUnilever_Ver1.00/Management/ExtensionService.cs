@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 
 namespace SeldatMRMS
 {
@@ -52,6 +53,10 @@ namespace SeldatMRMS
             }
 
             return inside;
+        }
+        public static String PosetoString(Pose p)
+        {
+            return p.Position.X + "," + p.Position.Y + "," + p.AngleW;
         }
     }
 }

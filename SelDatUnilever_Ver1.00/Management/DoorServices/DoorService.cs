@@ -1,4 +1,5 @@
-﻿using SelDatUnilever_Ver1._00.Management.ComSocket;
+﻿using SelDatUnilever_Ver1._00.Management;
+using SelDatUnilever_Ver1._00.Management.ComSocket;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -39,20 +40,55 @@ namespace DoorControllerService
             DOOR_ERROR /* 0x05 */
         }
 
-        public struct DoorInfoConfig{
-            public String ip;
-            public Int32 port;
-            public DoorId id;   
+        public class DoorInfoConfig:NotifyUIBase
+        {
+
+            private String _Ip;
+            public String Ip { get => _Ip; set { _Ip = value; RaisePropertyChanged("Ip"); } }
+            private Int32 _Port;
+            public Int32 Port { get => _Port; set { _Port = value; RaisePropertyChanged("Port"); } }
+            public DoorId Id;
+            private Int32 _IdStr;
+            public Int32 IdStr { get => _IdStr; set { _IdStr = value; RaisePropertyChanged("IdStr"); } }
             public Pose PointCheckInGate;
+            private String _PointCheckInGateStr;
+            public String PointCheckInGateStr { get => _PointCheckInGateStr; set { _PointCheckInGateStr = value; RaisePropertyChanged("PointCheckInGateStr"); } }
             public Pose PointFrontLine;
-            public String infoPallet;
+            private String _PointFrontLineStr;
+            public String PointFrontLineStr { get => _PointFrontLineStr; set { _PointFrontLineStr = value; RaisePropertyChanged("PointFrontLineStr"); } }
+
+            private String _infoPallet;
+            public String infoPallet { get => _infoPallet; set { _infoPallet = value; RaisePropertyChanged("infoPallet"); } }
+
+            public void ParsePointCheckInGateValue(String value)
+            {
+                try
+                {
+                    double xx = double.Parse(value.Split(',')[0]);
+                    double yy = double.Parse(value.Split(',')[1]);
+                    double angle = double.Parse(value.Split(',')[2]);
+                    PointCheckInGate = new Pose(xx, yy, angle);
+                }
+                catch { }
+            }
+            public void ParsePointFrontLineValue(String value)
+            {
+                try
+                {
+                    double xx = double.Parse(value.Split(',')[0]);
+                    double yy = double.Parse(value.Split(',')[1]);
+                    double angle = double.Parse(value.Split(',')[2]);
+                    PointFrontLine = new Pose(xx, yy, angle);
+                }
+                catch { }
+            }
         }
 
         public DoorInfoConfig config;
-        public DoorService(DoorInfoConfig cf):base(cf.ip,cf.port)
+        public DoorService(DoorInfoConfig cf):base(cf.Ip,cf.Port)
         {
             config = cf;
-            SetId(cf.id);
+            SetId(cf.Id);
         }
 
         public bool GetId(ref DataReceive data)
