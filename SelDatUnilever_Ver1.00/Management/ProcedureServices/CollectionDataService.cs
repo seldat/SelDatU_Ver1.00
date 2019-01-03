@@ -5,10 +5,6 @@ using SelDatUnilever_Ver1._00.Communication.HttpBridge;
 using SelDatUnilever_Ver1._00.Management.ProcedureServices;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.DeviceManagement.DeviceItem;
@@ -16,7 +12,7 @@ using static SelDatUnilever_Ver1._00.Management.DeviceManagement.DeviceItem;
 namespace SelDatUnilever_Ver1
 {
 
- 
+
     public class CollectionDataService
     {
         public enum PalletStatus

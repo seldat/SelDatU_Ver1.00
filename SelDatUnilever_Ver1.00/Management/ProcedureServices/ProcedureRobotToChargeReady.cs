@@ -1,4 +1,5 @@
 ﻿using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,8 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using static DoorControllerService.DoorService;
 using static SeldatMRMS.Management.RobotManagent.RobotBaseService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
-using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
 using static SelDatUnilever_Ver1._00.Management.ComSocket.RouterComPort;
 
@@ -198,14 +197,16 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         RobotGoToReady StateRobotGoToReady;
+        TrafficManagementService Traffic;
         public override event Action<Object> ReleaseProcedureHandler;
         public override event Action<Object> ErrorProcedureHandler;
-        public ProcedureRobotToReady(RobotUnity robot,ChargerId id) : base(robot)
+        public ProcedureRobotToReady(RobotUnity robot,ChargerId id,TrafficManagementService trafficService) : base(robot)
         {
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
             this.robot = robot;
+            this.Traffic = trafficService;
             LoadChargerConfigure();
-            points = DataRobotToReadyList[(int)id];
+            points = DataRobotToReadyList[(int)id - 1];
             procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_READY;
         }
         public void LoadChargerConfigure()
@@ -254,6 +255,7 @@ namespace SeldatMRMS
             ProcedureRobotToReady RbToRd = (ProcedureRobotToReady)ojb;
             RobotUnity rb = RbToRd.robot;
             DataRobotToReady p = RbToRd.points;
+            TrafficManagementService Traffic = RbToRd.Traffic;
             while (ProRun)
             {
                 switch (StateRobotGoToReady)
@@ -270,6 +272,10 @@ namespace SeldatMRMS
                             rb.SendCmdAreaPallet(RbToRd.points.PointOfCharger);
                             // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_READYAREA);
                             StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_WAITTING_CAME_POSITION_READYSTATION;
+                        }
+                        else if(Traffic.RobotIsInArea("",robot.properties.pose.Position))
+                        {
+                            robot.TurnOnSupervisorTraffic(false);
                         }
                         break;
                     // case RobotGoToReady.ROBREA_ROBOT_WAIITNG_DETECTLINE_TO_READYSTATION: // đang đợi dò line để đến vị trí line trong buffer

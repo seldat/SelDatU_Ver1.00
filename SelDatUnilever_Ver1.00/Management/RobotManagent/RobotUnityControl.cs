@@ -31,7 +31,7 @@ namespace SeldatMRMS.Management.RobotManagent
             {
                 this.Position = new Point(X, Y);
                 this.AngleW = AngleW;
-           }
+            }
             public Pose() { }
            public void Destroy() // hủy vị trí robot để robot khác có thể làm việc trong quá trình detect
             {

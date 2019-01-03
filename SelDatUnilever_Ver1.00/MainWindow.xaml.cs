@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using SeldatMRMS;
-using SeldatMRMS.Management;
-using SeldatMRMS.Management.DoorServices;
+﻿using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using SeldatMRMS.Management.UnityService;
@@ -11,22 +8,8 @@ using SelDatUnilever_Ver1._00.Management.DeviceManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
-using static SeldatMRMS.Management.TrafficRobotUnity;
-using static SeldatMRMS.ProcedureForkLiftToBuffer;
-using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
-using static SelDatUnilever_Ver1._00.Management.ComSocket.RouterComPort;
 
 namespace SelDatUnilever_Ver1._00
 {
@@ -219,26 +202,6 @@ namespace SelDatUnilever_Ver1._00
         {
             unityService = new UnityManagementService();
             unityService.Initialize();
-            /*chau test */
-            ChargerCtrl chargerCtrl = unityService.chargerService.ChargerStationList[ChargerId.CHARGER_ID_1];
-            DataReceive id = new DataReceive();
-            //chargerCtrl.SetId(ChargerId.CHARGER_ID_3);
-            chargerCtrl.GetId(ref id);
-            Console.WriteLine("id :{0}", id.data);
-
-            chargerCtrl.SetId(ChargerId.CHARGER_ID_2);
-
-            chargerCtrl.StartCharge();
-            chargerCtrl.StopCharge();
-
-            DataReceive state = new DataReceive();
-            chargerCtrl.GetState(ref state);
-
-            DataReceive batLevel = new DataReceive();
-            chargerCtrl.GetBatteryLevel(ref batLevel);
-
-            chargerCtrl.StopCharge();
-            /*end */
         }
 
         private void selRobot1_Checked(object sender, RoutedEventArgs e)

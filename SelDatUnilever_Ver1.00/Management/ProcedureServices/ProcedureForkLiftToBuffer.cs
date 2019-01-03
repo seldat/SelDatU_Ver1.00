@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using DoorControllerService;
-using SeldatMRMS.Management;
 using SeldatMRMS.Management.DoorServices;
 using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
@@ -14,7 +9,8 @@ using static SeldatMRMS.Management.RobotManagent.RobotBaseService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
 
-namespace SeldatMRMS {
+namespace SeldatMRMS
+{
 
     public class ProcedureForkLiftToBuffer : ProcedureControlServices {
         public struct DataForkLiftToBuffer {
@@ -68,6 +64,7 @@ namespace SeldatMRMS {
             // DataForkLiftToBuffer p = FlToBuf.points;
             DoorService ds = FlToBuf.door;
             TrafficManagementService Traffic = FlToBuf.Traffic;
+            Console.WriteLine("ProcedureForkLiftToBuffer run...");
             while (ProRun) {
                 switch (StateForkLiftToBuffer) {
                     case ForkLiftToBuffer.FORBUF_IDLE:
