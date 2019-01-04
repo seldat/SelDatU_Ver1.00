@@ -239,6 +239,7 @@ namespace SeldatMRMS.Management.RobotManagent
         public void SendPoseStamped(Pose pose)
         {
             GeometryPoseStamped data=new GeometryPoseStamped();
+            data.header.frame_id = "map";
             data.pose.position.x =(float)pose.Position.X;
             data.pose.position.y = (float)pose.Position.Y;
             data.pose.position.z = 0;

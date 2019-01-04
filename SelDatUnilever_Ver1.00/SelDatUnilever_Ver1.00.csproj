@@ -171,5 +171,8 @@
     <Folder Include="Management\OrderService\" />
     <Folder Include="Management\Store\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Management\RobotManagent\SelfDriving.py" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
