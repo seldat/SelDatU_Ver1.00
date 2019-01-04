@@ -180,6 +180,7 @@ namespace SeldatMRMS
                     case BufferToReturn.BUFRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
                         if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
                         {
+                            
                             rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
                         }
