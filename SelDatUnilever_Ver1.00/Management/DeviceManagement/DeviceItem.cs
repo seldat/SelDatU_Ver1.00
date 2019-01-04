@@ -41,7 +41,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
             TYPEREQUEST_BUFFER_TO_MACHINE=2,
             TYPEREQUEST_BUFFER_TO_RETURN=3,
             TYPEREQUEST_MACHINE_TO_RETURN=4,
-            TYPEREQUEST_RETURN_TO_GATE = 4,
+            TYPEREQUEST_RETURN_TO_GATE = 5,
         }
         public enum TabletConTrol
         {
@@ -144,6 +144,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 product.timeWorkId = order.timeWorkId;
                 product.activeDate = order.activeDate;
                 product.productId = order.productId;
+
+                // chu y sua 
                 product.palletStatus= PalletStatus.P.ToString();
                 order.dataRequest = product.ToString();
                 oneOrderList.Add(order);
@@ -162,7 +164,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.planId=(int)results["planId"];
                     order.timeWorkId = (int)results["timeWorkId"];
                     order.activeDate = (string)results["activeDate"];
-                    order.palletStatus = (String)results["palletStatus"];
+                   // order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst=(string)results["datapallet"][i];
                     JObject stuffPallet =JObject.Parse(jsonDPst);
                     double xx = (double)stuffPallet["line"]["x"];
@@ -176,6 +178,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     product.timeWorkId = order.timeWorkId;
                     product.activeDate = order.activeDate;
                     product.productId = order.productId;
+                    // chu y sua 
                     product.palletStatus = PalletStatus.P.ToString(); // W
                     order.dataRequest = product.ToString();
                     oneOrderList.Add(order);
@@ -205,7 +208,8 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     product.timeWorkId = order.timeWorkId;
                     product.activeDate = order.activeDate;
                     product.productId = order.productId;
-                    product.palletStatus = PalletStatus.P.ToString();
+                    // chu y sua 
+                    product.palletStatus = PalletStatus.W.ToString();
                     order.dataRequest = product.ToString();
                     oneOrderList.Add(order);
                 }
@@ -224,6 +228,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 product.timeWorkId = order.timeWorkId;
                 product.activeDate = order.activeDate;
                 product.productId = order.productId;
+                // chu y sua 
                 product.palletStatus = PalletStatus.W.ToString();
                 order.dataRequest = product.ToString();
                 oneOrderList.Add(order);
