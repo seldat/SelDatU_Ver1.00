@@ -8,19 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
 using static SeldatMRMS.Management.TrafficRobotUnity;
+using static SelDatUnilever_Ver1.CollectionDataService;
 
 namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
 {
     public class DeviceItem
     {
-        public enum PalletStatus
-        {
-            [field: Description("Pallet is exported to buffer area")]
-            W =1,
-            [field: Description("Pallet is imported to buffer area")]
-            P=0
-
-        }
         public enum PalletCtrl
         {
             Pallet_CTRL_DOWN =0,
@@ -209,7 +202,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     product.activeDate = order.activeDate;
                     product.productId = order.productId;
                     // chu y sua 
-                    product.palletStatus = PalletStatus.W.ToString();
+                    product.palletStatus = PalletStatus.F.ToString();
                     order.dataRequest = product.ToString();
                     oneOrderList.Add(order);
                 }

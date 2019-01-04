@@ -52,7 +52,8 @@ namespace SelDatUnilever_Ver1._00
         public MainWindow()
         {
             InitializeComponent();
-
+            CollectionDataService collection = new CollectionDataService();
+            collection.GetCheckInReturn();
             
            // door = new DoorManagementService();
            // ProcedureForkLiftToBuffer pr = new ProcedureForkLiftToBuffer(robot, door, traffiicService);
@@ -118,7 +119,7 @@ namespace SelDatUnilever_Ver1._00
 
             //  deviceRegistrationService=new DeviceRegistrationService(9000);
             //  deviceRegistrationService.listen();
-            string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
+           // string text = System.IO.File.ReadAllText("C:\\Users\\luat.tran\\Desktop\\datajson.json");
          
         /*    JArray results = JArray.Parse(text);
             foreach (var result in results)
@@ -240,10 +241,10 @@ namespace SelDatUnilever_Ver1._00
         UnityManagementService unityService;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-           unityService = new UnityManagementService();
+          /* unityService = new UnityManagementService();
             unityService.Initialize();
             DataContext = unityService.chargerService;
-            RobotUnity robotshape = new RobotUnity(this.canvas);
+            RobotUnity robotshape = new RobotUnity(this.canvas);*/
         }
 
         private void selRobot1_Checked(object sender, RoutedEventArgs e)

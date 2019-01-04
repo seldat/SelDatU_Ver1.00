@@ -35,7 +35,7 @@ namespace SelDatUnilever_Ver1
         // public int timeWorkID;
         public List<Pose> checkInBuffer = new List<Pose>();
         protected BridgeClientRequest clientRequest;
-        public const String UrlServer = "http://localhost:8081";
+        public const String UrlServer = "http://192.168.1.25:8081";
         public CollectionDataService()
         {
             clientRequest = new BridgeClientRequest();
@@ -55,6 +55,7 @@ namespace SelDatUnilever_Ver1
         {
             //String url = UrlServer+"/robot/rest/plan/getListPlanPallet";
             // String url = "http://localhost:8080";
+            Console.WriteLine(url);
             var data = clientRequest.PostCallAPI(url, dataReq);
             if (data.Result != null)
             {
@@ -214,8 +215,9 @@ namespace SelDatUnilever_Ver1
         public Pose GetCheckInReturn()
         {
             dynamic product = new JObject();
-            product.palletStatus =order.palletStatus;
+            product.palletStatus ="F";
             Pose poseTemp = null;
+           
             String collectionData = RequestDataProcedure(product.ToString(), UrlServer + "/robot/rest/buffer/getListBufferReturn");
             if (collectionData.Length > 0)
             {
