@@ -35,7 +35,7 @@ namespace SelDatUnilever_Ver1
         // public int timeWorkID;
         public List<Pose> checkInBuffer = new List<Pose>();
         protected BridgeClientRequest clientRequest;
-        public const String UrlServer = "http://localhost:8081";
+        public const String UrlServer = "http://localhost:12000";
         public CollectionDataService()
         {
             clientRequest = new BridgeClientRequest();
