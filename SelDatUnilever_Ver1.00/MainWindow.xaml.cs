@@ -192,7 +192,7 @@ namespace SelDatUnilever_Ver1._00
 
         private void sendPose_Click(object sender, RoutedEventArgs e)
         {
-           
+        }
 
         private void canvas_KeyUp(object sender, KeyEventArgs e)
         {
