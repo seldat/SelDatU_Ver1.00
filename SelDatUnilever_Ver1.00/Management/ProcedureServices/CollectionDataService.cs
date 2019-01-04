@@ -211,10 +211,10 @@ namespace SelDatUnilever_Ver1
             return order.palletAtMachine.linePos;
         }
 
-        public Pose GetCheckInReturn(PalletStatus palletStatus)
+        public Pose GetCheckInReturn()
         {
             dynamic product = new JObject();
-            product.palletStatus = palletStatus;
+            product.palletStatus =order.palletStatus;
             Pose poseTemp = null;
             String collectionData = RequestDataProcedure(product.ToString(), UrlServer + "/robot/rest/buffer/getListBufferReturn");
             if (collectionData.Length > 0)
@@ -231,12 +231,12 @@ namespace SelDatUnilever_Ver1
             return poseTemp;
         }
 
-        public Pose GetFrontLineReturn(PalletStatus palletStatus)
+        public Pose GetFrontLineReturn()
         {
 
             Pose poseTemp = null;
             dynamic product = new JObject();
-            product.palletStatus = palletStatus;
+            product.palletStatus = order.palletStatus;
             String collectionData = RequestDataProcedure(product.ToString(), UrlServer + "/robot/rest/buffer/getListBufferReturn");
             if (collectionData.Length > 0)
             {
@@ -301,11 +301,11 @@ namespace SelDatUnilever_Ver1
             return JsonConvert.SerializeObject(infoPallet);
         }
 
-        public String GetInfoOfPalletReturn(PalletStatus palletStatus, TrafficRobotUnity.PistonPalletCtrl pisCtrl)
+        public String GetInfoOfPalletReturn(TrafficRobotUnity.PistonPalletCtrl pisCtrl)
         {
             JInfoPallet infoPallet = new JInfoPallet();
             dynamic product = new JObject();
-            product.palletStatus = palletStatus;
+            product.palletStatus = order.palletStatus;
             String collectionData = RequestDataProcedure(product.ToString(), UrlServer + "/robot/rest/buffer/getListBufferReturn");
             if (collectionData.Length > 0)
             {
