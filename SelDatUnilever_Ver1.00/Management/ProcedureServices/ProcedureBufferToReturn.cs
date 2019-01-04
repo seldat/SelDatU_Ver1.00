@@ -166,7 +166,7 @@ namespace SeldatMRMS
                         if (resCmd == ResponseCommand.RESPONSE_FINISH_GOBACK_FRONTLINE)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                           // rb.SendPoseStamped(BfToRe.GetCheckInReturn());
+                           rb.SendPoseStamped(BfToRe.GetCheckInReturn());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_CHECKIN_RETURN;
                         }
                         break;
@@ -178,18 +178,18 @@ namespace SeldatMRMS
                         }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_CAME_CHECKIN_RETURN: // đã đến vị trí
-                       /* if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
+                        if (false == Traffic.HasRobotUnityinArea(BfToRe.GetFrontLineReturn().Position))
                         {
                             
                             rb.SendPoseStamped(BfToRe.GetFrontLineReturn());
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET;
-                        }*/
+                        }
                         break;
                     case BufferToReturn.BUFRET_ROBOT_GOTO_FRONTLINE_DROPDOWN_PALLET:
                         if (resCmd == ResponseCommand.RESPONSE_LASER_CAME_POINT)
                         {
                             resCmd = ResponseCommand.RESPONSE_NONE;
-                       //     rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_DOWN));
+                         rb.SendCmdAreaPallet(BfToRe.GetInfoOfPalletReturn(PistonPalletCtrl.PISTON_PALLET_DOWN));
                             StateBufferToReturn = BufferToReturn.BUFRET_ROBOT_WAITTING_DROPDOWN_PALLET;
                         }
                         break;

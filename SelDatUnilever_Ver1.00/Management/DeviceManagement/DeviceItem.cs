@@ -139,7 +139,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.productId = (int)results["productId"];
                 order.timeWorkId = (int)results["timeWorkId"];
                 order.activeDate = (string)results["activeDate"];
-                order.palletStatus = (String)results["palletStatus"];
+               // order.palletStatus = (String)results["palletStatus"];
                 dynamic product = new JObject();
                 product.timeWorkId = order.timeWorkId;
                 product.activeDate = order.activeDate;
@@ -194,7 +194,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                     order.typeReq = (TyeRequest)typeReq;
                     order.userName = (String)results["userName"];
                     order.activeDate = (string)results["activeDate"];
-                    order.palletStatus = (String)results["palletStatus"];
+                    //order.palletStatus = (String)results["palletStatus"];
                     String jsonDPst = (string)results["datapallet"][i];
                     JObject stuffPallet = JObject.Parse(jsonDPst);
                     double xx = (double)stuffPallet["line"]["x"];
@@ -223,7 +223,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.productId = (int)results["productId"];
                 order.timeWorkId = (int)results["timeWorkId"];
                 order.activeDate = (string)results["activeDate"];
-                order.palletStatus = (String)results["palletStatus"];
+               // order.palletStatus = (String)results["palletStatus"];
                 dynamic product = new JObject();
                 product.timeWorkId = order.timeWorkId;
                 product.activeDate = order.activeDate;
