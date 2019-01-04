@@ -30,7 +30,7 @@ namespace SeldatMRMS.Management.UnityService
             procedureManagementService = new ProcedureManagementService();
             chargerService = new ChargerManagementService();
             trafficService = new TrafficManagementService();
-            deviceRegistrationService = new DeviceRegistrationService(8082);
+            deviceRegistrationService = new DeviceRegistrationService(11000);
 
             assigmentTaskService = new AssigmentTaskService();
             trafficService = new TrafficManagementService();
