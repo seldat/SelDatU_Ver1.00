@@ -26,11 +26,11 @@ namespace SeldatMRMS.Management.RobotManagent
         }
         public ListCollectionView Grouped_PropertiesRobotUnity { get; private set; }
         public List<PropertiesRobotUnity> PropertiesRobotUnity_List;
-        Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
-        Dictionary<String, RobotUnity> RobotUnityWaitTaskList = new Dictionary<string, RobotUnity>();
-        Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
+        public Dictionary<String,RobotUnity>  RobotUnityRegistedList = new Dictionary<string, RobotUnity>();
+        public Dictionary<String, RobotUnity> RobotUnityWaitTaskList = new Dictionary<string, RobotUnity>();
+        public Dictionary<String, RobotUnity> RobotUnityReadyList = new Dictionary<string, RobotUnity>();
         public RobotManagementService() {
-            //LoadRobotUnityConfigure();
+           LoadRobotUnityConfigure();
           
             PropertiesRobotUnity_List = new List<PropertiesRobotUnity>();
             Grouped_PropertiesRobotUnity = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesRobotUnity_List);
@@ -109,13 +109,32 @@ namespace SeldatMRMS.Management.RobotManagent
             OleDbDataAdapter sda = new OleDbDataAdapter(oconn);
             DataTable data = new DataTable();
             sda.Fill(data);
-            foreach (DataRow row in data.Rows)
+           // foreach (DataRow row in data.Rows)
             {
-                RobotUnity robot = new RobotUnity();
+                RobotUnity robot1 = new RobotUnity();
                 //robot.Initialize(row);
-                robot.properties.NameID = "Robot1";
-                RobotUnityRegistedList.Add(robot.properties.NameID, robot);
-                AddRobotUnityReadyList(robot);
+                robot1.properties.NameID = "1";
+                robot1.Start("ws://192.168.80.131:9090");
+                RobotUnityRegistedList.Add(robot1.properties.NameID, robot1);
+                robot1.ConnectionStatusHandler += ConnectionStatusHandler;
+                AddRobotUnityReadyList(robot1);
+
+
+                //RobotUnity robot2 = new RobotUnity();
+                //robot2.ConnectionStatusHandler += ConnectionStatusHandler;
+                //robot.Initialize(row);
+                //robot2.properties.NameID = "Robot2";
+                //robot2.Start("ws://192.168.80.131:9090");
+                //RobotUnityRegistedList.Add(robot2.properties.NameID, robot2);
+                //AddRobotUnityReadyList(robot2);
+
+                //RobotUnity robot3 = new RobotUnity();
+                //robot.Initialize(row);
+                //robot3.properties.NameID = "Robot3";
+                //robot3.Start("ws://192.168.80.131:9090");
+                //RobotUnityRegistedList.Add(robot3.properties.NameID, robot3);
+                //AddRobotUnityReadyList(robot3);
+                //robot3.ConnectionStatusHandler += ConnectionStatusHandler;
             }
             con.Close();
         }

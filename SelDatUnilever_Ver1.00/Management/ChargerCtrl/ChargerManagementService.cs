@@ -29,7 +29,7 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
          /* CfChargerStationList = new List<ChargerInfoConfig>();
             ChargerStation_1 = new ChargerCtrl(CfChargerStationList[0]);
             ChargerStation_2 = new ChargerCtrl(CfChargerStationList[1]);
-            ChargerStation_3 = new ChargerCtrl(CfChargerStationList[2]);*/
+            ChargerStation_3 = new ChargerCtrl(CfChargerStationList[2]);
             PropertiesCharge_List = new List<ChargerInfoConfig>();
             Grouped_PropertiesCharge = (ListCollectionView)CollectionViewSource.GetDefaultView(PropertiesCharge_List);
             LoadConfigure();*/
@@ -111,15 +111,15 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
             foreach (DataRow row in data.Rows)
             {
                 ChargerInfoConfig ptemp = new ChargerInfoConfig();
-                ptemp.id = (ChargerId)int.Parse(row.Field<String>("ID"));
-                ptemp.ip = row.Field<String>("IP");
-                ptemp.port = int.Parse(row.Field<String>("Port"));
+                ptemp.Id = (ChargerId)int.Parse(row.Field<String>("ID"));
+                ptemp.Ip = row.Field<String>("IP");
+                ptemp.Port = int.Parse(row.Field<String>("Port"));
                 ptemp.PointFrontLine = new Pose(double.Parse(row.Field<String>("PointFrontLine").Split(',')[0]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[1]),
                                                 double.Parse(row.Field<String>("PointFrontLine").Split(',')[2]));
                 ptemp.PointOfPallet = row.Field<String>("PointOfCharger");
                 ChargerCtrl chargerStation = new ChargerCtrl(ptemp);
-                ChargerStationList.Add(chargerStation.cf.id,chargerStation);
+                ChargerStationList.Add(chargerStation.cf.Id,chargerStation);
             }
             con.Close();
         }

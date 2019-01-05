@@ -28,14 +28,14 @@ namespace SelDatUnilever_Ver1
         }
         //public int planID { get; set; }
         // public int productID { get; set; }
-        // public int productDetailID { get; set; }
+        // public int planID { get; set; }
         public OrderItem order;
         //public String typeRequest; // FL: ForkLift// BM: BUFFER MACHINE // PR: Pallet return
         //public String activeDate;
         // public int timeWorkID;
         public List<Pose> checkInBuffer = new List<Pose>();
         protected BridgeClientRequest clientRequest;
-        public const String UrlServer = "http://192.168.1.25:8081";
+        public const String UrlServer = "http://192.168.1.12:8081";
         public CollectionDataService()
         {
             clientRequest = new BridgeClientRequest();
@@ -72,8 +72,8 @@ namespace SelDatUnilever_Ver1
                 JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
-                    int temp_productDetailID = (int)result["productDetailId"];
-                    if (temp_productDetailID == order.productDetailID)
+                    int temp_planId = (int)result["planId"];
+                    if (temp_planId == order.planId)
                     {
                         var bufferResults = result["buffers"][0];
                         String checkinResults = (String)bufferResults["bufferCheckIn"];
@@ -98,8 +98,8 @@ namespace SelDatUnilever_Ver1
                 JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
-                    int temp_productDetailID = (int)result["productDetailId"];
-                    if (temp_productDetailID == order.productDetailID)
+                    int temp_planId = (int)result["planId"];
+                    if (temp_planId == order.planId)
                     {
                         var bufferResults = result["buffers"][0];
                         var palletInfo = bufferResults["pallets"][0];
@@ -115,7 +115,7 @@ namespace SelDatUnilever_Ver1
             }
             return poseTemp;
         }
-        
+
         public Pose GetFrontLineMachine()
         {
             return order.palletAtMachine.linePos;
@@ -124,7 +124,7 @@ namespace SelDatUnilever_Ver1
         public Pose GetCheckInReturn()
         {
             dynamic product = new JObject();
-            product.palletStatus =order.palletStatus;
+            product.palletStatus = order.palletStatus;
             Pose poseTemp = null;
             String collectionData = RequestDataProcedure(product.ToString(), UrlServer + "/robot/rest/buffer/getListBufferReturn");
             if (collectionData.Length > 0)
@@ -174,8 +174,8 @@ namespace SelDatUnilever_Ver1
                 JArray results = JArray.Parse(collectionData);
                 foreach (var result in results)
                 {
-                    int temp_productDetailID = (int)result["productDetailId"];
-                    if (temp_productDetailID == order.productDetailID)
+                    int temp_planId = (int)result["planId"];
+                    if (temp_planId == order.planId)
                     {
 
 
@@ -239,7 +239,7 @@ namespace SelDatUnilever_Ver1
 
         public void UpdatePalletState(PalletStatus palletStatus)
         {
-            String url = UrlServer+"/robot/rest/pallet/updatePalletStatus";
+            String url = UrlServer + "/robot/rest/pallet/updatePalletStatus";
             dynamic product = new JObject();
             product.palletId = order.palletId;
             product.palletStatus = palletStatus.ToString();

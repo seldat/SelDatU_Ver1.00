@@ -70,9 +70,11 @@ namespace SelDatUnilever_Ver1._00.Management.ChargerCtrl
                 catch { }
             }
         }
+        public ChargerInfoConfig cf;
         public ChargerCtrl(ChargerInfoConfig cf) : base(cf.Ip, cf.Port)
         {
             this.SetId(cf.Id);
+            this.cf = cf;
         }
         public bool GetId(ref DataReceive data)
         {

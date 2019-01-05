@@ -130,6 +130,7 @@ namespace SelDatUnilever_Ver1._00.Management.DeviceManagement
                 order.userName = (String)results["userName"];
                 order.productDetailID = (int)results["productDetailId"];
                 order.productId = (int)results["productId"];
+                order.planId = (int)results["planId"];
                 order.timeWorkId = (int)results["timeWorkId"];
                 order.activeDate = (string)results["activeDate"];
                // order.palletStatus = (String)results["palletStatus"];
