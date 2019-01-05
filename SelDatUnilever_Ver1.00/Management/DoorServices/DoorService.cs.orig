@@ -88,7 +88,11 @@ namespace DoorControllerService
         public DoorService(DoorInfoConfig cf):base(cf.Ip,cf.Port)
         {
             config = cf;
+<<<<<<< HEAD
+            SetId(cf.Id);
+=======
             //SetId(cf.id);
+>>>>>>> chau_test
         }
 
         public bool GetId(ref DataReceive data)

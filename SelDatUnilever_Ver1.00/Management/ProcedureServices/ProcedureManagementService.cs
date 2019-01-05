@@ -39,7 +39,7 @@ namespace SeldatMRMS
                         RegisterProcedureItem itemprocbm = new RegisterProcedureItem() { item = procbm, robot = robot, procedureDataItems = prcobmDataItems };
                         procbm.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
                         RegisterProcedureItemList.Add(itemprocbm);
-                    procbm.AssignAnOrder(orderItem);
+                        procbm.AssignAnOrder(orderItem);
                         procbm.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_BUFFER_TO_RETURN: 
@@ -62,6 +62,16 @@ namespace SeldatMRMS
                         procmr.AssignAnOrder(orderItem);
                         procmr.Start();
                     break;
+                case ProcedureItemSelected.PROCEDURE_RETURN_TO_GATE:
+                        ProcedureReturnToGate procrg = new ProcedureReturnToGate(robot, doorService, trafficService);
+                        ProcedureDataItems prorgDataItems = new ProcedureDataItems();
+                        prorgDataItems.StartTaskTime = DateTime.Now;
+                        RegisterProcedureItem itemprocrg = new RegisterProcedureItem() { item = procrg, robot = robot, procedureDataItems = prorgDataItems };
+                        procrg.ReleaseProcedureHandler += ReleaseProcedureItemHandler;
+                        RegisterProcedureItemList.Add(itemprocrg);
+                        procrg.AssignAnOrder(orderItem);
+                        procrg.Start();
+                    break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_CHARGE:
                         ProcedureRobotToCharger procrc = new ProcedureRobotToCharger(robot, chargerService,robot.properties.chargeID);
                         ProcedureDataItems procrcDataItems = new ProcedureDataItems();
@@ -72,7 +82,7 @@ namespace SeldatMRMS
                         procrc.Start();
                     break;
                 case ProcedureItemSelected.PROCEDURE_ROBOT_TO_READY:
-                        ProcedureRobotToReady procrr = new ProcedureRobotToReady(robot,robot.properties.chargeID);
+                        ProcedureRobotToReady procrr = new ProcedureRobotToReady(robot,robot.properties.chargeID,trafficService);
                         ProcedureDataItems procrrDataItems = new ProcedureDataItems();
                         procrrDataItems.StartTaskTime = DateTime.Now;
                         RegisterProcedureItem itemprocrr = new RegisterProcedureItem() { item = procrr, robot = robot, procedureDataItems = procrrDataItems };

@@ -1,5 +1,4 @@
-﻿using DoorControllerService;
-using SeldatMRMS.Management.RobotManagent;
+﻿using SeldatMRMS.Management.RobotManagent;
 using SeldatMRMS.Management.TrafficManager;
 using System;
 
@@ -9,7 +8,7 @@ namespace SeldatMRMS
     {
         public String ProcedureID { get; set; }
         public String DeliveryInfo { get; set; }
-        public const long TIME_OUT_WAIT_GOTO_FRONTLINE = 60000;
+        public const long TIME_OUT_WAIT_GOTO_FRONTLINE = 240000;
         public TrafficManagementService TrafficService;
         public struct ContentDatabase { }
         public virtual event Action<Object> ReleaseProcedureHandler;
@@ -35,7 +34,9 @@ namespace SeldatMRMS
             OPEN_DOOR_ERROR,
             CLOSE_DOOR_ERROR,
             CONNECT_CHARGER_ERROR,
-            CONTACT_CHARGER_ERROR
+            CONTACT_CHARGER_ERROR,
+            LASER_CONTROL_ERROR,
+            CAN_NOT_GET_DATA,
         }
 
         public ErrorCode errorCode;
@@ -197,6 +198,7 @@ namespace SeldatMRMS
         {
             return this.robot;
         }
+        public bool ProRun;
     }
 }
 

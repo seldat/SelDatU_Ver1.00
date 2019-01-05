@@ -1,4 +1,5 @@
 ﻿using SeldatMRMS.Management.RobotManagent;
+using SeldatMRMS.Management.TrafficManager;
 using SelDatUnilever_Ver1._00.Management.ChargerCtrl;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,8 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using static DoorControllerService.DoorService;
 using static SeldatMRMS.Management.RobotManagent.RobotBaseService;
 using static SeldatMRMS.Management.RobotManagent.RobotUnityControl;
-using static SeldatMRMS.Management.TrafficRobotUnity;
 using static SelDatUnilever_Ver1._00.Management.ChargerCtrl.ChargerCtrl;
 using static SelDatUnilever_Ver1._00.Management.ComSocket.RouterComPort;
 
@@ -42,20 +41,22 @@ namespace SeldatMRMS
             batLevel = new DataReceive();
             statusCharger = new DataReceive();
             this.robot = robot;
-            ChargerId id_t = id;
-            switch (id_t)
-            {
-                case ChargerId.CHARGER_ID_1:
-                    chargerCtrl = charger.ChargerStation_1;
-                    break;
-                case ChargerId.CHARGER_ID_2:
-                    chargerCtrl = charger.ChargerStation_2;
-                    break;
-                case ChargerId.CHARGER_ID_3:
-                    chargerCtrl = charger.ChargerStation_3;
-                    break;
-                default: break;
-            }
+            chargerCtrl = charger.ChargerStationList[id];
+
+            //ChargerId id_t = id;
+            //switch (id_t)
+            //{
+            //    case ChargerId.CHARGER_ID_1:
+            //        chargerCtrl = charger.ChargerStation_1;
+            //        break;
+            //    case ChargerId.CHARGER_ID_2:
+            //        chargerCtrl = charger.ChargerStation_2;
+            //        break;
+            //    case ChargerId.CHARGER_ID_3:
+            //        chargerCtrl = charger.ChargerStation_3;
+            //        break;
+            //    default: break;
+            //}
             procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_CHARGE;
         }
         public void Start(RobotGoToCharge state = RobotGoToCharge.ROBCHAR_ROBOT_GOTO_CHARGER)
@@ -65,16 +66,18 @@ namespace SeldatMRMS
             StateRobotToCharge = state;
             ProRobotToCharger = new Thread(this.Procedure);
             ProRobotToCharger.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
-            StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;
+            // StateRobotToCharge = RobotGoToCharge.ROBCHAR_ROBOT_RELEASED;
+            ProRun = false;
         }
         public void Procedure(object ojb)
         {
             ProcedureRobotToCharger RbToChar = (ProcedureRobotToCharger)ojb;
             RobotUnity rb = RbToChar.robot;
-            while (StateRobotToCharge != RobotGoToCharge.ROBCHAR_ROBOT_RELEASED)
+            while (ProRun)
             {
                 switch (StateRobotToCharge)
                 {
@@ -150,7 +153,10 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break; // trả robot về robotmanagement để nhận quy trình mới
+                    default:
+                        break;
                 }
                 Thread.Sleep(5);
             }
@@ -191,14 +197,16 @@ namespace SeldatMRMS
         RobotUnity robot;
         ResponseCommand resCmd;
         RobotGoToReady StateRobotGoToReady;
+        TrafficManagementService Traffic;
         public override event Action<Object> ReleaseProcedureHandler;
         public override event Action<Object> ErrorProcedureHandler;
-        public ProcedureRobotToReady(RobotUnity robot,ChargerId id) : base(robot)
+        public ProcedureRobotToReady(RobotUnity robot,ChargerId id,TrafficManagementService trafficService) : base(robot)
         {
             StateRobotGoToReady = RobotGoToReady.ROBREA_IDLE;
             this.robot = robot;
+            this.Traffic = trafficService;
             LoadChargerConfigure();
-            points = DataRobotToReadyList[(int)id];
+            points = DataRobotToReadyList[(int)id - 1];
             procedureCode = ProcedureCode.PROC_CODE_ROBOT_TO_READY;
         }
         public void LoadChargerConfigure()
@@ -234,10 +242,12 @@ namespace SeldatMRMS
             StateRobotGoToReady = state;
             ProRobotToReady = new Thread(this.Procedure);
             ProRobotToReady.Start(this);
+            ProRun = true;
         }
         public void Destroy()
         {
-            StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;
+            // StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_RELEASED;
+            ProRun = false;
         }
 
         public void Procedure(object ojb)
@@ -245,7 +255,8 @@ namespace SeldatMRMS
             ProcedureRobotToReady RbToRd = (ProcedureRobotToReady)ojb;
             RobotUnity rb = RbToRd.robot;
             DataRobotToReady p = RbToRd.points;
-            while (StateRobotGoToReady != RobotGoToReady.ROBREA_ROBOT_RELEASED)
+            TrafficManagementService Traffic = RbToRd.Traffic;
+            while (ProRun)
             {
                 switch (StateRobotGoToReady)
                 {
@@ -261,6 +272,10 @@ namespace SeldatMRMS
                             rb.SendCmdAreaPallet(RbToRd.points.PointOfCharger);
                             // rb.SendCmdLineDetectionCtrl(RequestCommandLineDetect.REQUEST_LINEDETECT_READYAREA);
                             StateRobotGoToReady = RobotGoToReady.ROBREA_ROBOT_WAITTING_CAME_POSITION_READYSTATION;
+                        }
+                        else if(Traffic.RobotIsInArea("",robot.properties.pose.Position))
+                        {
+                            robot.TurnOnSupervisorTraffic(false);
                         }
                         break;
                     // case RobotGoToReady.ROBREA_ROBOT_WAIITNG_DETECTLINE_TO_READYSTATION: // đang đợi dò line để đến vị trí line trong buffer
@@ -288,6 +303,7 @@ namespace SeldatMRMS
                         else{
                             ErrorProcedureHandler(this);    
                         }
+                        ProRun = false;
                         break;
                 }
                 Thread.Sleep(5);
